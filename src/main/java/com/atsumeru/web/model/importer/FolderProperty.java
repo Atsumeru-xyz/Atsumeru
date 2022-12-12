@@ -1,17 +1,20 @@
 package com.atsumeru.web.model.importer;
 
+import com.atsumeru.web.importer.Importer;
 import com.atsumeru.web.model.book.BookArchive;
 import com.atsumeru.web.model.book.BookSerie;
 import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.repository.BooksDatabaseRepository;
-import com.atsumeru.web.util.GUString;
-import com.atsumeru.web.importer.Importer;
 import com.atsumeru.web.util.GUFile;
+import com.atsumeru.web.util.GUString;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +34,10 @@ public class FolderProperty {
     @Expose
     @SerializedName("singles_in_root")
     private boolean isSinglesInRoot;
+
+    @Expose
+    @SerializedName("singles_if_in_root_with_folders")
+    private boolean isSinglesIfInRootWithFolders;
 
     @Expose
     @SerializedName("series_count")
@@ -89,15 +96,23 @@ public class FolderProperty {
         return result;
     }
 
-    public boolean isAsSingles(boolean isRootFolder) {
-        boolean asSingles = isSingles();
+    public boolean isAsSingles(File file, boolean isRootFolder) {
         if (isSinglesInRoot() && isRootFolder) {
-            asSingles = true;
+            return true;
         } else if (isSinglesInRoot()) {
-            asSingles = false;
+            return false;
+        } else if (isSinglesIfInRootWithFolders()) {
+            try {
+                return Files.list(file.getParentFile().toPath())
+                        .map(Path::toFile)
+                        .filter(file1 -> !GUString.equalsIgnoreCase(file1.getName(), ReadableContent.EXTERNAL_INFO_DIRECTORY_NAME))
+                        .anyMatch(GUFile::isDirectory);
+            } catch (IOException e) {
+                return false;
+            }
+        } else {
+            return isSingles();
         }
-
-        return asSingles;
     }
 
     public List<File> getArchivesInFolder() {

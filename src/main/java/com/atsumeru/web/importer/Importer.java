@@ -91,7 +91,7 @@ public final class Importer {
         String archivePath = file.getPath();
         String parentPath = file.getParent();
 
-        boolean asSingles = property.isAsSingles(parentPath.equals(importPath));
+        boolean asSingles = property.isAsSingles(file, parentPath.equals(importPath));
 
         // Чтение архива и заполнение модели ReadableContent информацией из него
         ReadableContent readableContent = Importer.importFile(
@@ -328,7 +328,7 @@ public final class Importer {
 
     private static BookSerie updateSerieFromBookArchive(BookSerie bookSerie, BookArchive bookArchive, String serieHash, String parentPath, boolean hasSerieCover, boolean asSingles, boolean isHasMetadata) {
         bookSerie.fromBaseBook(bookArchive);
-        if (GUString.isEmpty(bookSerie.getTitle()) || !isHasMetadata) {
+        if (GUString.isEmpty(bookSerie.getTitle()) || !isHasMetadata && !asSingles) {
             bookSerie.setTitle(GUFile.getCurrentDirName(parentPath));
         }
         bookSerie.setSerieId(serieHash);
