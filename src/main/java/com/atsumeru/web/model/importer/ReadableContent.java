@@ -23,6 +23,7 @@ import com.kursx.parser.fb2.Image;
 import com.trickl.palette.Palette;
 import kotlin.Pair;
 import lombok.Data;
+import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -53,6 +54,7 @@ public class ReadableContent implements Closeable {
     public static final String XML_INFO_FILENAME = "ComicInfo.xml";
     public static final String OPF_INFO_EXTENSION = ".opf";
     public static final String BOOK_JSON_INFO_FILENAME = "book_info.json";
+    public static final String SERIE_JSON_INFO_FILENAME = "serie_info.json";
     public static final String CHAPTER_JSON_INFO_FILENAME = "chapter_info.json";
     public static final String[] SUPPORTED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"};
     public static final String ZERO_COVER_FILENAME_START = "00000.";
@@ -64,6 +66,7 @@ public class ReadableContent implements Closeable {
     private InputStream xmlInfoStream; // ComicInfo.xml
     private InputStream opfInfoStream; // .*.opf
     private InputStream bookJsonInfoStream; // book_info.json
+    private InputStream serieJsonInfoStream; // serie_info.json
 
     private Pair<Integer, PDDocumentInformation> pdDocumentInformationPair; // <Pages, PDFInfo>
     private Pair<String, FictionBook> fictionBookPair; // <Path, FictionBook>
@@ -79,31 +82,35 @@ public class ReadableContent implements Closeable {
 
     private String serieHash;
     private BookArchive bookArchive;
+    private BookArchive serieArchive;
     private Map<String, List<String>> chapterPages;
 
     private Map<String, BookArchive> archivesMap;
     private String parentPath;
     private String archivePath;
     private boolean reImportIfExist;
+    private boolean ignoreVolumeNumbersDetection;
     private boolean forceUpdateCovers;
 
     private boolean isArchiveFile;
     private boolean asSingle;
     private boolean isBookFile;
 
-    private ReadableContent(Map<String, BookArchive> archivesMap, String parentPath, String archivePath, boolean asSingle, boolean reImportIfExist, boolean forceUpdateCovers) {
+    private ReadableContent(Map<String, BookArchive> archivesMap, String parentPath, String archivePath, boolean asSingle, boolean reImportIfExist, boolean ignoreVolumeNumbersDetection, boolean forceUpdateCovers) {
         this.archivesMap = archivesMap;
         this.parentPath = parentPath;
         this.archivePath = archivePath;
         this.asSingle = asSingle;
         this.reImportIfExist = reImportIfExist;
+        this.ignoreVolumeNumbersDetection = ignoreVolumeNumbersDetection;
         this.forceUpdateCovers = forceUpdateCovers;
     }
 
     @Nullable
-    public static ReadableContent create(Map<String, BookArchive> archivesMap, String parentPath, String archivePath, boolean asSingle, boolean reImportIfExist, boolean forceUpdateCovers)
+    public static ReadableContent create(Map<String, BookArchive> archivesMap, String parentPath, String archivePath,
+                                         boolean asSingle, boolean reImportIfExist, boolean ignoreVolumeNumbersDetection, boolean forceUpdateCovers)
             throws IOException, ParserConfigurationException, SAXException {
-        return new ReadableContent(archivesMap, parentPath, archivePath, asSingle, reImportIfExist, forceUpdateCovers).createContent();
+        return new ReadableContent(archivesMap, parentPath, archivePath, asSingle, reImportIfExist, ignoreVolumeNumbersDetection, forceUpdateCovers).createContent();
     }
 
     public static File getSerieExternalCover(String archivePath) {
@@ -199,6 +206,9 @@ public class ReadableContent implements Closeable {
             importChapters(getChapterPages(), getArchiveIterator(), bookArchive.getContentId());
         }
 
+        // Чтение внешних метаданных Серии
+        readExternalSerieInfo();
+
         GUFile.closeQuietly(this);
         return this;
     }
@@ -211,6 +221,7 @@ public class ReadableContent implements Closeable {
         setArchiveFile(isArchiveFile);
         setBookArchive(bookArchive);
         setBookFile(bookType != BookType.ARCHIVE);
+        findExternalSerieInfo();
         findExternalBookInfo();
 
         if (isArchiveFile) {
@@ -226,9 +237,26 @@ public class ReadableContent implements Closeable {
         }
     }
 
+    private void readExternalSerieInfo() {
+        if (getSerieJsonInfoStream() != null) {
+            try {
+                BookArchive archive = new BookArchive();
+                BookInfo.fromJSON(archive, IOUtils.toString(getSerieJsonInfoStream(), StandardCharsets.UTF_8));
+
+                archive.setPagesCount(bookArchive.getPagesCount());
+                if (GUString.isEmpty(archive.getContentId())) {
+                    archive.setContentId(bookArchive.getContentId());
+                }
+
+                serieArchive = archive;
+            } catch (IOException e) {
+                logW(Importer.fileLogger, "Unable to read external serie_info.json file...");
+            }
+        }
+    }
+
     public static Images saveCoverImage(BookArchive bookArchive, boolean asSingle) {
-        try {
-            ReadableContent archive = new ReadableContent(null, null, bookArchive.getFolder(), asSingle, false, true);
+        try (ReadableContent archive = new ReadableContent(null, null, bookArchive.getFolder(), asSingle, false, true, true)) {
             archive.readContent(null, null);
             archive.saveCoverIntoCache(
                     bookArchive.getContentId(),
@@ -239,6 +267,16 @@ public class ReadableContent implements Closeable {
             return archive.getImages();
         } catch (Exception ex) {
             return null;
+        }
+    }
+
+    @SneakyThrows
+    private void findExternalSerieInfo() {
+        if (!asSingle) {
+            File serieInfoFile = new File(new File(archivePath).getParentFile(), SERIE_JSON_INFO_FILENAME);
+            if (GUFile.isFile(serieInfoFile)) {
+                serieJsonInfoStream = Files.newInputStream(serieInfoFile.toPath());
+            }
         }
     }
 
@@ -256,7 +294,7 @@ public class ReadableContent implements Closeable {
                                 String chapterPath = file.toString()
                                         .replace(contentFolder + File.separator, "")
                                         .replace(CHAPTER_JSON_INFO_FILENAME, "");
-                                putChapterJsonInfoStream(chapterPath, new FileInputStream(file));
+                                putChapterJsonInfoStream(chapterPath, Files.newInputStream(file.toPath()));
                             } catch (IOException ignored) {
                             }
                         }))
@@ -595,6 +633,7 @@ public class ReadableContent implements Closeable {
         GUFile.closeQuietly(xmlInfoStream);
         GUFile.closeQuietly(opfInfoStream);
         GUFile.closeQuietly(bookJsonInfoStream);
+        GUFile.closeQuietly(serieJsonInfoStream);
         GUFile.closeQuietly(coverStream);
         GUFile.closeQuietly(serieCoverStream);
         chapterJsonInfoStream.values().forEach(GUFile::closeQuietly);

@@ -95,8 +95,9 @@ public class FilesHelper {
                 File externalCover = ReadableContent.getSerieExternalCover(book.getFolder());
                 if (externalCover != null) {
                     try {
-                        ArchiveHelper.writeEntryStreamIntoResponseOrOutputStream(response, response.getOutputStream(), new FileInputStream(externalCover),
-                                externalCover.length(), externalCover.getAbsolutePath(), convertImage, System.currentTimeMillis());
+                        ArchiveHelper.writeEntryStreamIntoResponseOrOutputStream(response, response.getOutputStream(),
+                                Files.newInputStream(externalCover.toPath()), externalCover.length(),
+                                externalCover.getAbsolutePath(), convertImage, System.currentTimeMillis());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

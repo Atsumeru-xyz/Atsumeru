@@ -100,13 +100,14 @@ public final class Importer {
                 archivePath,
                 asSingles,
                 reImportIfExist,
+                ignoreVolumeNumbersDetection,
                 forceUpdateCovers
         );
 
         if (readableContent != null) {
             String existedSerieHash = seriesMap.entrySet()
                     .stream()
-                    .filter(entry -> !(asSingles || readableContent.getBookArchive().isSingle())
+                    .filter(entry -> !(asSingles || readableContent.getBookArchive().isSingle() && readableContent.getSerieArchive() == null)
                             ? GUString.equalsIgnoreCase(GUFile.removeLastPathSlash(entry.getValue().getFolder()), GUFile.removeLastPathSlash(parentPath))
                             : GUString.equalsIgnoreCase(GUFile.removeLastPathSlash(entry.getKey()), readableContent.getSerieHash()))
                     .findFirst()
@@ -213,7 +214,7 @@ public final class Importer {
         BookSerie bookSerie;
 
         String serieHash = readableContent.getSerieHash();
-        boolean asSingle = readableContent.isAsSingle() || readableContent.getBookArchive().isSingle();
+        boolean asSingle = readableContent.isAsSingle() || readableContent.getBookArchive().isSingle() && readableContent.getSerieArchive() == null;
         boolean isBook = readableContent.isBookFile();
 
         bookArchiveInDb.fromBaseBook(readableContent.getBookArchive());
@@ -247,7 +248,8 @@ public final class Importer {
         } else {
             seriesMap.put(
                     serieHash,
-                    bookSerie = createSerieFromBookArchive(
+                    bookSerie = createSerieFromBookArchiveOrExternalInfo(
+                            readableContent,
                             bookArchiveInDb,
                             serieHash,
                             parentPath,
@@ -322,8 +324,8 @@ public final class Importer {
                 .count();
     }
 
-    private static BookSerie createSerieFromBookArchive(BookArchive bookArchive, String serieHash, String parentPath, boolean hasSerieCover, boolean asSingles, boolean isHasMetadata) {
-        return updateSerieFromBookArchive(new BookSerie(), bookArchive, serieHash, parentPath, hasSerieCover, asSingles, isHasMetadata);
+    private static BookSerie createSerieFromBookArchiveOrExternalInfo(ReadableContent readableContent, BookArchive bookArchive, String serieHash, String parentPath, boolean hasSerieCover, boolean asSingles, boolean isHasMetadata) {
+        return updateSerieFromBookArchive(new BookSerie(), Optional.ofNullable(readableContent.getSerieArchive()).orElse(bookArchive), serieHash, parentPath, hasSerieCover, asSingles, isHasMetadata);
     }
 
     private static BookSerie updateSerieFromBookArchive(BookSerie bookSerie, BookArchive bookArchive, String serieHash, String parentPath, boolean hasSerieCover, boolean asSingles, boolean isHasMetadata) {
