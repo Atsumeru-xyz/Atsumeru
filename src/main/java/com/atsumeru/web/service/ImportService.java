@@ -202,10 +202,14 @@ public class ImportService {
                 .filter(archive -> !actualArchivesInFS.containsKey(archive.getFolder()))
                 .collect(Collectors.toList());
 
+        // todo: удаление архивов, которые есть в фс, но их путь не привязан ни к одному пути импорта
+
         archivesNotInFS.forEach(archive -> {
             archivesInDbMap.remove(archive.getContentId());
             archivesInFolder.remove(archive.getFolder());
         });
+
+        // todo: удаление серий, директории которых не пустые, но которые не содержат архивов
 
         // Поиск Серий, которых больше нет в файловой системе
         List<IBaseBookItem> seriesNotInFS = seriesInDbMap.values()

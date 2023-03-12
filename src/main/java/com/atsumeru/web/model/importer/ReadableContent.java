@@ -197,7 +197,7 @@ public class ReadableContent implements Closeable {
         }
 
         // Парсинг номеров томов
-        if (GUString.isNotEmpty(bookArchive.getFolder())) {
+        if (!ignoreVolumeNumbersDetection && GUString.isNotEmpty(bookArchive.getFolder())) {
             ChapterRecognition.parseNumbers(bookArchive);
         }
 

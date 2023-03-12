@@ -40,6 +40,10 @@ public class FolderProperty {
     private boolean isSinglesIfInRootWithFolders;
 
     @Expose
+    @SerializedName("ignore_volume_numbers_detection")
+    private boolean isIgnoreVolumeNumbersDetection;
+
+    @Expose
     @SerializedName("series_count")
     private long seriesCount;
 

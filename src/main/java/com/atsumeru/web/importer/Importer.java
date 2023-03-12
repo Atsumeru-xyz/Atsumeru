@@ -85,6 +85,7 @@ public final class Importer {
     public static void importFile(FolderProperty property, File file, Map<String, BookSerie> seriesMap, Map<String, BookArchive> archivesMap, OnImportCallback callback) {
         boolean reImportIfExist = property.isReImportIfExist();
         boolean forceUpdateCovers = property.isForceUpdateCovers();
+        boolean ignoreVolumeNumbersDetection = property.isIgnoreVolumeNumbersDetection();
 
         String importPath = GUFile.removeLastPathSlash(property.getPath());
 
@@ -131,10 +132,11 @@ public final class Importer {
     }
 
     @Nullable
-    public static ReadableContent importFile(Map<String, BookArchive> archivesMap, String parentPath, String archivePath, boolean asSingle, boolean reImportIfExist, boolean forceUpdateCovers) {
+    public static ReadableContent importFile(Map<String, BookArchive> archivesMap, String parentPath, String archivePath,
+                                             boolean asSingle, boolean reImportIfExist, boolean ignoreVolumeNumbersDetection, boolean forceUpdateCovers) {
         try {
             // Создание модели ReadableContent и наполнение ее данными из файла
-            return ReadableContent.create(archivesMap, parentPath, archivePath, asSingle, reImportIfExist, forceUpdateCovers);
+            return ReadableContent.create(archivesMap, parentPath, archivePath, asSingle, reImportIfExist, ignoreVolumeNumbersDetection, forceUpdateCovers);
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
