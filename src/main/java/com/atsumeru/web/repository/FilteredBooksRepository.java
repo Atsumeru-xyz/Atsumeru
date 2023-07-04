@@ -20,12 +20,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class FilteredBooksRepository {
-    private static final Comparator<IBaseBookItem> TITLE_COMPARATOR = (item1, item2) -> NaturalStringComparator.compareStrings(item1.getTitle(), item2.getTitle());
+    public static final Comparator<IBaseBookItem> TITLE_COMPARATOR = (item1, item2) -> NaturalStringComparator.compareStrings(item1.getTitle(), item2.getTitle());
 
     public static List<IBaseBookItem> getFilteredList(User user, ContentType contentType, String category, LibraryPresentation libraryPresentation, String search,
                                                       Sort sort, boolean ascending, MultiValueMap<String, String> filtersMap, int page, int limit, boolean withVolumesAndHistory, boolean withChapters) {
         Status status = GUEnum.valueOfOrNull(Status.class, filtersMap.getFirst("status"));
         TranslationStatus translationStatus = GUEnum.valueOfOrNull(TranslationStatus.class, filtersMap.getFirst("translation_status"));
+        PlotType plotType = GUEnum.valueOfOrNull(PlotType.class, filtersMap.getFirst("plot_type"));
         Censorship censorship = GUEnum.valueOfOrNull(Censorship.class, filtersMap.getFirst("censorship"));
         Color color = GUEnum.valueOfOrNull(Color.class, filtersMap.getFirst("color"));
         AgeRating ageRating = GUEnum.valueOfOrNull(AgeRating.class, filtersMap.getFirst("age_rating"));
@@ -40,11 +41,12 @@ public class FilteredBooksRepository {
         LogicalMode languagesMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("languages_mode"));
         LogicalMode eventsMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("event_mode"));
         LogicalMode charactersMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("characters_mode"));
+        LogicalMode seriesMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("series_mode"));
         LogicalMode parodiesMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("parodies_mode"));
         LogicalMode circlesMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("circles_mode"));
         LogicalMode magazinesMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("magazines_mode"));
 
-        return getFilteredList(user, contentType, category, libraryPresentation, search, sort, ascending, status, translationStatus, censorship, color, ageRating,
+        return getFilteredList(user, contentType, category, libraryPresentation, search, sort, ascending, status, translationStatus, plotType, censorship, color, ageRating,
                 GUArray.splitString(filtersMap.getFirst("authors"), ","), authorsMode,
                 GUArray.splitString(filtersMap.getFirst("artists"), ","), artistsMode,
                 GUArray.splitString(filtersMap.getFirst("publishers"), ","), publishersMode,
@@ -55,6 +57,7 @@ public class FilteredBooksRepository {
                 GUArray.splitString(filtersMap.getFirst("languages"), ","), languagesMode,
                 GUArray.splitString(filtersMap.getFirst("events"), ","), eventsMode,
                 GUArray.splitString(filtersMap.getFirst("characters"), ","), charactersMode,
+                GUArray.splitString(filtersMap.getFirst("series"), ","), seriesMode,
                 GUArray.splitString(filtersMap.getFirst("parodies"), ","), parodiesMode,
                 GUArray.splitString(filtersMap.getFirst("circles"), ","), circlesMode,
                 GUArray.splitString(filtersMap.getFirst("magazines"), ","), magazinesMode,
@@ -62,15 +65,16 @@ public class FilteredBooksRepository {
                 withVolumesAndHistory, withChapters);
     }
 
-    public static List<IBaseBookItem> getFilteredList(User user, ContentType contentType, String category, LibraryPresentation libraryPresentation, String search, Sort sort,
-                                                      boolean ascending, Status status, TranslationStatus translationStatus, Censorship censorship, Color color, AgeRating ageRating,
+    public static List<IBaseBookItem> getFilteredList(User user, ContentType contentType, String category, LibraryPresentation libraryPresentation, String search,
+                                                      Sort sort, boolean ascending, Status status, TranslationStatus translationStatus,
+                                                      PlotType plotType, Censorship censorship, Color color, AgeRating ageRating,
                                                       List<String> authors, LogicalMode authorsMode, List<String> artists, LogicalMode artistsMode,
                                                       List<String> publishers, LogicalMode publishersMode, List<String> translators, LogicalMode translatorsMode,
                                                       List<String> genres, LogicalMode genresMode, List<String> tags, LogicalMode tagsMode,
                                                       List<String> countries, LogicalMode countriesMode, List<String> languages, LogicalMode languagesMode,
                                                       List<String> events, LogicalMode eventsMode, List<String> characters, LogicalMode charactersMode,
-                                                      List<String> parodies, LogicalMode parodiesMode, List<String> circles, LogicalMode circlesMode,
-                                                      List<String> magazines, LogicalMode magazinesMode, List<String> years,
+                                                      List<String> series, LogicalMode seriesMode, List<String> parodies, LogicalMode parodiesMode,
+                                                      List<String> circles, LogicalMode circlesMode, List<String> magazines, LogicalMode magazinesMode, List<String> years,
                                                       int page, int limit, boolean withVolumesAndHistory, boolean withChapters) {
         List<IBaseBookItem> list = BooksRepository.getBooks(user, libraryPresentation, 1, Integer.MAX_VALUE, false, false);
 
@@ -101,14 +105,14 @@ public class FilteredBooksRepository {
                         || GUString.containsIgnoreCase(it.getArtists(), search)
                         || GUString.containsIgnoreCase(it.getTranslators(), search)
                         || GUString.containsIgnoreCase(it.getPublisher(), search)
-                        // TODO: localized genres support
-                        || GUString.containsIgnoreCase(it.getGenres(), search)
+                        || GUString.containsIgnoreCase(it.getGenres(), search) // TODO: localized genres support
                         || GUString.containsIgnoreCase(it.getTags(), search)
                         || GUString.containsIgnoreCase(it.getYear(), search)
                         || GUString.containsIgnoreCase(it.getCountry(), search)
                         || GUString.containsIgnoreCase(it.getLanguage(), search)
                         || GUString.containsIgnoreCase(it.getEvent(), search)
                         || GUString.containsIgnoreCase(it.getCharacters(), search)
+                        || GUString.containsIgnoreCase(it.getSeries(), search)
                         || GUString.containsIgnoreCase(it.getParodies(), search)
                         || GUString.containsIgnoreCase(it.getCircles(), search)
                         || GUString.containsIgnoreCase(it.getMagazines(), search)
@@ -144,6 +148,7 @@ public class FilteredBooksRepository {
                     || !itemHasFiltersEntry(languages, GUArray.splitString(it.getLanguage(), ","), languagesMode)
                     || !itemHasFiltersEntry(events, GUArray.splitString(it.getEvent(), ","), eventsMode)
                     || !itemHasFiltersEntry(characters, GUArray.splitString(it.getCharacters(), ","), charactersMode)
+                    || !itemHasFiltersEntry(series, GUArray.splitString(it.getSeries(), ","), seriesMode)
                     || !itemHasFiltersEntry(parodies, GUArray.splitString(it.getParodies(), ","), parodiesMode)
                     || !itemHasFiltersEntry(circles, GUArray.splitString(it.getCircles(), ","), circlesMode)
                     || !itemHasFiltersEntry(magazines, GUArray.splitString(it.getMagazines(), ","), magazinesMode)) {
@@ -278,11 +283,10 @@ public class FilteredBooksRepository {
                 return ((Comparator<IBaseBookItem>) (item1, item2) -> AlphanumComparator.compareStrings(item1.getLanguage(), item2.getLanguage())).thenComparing(TITLE_COMPARATOR);
             case PUBLISHER:
                 return ((Comparator<IBaseBookItem>) (item1, item2) -> AlphanumComparator.compareStrings(item1.getPublisher(), item2.getPublisher())).thenComparing(TITLE_COMPARATOR);
+            case SERIE:
+                return getSerieComparator();
             case PARODY:
-                return ((Comparator<IBaseBookItem>) (item1, item2) -> AlphanumComparator.compareStrings(
-                        GUArray.safeGetString(GUArray.splitString(item1.getParodies()), 0, ""),
-                        GUArray.safeGetString(GUArray.splitString(item2.getParodies()), 0, "")
-                )).thenComparing(TITLE_COMPARATOR);
+                return getParodyComparator();
             case VOLUMES_COUNT:
                 return Comparator.comparingLong(IBaseBookItem::getVolumesCount).thenComparing(TITLE_COMPARATOR);
             case CHAPTERS_COUNT:
@@ -298,6 +302,14 @@ public class FilteredBooksRepository {
             default:
                 return Comparator.comparingLong(IBaseBookItem::getDbId);
         }
+    }
+
+    public static Comparator<IBaseBookItem> getSerieComparator() {
+        return ((Comparator<IBaseBookItem>) (item1, item2) -> AlphanumComparator.compareStrings(
+                GUArray.safeGetString(GUArray.splitString(item1.getSeries()), 0, ""),
+                GUArray.safeGetString(GUArray.splitString(item2.getSeries()), 0, "")
+        )).thenComparing((item1, item2) -> AlphanumComparator.compareStrings(item1.getYear(), item2.getYear()))
+                .thenComparing(TITLE_COMPARATOR);
     }
 
     public static Comparator<IBaseBookItem> getParodyComparator() {
@@ -355,6 +367,7 @@ public class FilteredBooksRepository {
         Set<String> languages = new TreeSet<>();
         Set<String> events = new TreeSet<>();
         Set<String> characters = new TreeSet<>();
+        Set<String> series = new TreeSet<>();
         Set<String> parodies = new TreeSet<>();
         Set<String> circles = new TreeSet<>();
         Set<String> magazines = new TreeSet<>();
@@ -367,6 +380,7 @@ public class FilteredBooksRepository {
             }
             fillSetWithEnumName(statuses, item.getStatus());
             fillSetWithEnumName(translationStatuses, item.getTranslationStatus());
+            fillSetWithEnumName(plotTypes, item.getPlotType());
             fillSetWithEnumName(censorships, item.getCensorship());
             fillSetWithEnumName(colors, item.getColor());
             fillSetWithEnumName(ageRatings, item.getAgeRating());
@@ -422,6 +436,7 @@ public class FilteredBooksRepository {
         safeAddCollectionIntoFiltersList(filters, languages, "languages", true, false);
         safeAddCollectionIntoFiltersList(filters, events, "events", true, false);
         safeAddCollectionIntoFiltersList(filters, characters, "characters", true, false);
+        safeAddCollectionIntoFiltersList(filters, series, "series", true, false);
         safeAddCollectionIntoFiltersList(filters, parodies, "parodies", true, false);
         safeAddCollectionIntoFiltersList(filters, circles, "circles", true, false);
         safeAddCollectionIntoFiltersList(filters, magazines, "magazines", true, false);

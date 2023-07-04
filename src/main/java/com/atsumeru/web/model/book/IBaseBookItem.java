@@ -41,6 +41,7 @@ public interface IBaseBookItem {
     String getLanguage();
     String getEvent();
     String getCharacters();
+    String getSeries();
     String getParodies();
     String getCircles();
     String getMagazines();

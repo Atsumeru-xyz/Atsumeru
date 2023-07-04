@@ -160,6 +160,7 @@ public class BooksApiController {
                                                 // Single filters
                                                 @RequestParam(value = "status", defaultValue = "") Status status,
                                                 @RequestParam(value = "translation_status", defaultValue = "") TranslationStatus translationStatus,
+                                                @RequestParam(value = "plot_type", defaultValue = "") PlotType plotType,
                                                 @RequestParam(value = "censorship", defaultValue = "") Censorship censorship,
                                                 @RequestParam(value = "color", defaultValue = "") Color color,
                                                 @RequestParam(value = "age_rating", defaultValue = "") AgeRating ageRating,
@@ -184,6 +185,8 @@ public class BooksApiController {
                                                 @RequestParam(value = "event_mode", defaultValue = "and") LogicalMode eventsMode,
                                                 @RequestParam(value = "characters", defaultValue = "") List<String> characters,
                                                 @RequestParam(value = "characters_mode", defaultValue = "and") LogicalMode charactersMode,
+                                                @RequestParam(value = "series", defaultValue = "") List<String> series,
+                                                @RequestParam(value = "series_mode", defaultValue = "and") LogicalMode seriesMode,
                                                 @RequestParam(value = "parodies", defaultValue = "") List<String> parodies,
                                                 @RequestParam(value = "parodies_mode", defaultValue = "and") LogicalMode parodiesMode,
                                                 @RequestParam(value = "circles", defaultValue = "") List<String> circles,
@@ -201,10 +204,10 @@ public class BooksApiController {
                 userService.getUserFromRequest(request),
                 CategoryRepository.getContentTypeForCategory(category, contentType),
                 CategoryRepository.createDbIdForCategoryId(category),
-                libraryPresentation, search, sort,ascending, status, translationStatus, censorship,
+                libraryPresentation, search, sort,ascending, status, translationStatus, plotType, censorship,
                 color, ageRating, authors, authorsMode, artists, artistsMode, publishers, publishersMode, translators, translatorsMode,
                 genres, genresMode, tags, tagsMode, countries, countriesMode, languages, languagesMode, events, eventsMode, characters,
-                charactersMode, parodies, parodiesMode, circles, circlesMode, magazines, magazinesMode, years, page, limit,
+                charactersMode, series, seriesMode, parodies, parodiesMode, circles, circlesMode, magazines, magazinesMode, years, page, limit,
                 Settings.isAllowListLoadingWithVolumes() && withVolumesAndHistory,
                 Settings.isAllowListLoadingWithChapters() && withChapters
         );
@@ -218,6 +221,14 @@ public class BooksApiController {
                                         @RequestParam(value = "with_volumes", defaultValue = "false") boolean withVolumesAndHistory,
                                         @RequestParam(value = "with_chapters", defaultValue = "false") boolean withChapters) {
         return BooksRepository.getBookDetails(userService.getUserFromRequest(request), bookHash, withVolumesAndHistory, withChapters);
+    }
+
+    @GetMapping(value = {
+            "/{serie_hash}/serie",
+            "/{serie_hash}/franchise"
+    })
+    public List<IBaseBookItem> getSerieFranchiseBooks(HttpServletRequest request, @PathVariable(value = "serie_hash") String serieHash) {
+        return BooksRepository.getSerieFranchiseBooks(userService.getUserFromRequest(request), serieHash);
     }
 
     //*****************************//

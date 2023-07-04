@@ -155,8 +155,18 @@ public abstract class BaseBook implements IBaseBookItem {
     private String translationStatus;
 
     @Expose
+    @SerializedName("plot_type")
+    @DatabaseField(columnName = "PLOT_TYPE")
+    private String plotType;
+
+    @Expose
     @DatabaseField(columnName = "CENSORSHIP")
     private String censorship;
+
+    @Expose
+    @DatabaseField(columnName = "SERIES")
+    @JsonAdapter(StringListBidirectionalAdapter.class)
+    private String series;
 
     @Expose
     @DatabaseField(columnName = "PARODIES")
@@ -240,6 +250,7 @@ public abstract class BaseBook implements IBaseBookItem {
         this.year = book.getYear();
         this.country = book.getCountry();
         this.language = book.getLanguage();
+        this.series = book.getSeries();
         this.parodies = book.getParodies();
         this.circles = book.getCircles();
         this.magazines = book.getMagazines();

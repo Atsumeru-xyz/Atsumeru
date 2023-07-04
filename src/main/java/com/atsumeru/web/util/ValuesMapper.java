@@ -85,6 +85,10 @@ public class ValuesMapper {
                 return Optional.ofNullable(baseBook.getTags())
                         .map(value -> lowerCaseArrays ? value.toLowerCase() : value)
                         .orElse(baseBook.getTags());
+            case "series":
+                return Optional.ofNullable(baseBook.getSeries())
+                        .map(value -> lowerCaseArrays ? value.toLowerCase() : value)
+                        .orElse(baseBook.getSeries());
             case "parodies":
                 return Optional.ofNullable(baseBook.getParodies())
                         .map(value -> lowerCaseArrays ? value.toLowerCase() : value)

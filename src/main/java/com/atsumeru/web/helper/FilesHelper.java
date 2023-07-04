@@ -1,20 +1,20 @@
 package com.atsumeru.web.helper;
 
-import com.atsumeru.web.model.book.BookArchive;
-import com.atsumeru.web.model.book.IBaseBookItem;
-import com.atsumeru.web.model.importer.ReadableContent;
-import com.atsumeru.web.repository.BooksRepository;
-import com.atsumeru.web.util.ContentDetector;
 import com.atsumeru.web.enums.BookType;
 import com.atsumeru.web.exception.DownloadsNotAllowedException;
 import com.atsumeru.web.exception.NoReadableFoundException;
 import com.atsumeru.web.exception.RendererNotImplementedException;
 import com.atsumeru.web.manager.ImageCache;
+import com.atsumeru.web.model.book.BookArchive;
+import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.model.book.image.Images;
+import com.atsumeru.web.model.importer.ReadableContent;
 import com.atsumeru.web.renderer.RendererFactory;
 import com.atsumeru.web.repository.BooksDatabaseRepository;
+import com.atsumeru.web.repository.BooksRepository;
 import com.atsumeru.web.repository.dao.BooksDaoManager;
 import com.atsumeru.web.service.UserDatabaseDetailsService;
+import com.atsumeru.web.util.ContentDetector;
 import com.atsumeru.web.util.GUArray;
 import com.atsumeru.web.util.GUFile;
 import org.apache.commons.io.IOUtils;

@@ -50,6 +50,7 @@ public class BookInfo {
         putJSON(obj, "artists", GUArray.splitString(archive.getArtists()));
         putJSON(obj, "languages", GUArray.splitString(archive.getLanguage()));
         putJSON(obj, "translators", GUArray.splitString(archive.getTranslators()));
+        putJSON(obj, "series", GUArray.splitString(archive.getSeries()));
         putJSON(obj, "parodies", GUArray.splitString(archive.getParodies()));
         putJSON(obj, "circles", GUArray.splitString(archive.getCircles()));
         putJSON(obj, "magazines", GUArray.splitString(archive.getMagazines()));
@@ -130,6 +131,7 @@ public class BookInfo {
         archive.setArtists(GUString.join(",", JSONHelper.getStringList(obj, "artists")));
         archive.setTranslators(GUString.join(",", JSONHelper.getStringList(obj, "translators")));
         archive.setLanguage(GUString.join(",", JSONHelper.getStringList(obj, "languages")));
+        archive.setSeries(GUString.join(",", JSONHelper.getStringList(obj, "series")));
         archive.setParodies(GUString.join(",", JSONHelper.getStringList(obj, "parodies")));
         archive.setCircles(GUString.join(",", JSONHelper.getStringList(obj, "circles")));
         archive.setMagazines(GUString.join(",", JSONHelper.getStringList(obj, "magazines")));

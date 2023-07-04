@@ -9,6 +9,7 @@ public enum Sort {
     COUNTRY,
     LANGUAGE,
     PUBLISHER,
+    SERIE,
     PARODY,
     VOLUMES_COUNT,
     CHAPTERS_COUNT,
