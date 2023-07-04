@@ -138,6 +138,7 @@ public final class Importer {
             // Создание модели ReadableContent и наполнение ее данными из файла
             return ReadableContent.create(archivesMap, parentPath, archivePath, asSingle, reImportIfExist, ignoreVolumeNumbersDetection, forceUpdateCovers);
         } catch (Exception ex) {
+            logError("Unable to read archive: " + archivePath);
             ex.printStackTrace();
             return null;
         }
