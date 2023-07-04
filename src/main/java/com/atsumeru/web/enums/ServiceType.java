@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public enum ServiceType {
     MYANIMELIST("mal", "https://myanimelist.net/manga/%s", Pattern.compile("manga/(\\d+)"), DatabaseFields.MAL_ID),
-    SHIKIMORI("shiki", "https://shikimori.one/mangas/%s", Pattern.compile("/(\\d+)|/\\w(\\d+)"), DatabaseFields.SHIKIMORI_ID),
+    SHIKIMORI("shiki", "https://shikimori.me/mangas/%s", Pattern.compile("/(\\d+)|/\\w(\\d+)"), DatabaseFields.SHIKIMORI_ID),
     KITSU("kt", "https://kitsu.io/manga/%s", Pattern.compile("manga/(.*)/|manga/(.*)"), DatabaseFields.KITSU_ID),
     ANILIST("al", "https://anilist.co/manga/%s", Pattern.compile("manga/(\\d+)"), DatabaseFields.ANILIST_ID),
     MANGAUPDATES("mu", "https://www.mangaupdates.com/series.html?id=%s", Pattern.compile("\\?id=(\\d+)"), DatabaseFields.MANGAUPDATES_ID),
