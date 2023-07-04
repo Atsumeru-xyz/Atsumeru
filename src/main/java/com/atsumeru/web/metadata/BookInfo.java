@@ -70,6 +70,7 @@ public class BookInfo {
         // Statuses
         putJSON(obj, "status", archive.getStatus());
         putJSON(obj, "translation_status", archive.getTranslationStatus());
+        putJSON(obj, "plot_type", archive.getPlotType());
         putJSON(obj, "censorship", archive.getCensorship());
         putJSON(obj, "content_type", archive.getContentType());
         putJSON(obj, "color", archive.getColor());
@@ -144,6 +145,7 @@ public class BookInfo {
         // Statuses
         archive.setStatus(GUEnum.valueOf(Status.class, JSONHelper.getStringSafe(obj, "status")).toString());
         archive.setTranslationStatus(GUEnum.valueOf(TranslationStatus.class, JSONHelper.getStringSafe(obj, "translation_status")).toString());
+        archive.setPlotType(GUEnum.valueOf(PlotType.class, JSONHelper.getStringSafe(obj, "plot_type")).toString());
         archive.setCensorship(GUEnum.valueOf(Censorship.class, JSONHelper.getStringSafe(obj, "censorship")).toString());
         archive.setContentType(GUEnum.valueOf(ContentType.class, JSONHelper.getStringSafe(obj, "content_type")).toString());
         archive.setColor(GUEnum.valueOf(Color.class, JSONHelper.getStringSafe(obj, "color")).toString());

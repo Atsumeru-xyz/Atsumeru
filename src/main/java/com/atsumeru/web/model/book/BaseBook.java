@@ -251,6 +251,7 @@ public abstract class BaseBook implements IBaseBookItem {
 
         setEnumsAndScores(book.getStatus(),
                 book.getTranslationStatus(),
+                book.getPlotType(),
                 book.getCensorship(),
                 book.getColor(),
                 book.getRating(),
@@ -259,9 +260,10 @@ public abstract class BaseBook implements IBaseBookItem {
         setCoverAccent(book.getCoverAccent());
     }
 
-    private void setEnumsAndScores(Status status, TranslationStatus translationStatus, Censorship censorship, Color color, Integer rating, String score) {
+    private void setEnumsAndScores(Status status, TranslationStatus translationStatus, PlotType plotType, Censorship censorship, Color color, Integer rating, String score) {
         this.status = Optional.ofNullable(status).map(Enum::toString).orElse(null);
         this.translationStatus = Optional.ofNullable(translationStatus).map(Enum::toString).orElse(null);
+        this.plotType = Optional.ofNullable(plotType).map(Enum::toString).orElse(null);
         this.censorship = Optional.ofNullable(censorship).map(Enum::toString).orElse(null);
         this.color = Optional.ofNullable(color).map(Enum::toString).orElse(null);
 
@@ -304,6 +306,12 @@ public abstract class BaseBook implements IBaseBookItem {
     public TranslationStatus getMangaTranslationStatus() {
         return Optional.ofNullable(translationStatus)
                 .map(value -> TranslationStatus.valueOf(value.toUpperCase()))
+                .orElse(null);
+    }
+
+    public PlotType getMangaPlotType() {
+        return Optional.ofNullable(plotType)
+                .map(value -> PlotType.valueOf(value.toUpperCase()))
                 .orElse(null);
     }
 
@@ -383,6 +391,11 @@ public abstract class BaseBook implements IBaseBookItem {
     @Override
     public TranslationStatus getTranslationStatus() {
         return GUEnum.valueOf(TranslationStatus.class, translationStatus);
+    }
+
+    @Override
+    public PlotType getPlotType() {
+        return GUEnum.valueOf(PlotType.class, plotType);
     }
 
     @Override

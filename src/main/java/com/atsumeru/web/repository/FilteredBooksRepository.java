@@ -126,6 +126,7 @@ public class FilteredBooksRepository {
             if (contentType != null && it.getContentType() != contentType
                     || status != null && it.getStatus() != status
                     || translationStatus != null && it.getTranslationStatus() != translationStatus
+                    || plotType != null && it.getPlotType() != plotType
                     || censorship != null && it.getCensorship() != censorship
                     || color != null && it.getColor() != color
                     || ageRating != null && it.getAgeRating() != ageRating) {
@@ -339,6 +340,7 @@ public class FilteredBooksRepository {
         Set<String> contentTypes = new TreeSet<>();
         Set<String> statuses = new TreeSet<>();
         Set<String> translationStatuses = new TreeSet<>();
+        Set<String> plotTypes = new TreeSet<>();
         Set<String> censorships = new TreeSet<>();
         Set<String> colors = new TreeSet<>();
         Set<String> ageRatings = new TreeSet<>();
@@ -380,28 +382,30 @@ public class FilteredBooksRepository {
             GUArray.fillSetWithStringAsArray(languages, item.getLanguage());
             GUArray.fillSetWithList(events, Collections.singletonList(item.getEvent()));
             GUArray.fillSetWithStringAsArray(characters, item.getCharacters());
+            GUArray.fillSetWithStringAsArray(series, item.getSeries());
             GUArray.fillSetWithStringAsArray(parodies, item.getParodies());
             GUArray.fillSetWithStringAsArray(circles, item.getCircles());
             GUArray.fillSetWithStringAsArray(magazines, item.getMagazines());
         });
 
-        createFiltersFromSets(filters, sort, contentTypes, statuses, translationStatuses, censorships, colors, ageRatings, authors, artists,
-                publishers, translators, genres, tags, years, countries, languages, events, characters, parodies, circles, magazines);
+        createFiltersFromSets(filters, sort, contentTypes, statuses, translationStatuses, plotTypes, censorships, colors, ageRatings, authors, artists,
+                publishers, translators, genres, tags, years, countries, languages, events, characters, series, parodies, circles, magazines);
 
         return filters;
     }
 
     private static void createFiltersFromSets(List<Filters> filters, List<String> sort, Set<String> contentTypes, Set<String> statuses,
-                                              Set<String> translationStatuses, Set<String> censorships, Set<String> colors,
+                                              Set<String> translationStatuses, Set<String> plotTypes, Set<String> censorships, Set<String> colors,
                                               Set<String> ageRatings, Set<String> authors, Set<String> artists, Set<String> publishers,
                                               Set<String> translators, Set<String> genres, Set<String> tags, Set<String> years,
                                               Set<String> countries, Set<String> languages, Set<String> events, Set<String> characters,
-                                              Set<String> parodies, Set<String> circles, Set<String> magazines) {
+                                              Set<String> series, Set<String> parodies, Set<String> circles, Set<String> magazines) {
         // Single mode filters without AND modifier
         safeAddCollectionIntoFiltersList(filters, sort, "sort", false, true);
         safeAddCollectionIntoFiltersList(filters, contentTypes, "type", false, true);
         safeAddCollectionIntoFiltersList(filters, statuses, "status", false, true);
         safeAddCollectionIntoFiltersList(filters, translationStatuses, "translation_status", false, true);
+        safeAddCollectionIntoFiltersList(filters, plotTypes, "plot_type", false, true);
         safeAddCollectionIntoFiltersList(filters, censorships, "censorship", false, true);
         safeAddCollectionIntoFiltersList(filters, colors, "color", false, true);
         safeAddCollectionIntoFiltersList(filters, ageRatings, "age_rating", false, true);

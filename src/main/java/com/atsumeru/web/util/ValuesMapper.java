@@ -70,6 +70,8 @@ public class ValuesMapper {
                 return baseBook.getStatus().name();
             case "translation_status":
                 return baseBook.getTranslationStatus().name();
+            case "plot_type":
+                return baseBook.getPlotType().name();
             case "content_type":
                 return baseBook.getContentType().name();
             case "cover":

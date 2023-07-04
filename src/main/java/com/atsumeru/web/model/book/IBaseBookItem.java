@@ -62,6 +62,8 @@ public interface IBaseBookItem {
     ContentType getContentType();
     Status getStatus();
     TranslationStatus getTranslationStatus();
+
+    PlotType getPlotType();
     Censorship getCensorship();
     Color getColor();
     AgeRating getAgeRating();
@@ -105,6 +107,7 @@ public interface IBaseBookItem {
 
     void setStatus(String status);
     void setTranslationStatus(String translationStatus);
+    void setPlotType(String plotType);
     void setCensorship(String censorship);
     void setVolumes(List<VolumeItem> volumes);
 
