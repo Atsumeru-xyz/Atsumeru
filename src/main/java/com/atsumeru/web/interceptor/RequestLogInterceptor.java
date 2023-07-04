@@ -39,7 +39,7 @@ public class RequestLogInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
-        String ipAddress = request.getHeader("X-Forward-For");
+        String ipAddress = request.getHeader("X-Forwarded-For");
         if (ipAddress == null) {
             ipAddress = request.getRemoteAddr();
         }
