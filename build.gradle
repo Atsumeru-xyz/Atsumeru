@@ -121,8 +121,8 @@ dependencies {
     implementation 'org.apache.pdfbox:pdfbox:2.0.25'
 
     // Bonjour Service
-    implementation 'de.mannodermaus.rxjava2:rxbonjour:2.0.0-RC1'
-    implementation 'de.mannodermaus.rxjava2:rxbonjour-platform-desktop:2.0.0-RC1'
+    implementation "de.mannodermaus.rxjava2:rxbonjour:2.0.0-RC1"
+    implementation files("libs/rxbonjour-platform-desktop-2.0.0-RC1.jar")
     implementation('de.mannodermaus.rxjava2:rxbonjour-driver-jmdns:2.0.0-RC1') {
         exclude group: 'org.slf4j'
     }

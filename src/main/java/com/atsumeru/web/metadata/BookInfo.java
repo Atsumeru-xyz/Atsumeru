@@ -50,6 +50,7 @@ public class BookInfo {
         putJSON(obj, "artists", GUArray.splitString(archive.getArtists()));
         putJSON(obj, "languages", GUArray.splitString(archive.getLanguage()));
         putJSON(obj, "translators", GUArray.splitString(archive.getTranslators()));
+        putJSON(obj, "series", GUArray.splitString(archive.getSeries()));
         putJSON(obj, "parodies", GUArray.splitString(archive.getParodies()));
         putJSON(obj, "circles", GUArray.splitString(archive.getCircles()));
         putJSON(obj, "magazines", GUArray.splitString(archive.getMagazines()));
@@ -70,6 +71,7 @@ public class BookInfo {
         // Statuses
         putJSON(obj, "status", archive.getStatus());
         putJSON(obj, "translation_status", archive.getTranslationStatus());
+        putJSON(obj, "plot_type", archive.getPlotType());
         putJSON(obj, "censorship", archive.getCensorship());
         putJSON(obj, "content_type", archive.getContentType());
         putJSON(obj, "color", archive.getColor());
@@ -129,6 +131,7 @@ public class BookInfo {
         archive.setArtists(GUString.join(",", JSONHelper.getStringList(obj, "artists")));
         archive.setTranslators(GUString.join(",", JSONHelper.getStringList(obj, "translators")));
         archive.setLanguage(GUString.join(",", JSONHelper.getStringList(obj, "languages")));
+        archive.setSeries(GUString.join(",", JSONHelper.getStringList(obj, "series")));
         archive.setParodies(GUString.join(",", JSONHelper.getStringList(obj, "parodies")));
         archive.setCircles(GUString.join(",", JSONHelper.getStringList(obj, "circles")));
         archive.setMagazines(GUString.join(",", JSONHelper.getStringList(obj, "magazines")));
@@ -144,6 +147,7 @@ public class BookInfo {
         // Statuses
         archive.setStatus(GUEnum.valueOf(Status.class, JSONHelper.getStringSafe(obj, "status")).toString());
         archive.setTranslationStatus(GUEnum.valueOf(TranslationStatus.class, JSONHelper.getStringSafe(obj, "translation_status")).toString());
+        archive.setPlotType(GUEnum.valueOf(PlotType.class, JSONHelper.getStringSafe(obj, "plot_type")).toString());
         archive.setCensorship(GUEnum.valueOf(Censorship.class, JSONHelper.getStringSafe(obj, "censorship")).toString());
         archive.setContentType(GUEnum.valueOf(ContentType.class, JSONHelper.getStringSafe(obj, "content_type")).toString());
         archive.setColor(GUEnum.valueOf(Color.class, JSONHelper.getStringSafe(obj, "color")).toString());

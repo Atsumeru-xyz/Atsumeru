@@ -5,6 +5,7 @@ import com.atsumeru.web.model.book.BookArchive;
 import com.atsumeru.web.model.book.BookSerie;
 import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.repository.BooksDatabaseRepository;
+import com.atsumeru.web.service.ImportService;
 import com.atsumeru.web.util.GUFile;
 import com.atsumeru.web.util.GUString;
 import com.google.gson.annotations.Expose;
@@ -129,7 +130,7 @@ public class FolderProperty {
     }
 
     private static List<IBaseBookItem> getInLibraryBooks(String folderPath, Class<? extends IBaseBookItem> clazz) {
-        return BooksDatabaseRepository.getInstance().getDaoManager().queryLike("FOLDER", folderPath + "%", clazz);
+        return BooksDatabaseRepository.getInstance().getDaoManager().queryLike(ImportService.FOLDER_FIELD_NAME, folderPath + "%", clazz);
     }
 
     public void addSerieFolder(String folder) {

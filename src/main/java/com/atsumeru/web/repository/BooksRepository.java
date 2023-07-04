@@ -1,7 +1,5 @@
 package com.atsumeru.web.repository;
 
-import com.atsumeru.web.model.book.BookSerie;
-import com.atsumeru.web.util.GUString;
 import com.atsumeru.web.enums.ContentType;
 import com.atsumeru.web.enums.LibraryPresentation;
 import com.atsumeru.web.enums.Sort;
@@ -10,6 +8,7 @@ import com.atsumeru.web.exception.NoReadableFoundException;
 import com.atsumeru.web.helper.Constants;
 import com.atsumeru.web.manager.Settings;
 import com.atsumeru.web.model.book.BookArchive;
+import com.atsumeru.web.model.book.BookSerie;
 import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.model.book.chapter.BookChapter;
 import com.atsumeru.web.model.book.volume.VolumeItem;
@@ -18,6 +17,8 @@ import com.atsumeru.web.model.database.User;
 import com.atsumeru.web.repository.dao.BooksDaoManager;
 import com.atsumeru.web.service.UserDatabaseDetailsService;
 import com.atsumeru.web.util.GUArray;
+import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.comparator.AlphanumComparator;
 import kotlin.Pair;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,15 +51,15 @@ public class BooksRepository {
         Set<String> disallowedTags = user.getDisallowedTags();
 
         List<IBaseBookItem> list = daoManager.query(
-                getOrderByColumnNameForSort(sort),
-                ascendingOrder,
-                contentType,
-                category,
-                user.getAllowedContentTypes(),
-                user.getAllowedCategoryIds(),
-                libraryPresentation,
-                libraryPresentation.getDbClassForPresentation()
-        ).stream()
+                        getOrderByColumnNameForSort(sort),
+                        ascendingOrder,
+                        contentType,
+                        category,
+                        user.getAllowedContentTypes(),
+                        user.getAllowedCategoryIds(),
+                        libraryPresentation,
+                        libraryPresentation.getDbClassForPresentation()
+                ).stream()
                 .map(IBaseBookItem.class::cast)
                 .filter(item -> FilteredBooksRepository.isNotInSet(item.getGenres(), disallowedGenres))
                 .filter(item -> FilteredBooksRepository.isNotInSet(item.getTags(), disallowedTags))
@@ -69,8 +70,18 @@ public class BooksRepository {
 
         loadVolumesAndChaptersInfo(user, libraryPresentation, list, withVolumesAndHistory, withChapters, getAll);
 
-        if (sort == Sort.LAST_READ || sort == Sort.PARODY) {
-            list.sort(sort == Sort.LAST_READ ? FilteredBooksRepository.getLastReadComparator() : FilteredBooksRepository.getParodyComparator());
+        if (sort == Sort.LAST_READ || sort == Sort.PARODY || sort == Sort.SERIE) {
+            switch (sort) {
+                case LAST_READ:
+                    list.sort(FilteredBooksRepository.getLastReadComparator());
+                    break;
+                case PARODY:
+                    list.sort(FilteredBooksRepository.getParodyComparator());
+                    break;
+                case SERIE:
+                    list.sort(FilteredBooksRepository.getSerieComparator());
+                    break;
+            }
             return list.stream()
                     .skip((page - 1) * limit)
                     .limit(limit)
@@ -113,6 +124,37 @@ public class BooksRepository {
         // TODO: log into file
 //        logger.info(String.format("Readable details (%s, %s) query time: %sms", serieItem.getTitle(), itemHash, (System.currentTimeMillis() - time)));
         return serieItem;
+    }
+
+    public static List<IBaseBookItem> getSerieFranchiseBooks(User user, String itemHash) {
+        IBaseBookItem serieItem = getSerieItem(null, itemHash, true);
+        Set<String> series = GUArray.splitString(serieItem.getSeries(), ",")
+                .stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
+
+        if (GUArray.isNotEmpty(series)) {
+            List<IBaseBookItem> list = daoManager.queryAll(BookSerie.class, LibraryPresentation.SERIES_AND_SINGLES)
+                    .stream()
+                    .map(BookSerie.class::cast)
+                    .filter(bookSerie -> GUArray.splitString(bookSerie.getSeries(), ",")
+                            .stream()
+                            .map(String::toLowerCase)
+                            .anyMatch(serie -> GUArray.isInSet(series, serie)))
+                    .sorted(getPlotTypeComparator())
+                    .collect(Collectors.toList());
+
+            loadVolumesAndChaptersInfo(user, LibraryPresentation.SERIES_AND_SINGLES, list, true, false, false);
+            return list;
+        }
+
+        return new ArrayList<>();
+    }
+
+    public static Comparator<IBaseBookItem> getPlotTypeComparator() {
+        return Comparator.comparingInt((IBaseBookItem item) -> item.getPlotType().getOrder())
+                .thenComparing((item1, item2) -> AlphanumComparator.compareStrings(item1.getYear(), item2.getYear()))
+                .thenComparing(FilteredBooksRepository.TITLE_COMPARATOR);
     }
 
     /* ***************************************** */

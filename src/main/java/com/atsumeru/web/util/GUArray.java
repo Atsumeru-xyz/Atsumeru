@@ -6,6 +6,10 @@ import java.util.stream.Collectors;
 
 public class GUArray {
 
+    public static <T> boolean isInSet(Set<T> set, T item) {
+        return isNotEmpty(set) && set.contains(item);
+    }
+
     public static List<String> splitString(String str) {
         return splitString(str, ",");
     }

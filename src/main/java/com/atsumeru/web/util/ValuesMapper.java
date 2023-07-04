@@ -70,6 +70,8 @@ public class ValuesMapper {
                 return baseBook.getStatus().name();
             case "translation_status":
                 return baseBook.getTranslationStatus().name();
+            case "plot_type":
+                return baseBook.getPlotType().name();
             case "content_type":
                 return baseBook.getContentType().name();
             case "cover":
@@ -83,6 +85,10 @@ public class ValuesMapper {
                 return Optional.ofNullable(baseBook.getTags())
                         .map(value -> lowerCaseArrays ? value.toLowerCase() : value)
                         .orElse(baseBook.getTags());
+            case "series":
+                return Optional.ofNullable(baseBook.getSeries())
+                        .map(value -> lowerCaseArrays ? value.toLowerCase() : value)
+                        .orElse(baseBook.getSeries());
             case "parodies":
                 return Optional.ofNullable(baseBook.getParodies())
                         .map(value -> lowerCaseArrays ? value.toLowerCase() : value)

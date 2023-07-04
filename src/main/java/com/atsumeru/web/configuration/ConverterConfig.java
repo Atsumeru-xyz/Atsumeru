@@ -18,6 +18,7 @@ public class ConverterConfig implements WebMvcConfigurer {
         registry.addConverter(String.class, ContentType.class, new StringToNullableEnumConverter<>(ContentType.class));
         registry.addConverter(String.class, Status.class, new StringToNullableEnumConverter<>(Status.class));
         registry.addConverter(String.class, TranslationStatus.class, new StringToNullableEnumConverter<>(TranslationStatus.class));
+        registry.addConverter(String.class, PlotType.class, new StringToNullableEnumConverter<>(PlotType.class));
         registry.addConverter(String.class, Censorship.class, new StringToNullableEnumConverter<>(Censorship.class));
         registry.addConverter(String.class, AgeRating.class, new StringToNullableEnumConverter<>(AgeRating.class));
         registry.addConverter(String.class, ServiceType.class, new StringToNullableEnumConverter<>(ServiceType.class));

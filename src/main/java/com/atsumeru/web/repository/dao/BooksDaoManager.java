@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class BooksDaoManager extends BaseDaoManager {
-    public static final long DB_VERSION = 1;
+    public static final long DB_VERSION = 2;
     private static final Logger logger = LoggerFactory.getLogger(BooksDaoManager.class.getSimpleName());
 
     private static final String REMOVED_FIELD_NAME = "REMOVED";
