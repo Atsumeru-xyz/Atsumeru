@@ -8,6 +8,7 @@ import com.atsumeru.web.controller.rest.service.ServicesApiController;
 import com.atsumeru.web.helper.ServerHelper;
 import com.atsumeru.web.logger.FileLogger;
 import com.atsumeru.web.manager.Settings;
+import com.atsumeru.web.util.GUString;
 import com.atsumeru.web.util.WorkspaceUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -38,19 +39,18 @@ public class RequestLogInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
-        String ipAddress = request.getHeader("X-Forwarded-For");
-        if (ipAddress == null) {
-            ipAddress = request.getRemoteAddr();
-        }
-
-        String userName = Optional.ofNullable(request.getUserPrincipal())
-                .map(Principal::getName)
-                .orElse("Unknown");
-
+    public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
         String requestedUrl = ServerHelper.getRequestedRelativeURL(request);
         boolean isServiceStatusRequest = isServiceStatusRequest(requestedUrl);
         if (isLoggableRequest(requestedUrl) && !isServiceStatusRequest) {
+            String ipAddress = Optional.ofNullable(request.getHeader("X-Forwarded-For"))
+                    .filter(GUString::isNotEmpty)
+                    .orElseGet(request::getRemoteAddr);
+
+            String userName = Optional.ofNullable(request.getUserPrincipal())
+                    .map(Principal::getName)
+                    .orElse("Unknown");
+
             String log = "[" + ipAddress + "@" + userName + "] Requested " + requestedUrl;
             if (!isPingEndpoint(requestedUrl) && !isDisableRequestLoggingIntoConsole) {
                 logger.info(log);
