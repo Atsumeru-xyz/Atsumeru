@@ -9,6 +9,7 @@ import com.atsumeru.web.helper.ServerHelper;
 import com.atsumeru.web.logger.FileLogger;
 import com.atsumeru.web.manager.Settings;
 import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.GUType;
 import com.atsumeru.web.util.WorkspaceUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -43,9 +44,16 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         String requestedUrl = ServerHelper.getRequestedRelativeURL(request);
         boolean isServiceStatusRequest = isServiceStatusRequest(requestedUrl);
         if (isLoggableRequest(requestedUrl) && !isServiceStatusRequest) {
-            String ipAddress = Optional.ofNullable(request.getHeader("X-Forwarded-For"))
-                    .filter(GUString::isNotEmpty)
-                    .orElseGet(request::getRemoteAddr);
+            boolean doNotTrack = Optional.ofNullable(request.getHeader("DNT"))
+                    .map(value -> GUType.getIntDef(value, 0))
+                    .map(value -> value == 1)
+                    .orElse(false);
+
+            String ipAddress = !doNotTrack
+                    ? Optional.ofNullable(request.getHeader("X-Forwarded-For"))
+                            .filter(GUString::isNotEmpty)
+                            .orElseGet(request::getRemoteAddr)
+                    : "Private";
 
             String userName = Optional.ofNullable(request.getUserPrincipal())
                     .map(Principal::getName)
