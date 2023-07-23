@@ -29,7 +29,7 @@ public class Localizr {
     public static String toLocale(String msgCode, String... formatArgs) {
         Locale locale = LocaleContextHolder.getLocale();
         try {
-            return String.format(messageSource.getMessage(msgCode, null, locale), formatArgs);
+            return String.format(messageSource.getMessage(msgCode, null, locale), (Object) formatArgs);
         } catch (Exception ex) {
             return "Unlocalized";
         }

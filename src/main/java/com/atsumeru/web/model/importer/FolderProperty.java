@@ -11,6 +11,7 @@ import com.atsumeru.web.util.GUString;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.File;
 import java.io.IOException;
@@ -99,6 +100,11 @@ public class FolderProperty {
             result = path.equalsIgnoreCase(((FolderProperty) object).getPath());
         }
         return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     public boolean isAsSingles(File file, boolean isRootFolder) {
