@@ -3,22 +3,21 @@ package com.atsumeru.web.controller.rest.book;
 import com.atsumeru.web.enums.*;
 import com.atsumeru.web.helper.ArchiveHelper;
 import com.atsumeru.web.helper.FilesHelper;
-import com.atsumeru.web.model.book.IBaseBookItem;
-import com.atsumeru.web.repository.BooksRepository;
-import com.atsumeru.web.repository.CategoryRepository;
-import com.atsumeru.web.repository.FilteredBooksRepository;
-import com.atsumeru.web.repository.UserDatabaseRepository;
-import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.helper.RestHelper;
 import com.atsumeru.web.manager.AtsumeruCacheManager;
 import com.atsumeru.web.manager.ImageCache;
 import com.atsumeru.web.manager.Settings;
 import com.atsumeru.web.model.AtsumeruMessage;
+import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.model.book.chapter.BookChapter;
 import com.atsumeru.web.model.book.volume.VolumeItem;
 import com.atsumeru.web.model.filter.Filters;
+import com.atsumeru.web.repository.BooksRepository;
+import com.atsumeru.web.repository.CategoryRepository;
+import com.atsumeru.web.repository.FilteredBooksRepository;
+import com.atsumeru.web.repository.UserDatabaseRepository;
 import com.atsumeru.web.util.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.atsumeru.web.util.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,8 +40,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/books")
 public class BooksApiController {
-    @Autowired
-    UserDatabaseRepository userService;
+    private final UserDatabaseRepository userService;
+
+    public BooksApiController(UserDatabaseRepository userService) {
+        this.userService = userService;
+    }
 
     //*****************************//
     //*         Books             *//

@@ -1,7 +1,6 @@
 package com.atsumeru.web.component;
 
 import com.atsumeru.web.enums.ContentType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
@@ -12,8 +11,7 @@ import java.util.Locale;
 public class Localizr {
     private static ResourceBundleMessageSource messageSource;
 
-    @Autowired
-    Localizr(ResourceBundleMessageSource messageSource) {
+    public Localizr(ResourceBundleMessageSource messageSource) {
         Localizr.messageSource = messageSource;
     }
 

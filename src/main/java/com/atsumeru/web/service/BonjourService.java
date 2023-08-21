@@ -12,7 +12,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
@@ -26,12 +25,15 @@ import java.util.Map;
 public class BonjourService {
     private static final Logger logger = LoggerFactory.getLogger(BonjourService.class.getSimpleName());
 
-    @Autowired
-    private Environment environment;
-    @Autowired
-    private AppInfo appInfo;
+    private final Environment environment;
+    private final AppInfo appInfo;
 
     private Disposable disposable;
+
+    public BonjourService(Environment environment, AppInfo appInfo) {
+        this.environment = environment;
+        this.appInfo = appInfo;
+    }
 
     public void restartService() {
         if (Settings.isDisableBonjourService()) {

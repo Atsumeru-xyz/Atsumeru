@@ -1,15 +1,14 @@
 package com.atsumeru.web.controller.rest.hub;
 
-import com.atsumeru.web.model.book.IBaseBookItem;
-import com.atsumeru.web.repository.BooksRepository;
-import com.atsumeru.web.repository.CategoryRepository;
-import com.atsumeru.web.repository.UserDatabaseRepository;
 import com.atsumeru.web.enums.ContentType;
 import com.atsumeru.web.enums.LibraryPresentation;
 import com.atsumeru.web.enums.Sort;
 import com.atsumeru.web.helper.ServerHelper;
 import com.atsumeru.web.manager.Settings;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.atsumeru.web.model.book.IBaseBookItem;
+import com.atsumeru.web.repository.BooksRepository;
+import com.atsumeru.web.repository.CategoryRepository;
+import com.atsumeru.web.repository.UserDatabaseRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +23,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/books")
 public class HubApiController {
-    @Autowired
-    UserDatabaseRepository userService;
+    private final UserDatabaseRepository userService;
+
+    public HubApiController(UserDatabaseRepository userService) {
+        this.userService = userService;
+    }
 
     //*****************************//
     //*    Hub: New and Latest    *//

@@ -1,13 +1,15 @@
 package com.atsumeru.web.interceptor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Component
 public class InterceptorRegistry implements WebMvcConfigurer {
-    @Autowired
-    private RequestLogInterceptor requestLogInterceptor;
+    private final RequestLogInterceptor requestLogInterceptor;
+
+    public InterceptorRegistry(RequestLogInterceptor requestLogInterceptor) {
+        this.requestLogInterceptor = requestLogInterceptor;
+    }
 
     @Override
     public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {

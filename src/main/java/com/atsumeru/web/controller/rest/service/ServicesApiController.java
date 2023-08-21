@@ -7,7 +7,6 @@ import com.atsumeru.web.model.service.ServicesStatus;
 import com.atsumeru.web.service.CoversSaverService;
 import com.atsumeru.web.service.MetadataUpdateService;
 import com.atsumeru.web.service.UserDatabaseDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,11 +21,13 @@ public class ServicesApiController {
     protected static final String ROOT_ENDPOINT = "/api/v1/services";
     private static final String STATUS_ENDPOINT = "/status";
 
-    @Autowired
-    ImporterApiController importerController;
+    private final ImporterApiController importerController;
+    private final MetadataApiController metadataController;
 
-    @Autowired
-    MetadataApiController metadataController;
+    public ServicesApiController(ImporterApiController importerController, MetadataApiController metadataController) {
+        this.importerController = importerController;
+        this.metadataController = metadataController;
+    }
 
     public static void checkIsBlockingServicesRunning(boolean isServiceStatusRequest) {
         if (MetadataUpdateService.isUpdateActive() && !isServiceStatusRequest) {

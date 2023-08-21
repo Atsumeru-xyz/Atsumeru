@@ -1,10 +1,9 @@
 package com.atsumeru.web.controller.rest.history;
 
+import com.atsumeru.web.enums.LibraryPresentation;
 import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.repository.HistoryRepository;
 import com.atsumeru.web.repository.UserDatabaseRepository;
-import com.atsumeru.web.enums.LibraryPresentation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +18,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/books")
 public class HistoryApiController {
-    @Autowired
-    UserDatabaseRepository userService;
+    private final UserDatabaseRepository userService;
+
+    public HistoryApiController(UserDatabaseRepository userService) {
+        this.userService = userService;
+    }
 
     //*****************************//
     //*          History          *//

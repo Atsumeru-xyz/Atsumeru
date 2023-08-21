@@ -2,22 +2,21 @@ package com.atsumeru.web.controller.rest.user;
 
 import com.atsumeru.web.configuration.ServerConfig;
 import com.atsumeru.web.enums.Genre;
-import com.atsumeru.web.model.GenreModel;
-import com.atsumeru.web.model.book.BookArchive;
-import com.atsumeru.web.model.book.IBaseBookItem;
-import com.atsumeru.web.repository.BooksDatabaseRepository;
-import com.atsumeru.web.repository.CategoryRepository;
-import com.atsumeru.web.repository.UserDatabaseRepository;
-import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.enums.LibraryPresentation;
 import com.atsumeru.web.helper.RestHelper;
 import com.atsumeru.web.manager.AtsumeruCacheManager;
 import com.atsumeru.web.model.AtsumeruMessage;
+import com.atsumeru.web.model.GenreModel;
 import com.atsumeru.web.model.UserAccessConstants;
+import com.atsumeru.web.model.book.BookArchive;
+import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.model.database.User;
+import com.atsumeru.web.repository.BooksDatabaseRepository;
+import com.atsumeru.web.repository.CategoryRepository;
+import com.atsumeru.web.repository.UserDatabaseRepository;
 import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.util.comparator.AlphanumComparator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -35,9 +34,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/users")
 @PreAuthorize("hasRole('ADMIN')")
 public class UsersApiController {
+    private final UserDatabaseRepository userService;
 
-    @Autowired
-    UserDatabaseRepository userService;
+    public UsersApiController(UserDatabaseRepository userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/me")
     public User aboutMe(HttpServletRequest request) {

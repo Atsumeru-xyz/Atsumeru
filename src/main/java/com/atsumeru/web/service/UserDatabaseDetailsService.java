@@ -2,7 +2,6 @@ package com.atsumeru.web.service;
 
 import com.atsumeru.web.model.database.User;
 import com.atsumeru.web.repository.UserDatabaseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,8 +16,11 @@ import java.util.Set;
 
 @Service
 public class UserDatabaseDetailsService implements UserDetailsService {
-    @Autowired
-    private UserDatabaseRepository repository;
+    private final UserDatabaseRepository repository;
+
+    public UserDatabaseDetailsService(UserDatabaseRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {

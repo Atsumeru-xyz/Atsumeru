@@ -1,11 +1,11 @@
 package com.atsumeru.web.repository;
 
-import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.exception.UserNotFoundException;
 import com.atsumeru.web.helper.PasswordGenerator;
 import com.atsumeru.web.model.database.User;
 import com.atsumeru.web.repository.dao.UsersDaoManager;
 import com.atsumeru.web.util.FileUtils;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.util.Workspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

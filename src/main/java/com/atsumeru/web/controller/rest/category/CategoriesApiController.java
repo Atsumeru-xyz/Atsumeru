@@ -1,16 +1,15 @@
 package com.atsumeru.web.controller.rest.category;
 
-import com.atsumeru.web.model.book.BookSerie;
-import com.atsumeru.web.repository.BooksDatabaseRepository;
-import com.atsumeru.web.repository.CategoryRepository;
-import com.atsumeru.web.repository.UserDatabaseRepository;
 import com.atsumeru.web.enums.ContentType;
 import com.atsumeru.web.helper.RestHelper;
 import com.atsumeru.web.manager.AtsumeruCacheManager;
 import com.atsumeru.web.model.AtsumeruMessage;
+import com.atsumeru.web.model.book.BookSerie;
 import com.atsumeru.web.model.database.Category;
+import com.atsumeru.web.repository.BooksDatabaseRepository;
+import com.atsumeru.web.repository.CategoryRepository;
+import com.atsumeru.web.repository.UserDatabaseRepository;
 import com.atsumeru.web.util.EnumUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,8 +26,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/books/categories")
 public class CategoriesApiController {
-    @Autowired
-    UserDatabaseRepository userService;
+    private final UserDatabaseRepository userService;
+
+    public CategoriesApiController(UserDatabaseRepository userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("")
     public List<Category> getCategoryList(HttpServletRequest request) {

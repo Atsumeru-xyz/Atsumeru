@@ -1,15 +1,14 @@
 package com.atsumeru.web.controller.rest.sync;
 
-import com.atsumeru.web.repository.BooksRepository;
-import com.atsumeru.web.repository.HistoryRepository;
-import com.atsumeru.web.repository.UserDatabaseRepository;
-import com.atsumeru.web.util.StringUtils;
-import com.atsumeru.web.util.ArrayUtils;
-import com.atsumeru.web.util.TypeUtils;
 import com.atsumeru.web.helper.RestHelper;
 import com.atsumeru.web.model.AtsumeruMessage;
 import com.atsumeru.web.model.database.History;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.atsumeru.web.repository.BooksRepository;
+import com.atsumeru.web.repository.HistoryRepository;
+import com.atsumeru.web.repository.UserDatabaseRepository;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.StringUtils;
+import com.atsumeru.web.util.TypeUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +24,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/books/sync")
 public class SyncApiController {
-    @Autowired
-    private UserDatabaseRepository userService;
+    private final UserDatabaseRepository userService;
+
+    public SyncApiController(UserDatabaseRepository userService) {
+        this.userService = userService;
+    }
 
     @GetMapping(value = "/push")
     @CacheEvict(cacheNames = {"history", "books", "books_by_bound_service"}, allEntries = true)
@@ -49,7 +51,7 @@ public class SyncApiController {
                         userService.getUserFromRequest(request),
                         BooksRepository.isArchiveHash(hash) ? hash : null,
                         BooksRepository.isChapterHash(hash) ? hash : null,
-                        TypeUtils.getIntDef(entry.getValue().get(0),0)
+                        TypeUtils.getIntDef(entry.getValue().get(0), 0)
                 );
             }
             return RestHelper.createResponseMessage("Synced successfully", HttpStatus.OK);

@@ -1,7 +1,6 @@
 package com.atsumeru.web.configuration;
 
 import com.atsumeru.web.service.UserDatabaseDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -16,8 +15,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private UserDatabaseDetailsService userDatabaseDetailsService;
+    private final UserDatabaseDetailsService userDatabaseDetailsService;
+
+    public WebSecurityConfig(UserDatabaseDetailsService userDatabaseDetailsService) {
+        this.userDatabaseDetailsService = userDatabaseDetailsService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

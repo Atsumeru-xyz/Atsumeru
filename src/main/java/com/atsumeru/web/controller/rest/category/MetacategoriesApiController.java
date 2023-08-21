@@ -1,10 +1,9 @@
 package com.atsumeru.web.controller.rest.category;
 
 import com.atsumeru.web.model.book.IBaseBookItem;
+import com.atsumeru.web.model.category.Metacategory;
 import com.atsumeru.web.repository.MetacategoryRepository;
 import com.atsumeru.web.repository.UserDatabaseRepository;
-import com.atsumeru.web.model.category.Metacategory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +15,11 @@ import java.util.Set;
 @RestController
 @RequestMapping("/api/v1/books/metacategories")
 public class MetacategoriesApiController {
+    private final UserDatabaseRepository userService;
 
-    @Autowired
-    UserDatabaseRepository userService;
+    public MetacategoriesApiController(UserDatabaseRepository userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("")
     public Set<Metacategory> getMetacategoryList() {
