@@ -152,7 +152,7 @@ public final class Importer {
         String bookType = clazz.isAssignableFrom(BookSerie.class) ? "serie" : "archive";
 
         List<String> bookPaths = notInFileSystemBooks.stream()
-                .peek(bookItem -> logFile(String.format("Removing (%s) %s from DB with path: %s...\n", bookType, bookItem.getTitle(), bookItem.getFolder())))
+                .peek(bookItem -> logFile(String.format("Removing (%s) %s from DB with path: %s...", bookType, bookItem.getTitle(), bookItem.getFolder())))
                 .map(IBaseBookItem::getFolder)
                 .collect(Collectors.toList());
 
