@@ -44,7 +44,7 @@ public final class Importer {
 
     static {
         daoManager = BooksDatabaseRepository.getInstance().getDaoManager();
-        fileLogger = FileLogger.createLogger("ImporterLog", WorkspaceUtils.LOGS_DIR + "import.log");
+        fileLogger = FileLogger.createLogger("ImporterLog", Workspace.LOGS_DIR + "import.log");
     }
 
     public static void resetProgress() {
@@ -87,7 +87,7 @@ public final class Importer {
         boolean forceUpdateCovers = property.isForceUpdateCovers();
         boolean ignoreVolumeNumbersDetection = property.isIgnoreVolumeNumbersDetection();
 
-        String importPath = GUFile.removeLastPathSlash(property.getPath());
+        String importPath = FileUtils.removeLastPathSlash(property.getPath());
 
         String archivePath = file.getPath();
         String parentPath = file.getParent();
@@ -109,13 +109,13 @@ public final class Importer {
             String existedSerieHash = seriesMap.entrySet()
                     .stream()
                     .filter(entry -> !(asSingles || readableContent.getBookArchive().isSingle() && readableContent.getSerieArchive() == null)
-                            ? GUString.equalsIgnoreCase(GUFile.removeLastPathSlash(entry.getValue().getFolder()), GUFile.removeLastPathSlash(parentPath))
-                            : GUString.equalsIgnoreCase(GUFile.removeLastPathSlash(entry.getKey()), readableContent.getSerieHash()))
+                            ? StringUtils.equalsIgnoreCase(FileUtils.removeLastPathSlash(entry.getValue().getFolder()), FileUtils.removeLastPathSlash(parentPath))
+                            : StringUtils.equalsIgnoreCase(FileUtils.removeLastPathSlash(entry.getKey()), readableContent.getSerieHash()))
                     .findFirst()
                     .map(Map.Entry::getKey)
                     .orElse(null);
 
-            if (GUString.isNotEmpty(existedSerieHash)) {
+            if (StringUtils.isNotEmpty(existedSerieHash)) {
                 readableContent.setSerieHash(existedSerieHash);
             }
 
@@ -156,7 +156,7 @@ public final class Importer {
                 .map(IBaseBookItem::getFolder)
                 .collect(Collectors.toList());
 
-        if (GUArray.isNotEmpty(bookPaths)) {
+        if (ArrayUtils.isNotEmpty(bookPaths)) {
             int removed = daoManager.removeByColumnIn("FOLDER", bookPaths, clazz);
 
             if (clazz.isAssignableFrom(BookArchive.class)) {
@@ -166,7 +166,7 @@ public final class Importer {
                         .map(Object::toString)
                         .collect(Collectors.toList());
 
-                        if (GUArray.isNotEmpty(serieIds)) {
+                        if (ArrayUtils.isNotEmpty(serieIds)) {
                             daoManager.removeByColumnIn("ID", serieIds, BookSerie.class);
                         }
             }
@@ -197,7 +197,7 @@ public final class Importer {
 
     private static Pair<String, String> saveArchive(ReadableContent readableContent, Map<String, BookSerie> seriesMap, String parentPath, boolean reImportIfExist) {
         Pair<String, String> pair = null;
-        if (readableContent != null && (GUArray.isNotEmpty(readableContent.getPageEntryNames()) || readableContent.isBookFile())) {
+        if (readableContent != null && (ArrayUtils.isNotEmpty(readableContent.getPageEntryNames()) || readableContent.isBookFile())) {
             BookArchive bookArchive = daoManager.queryItem(readableContent.getBookArchive().getContentId(), BookArchive.class);
             BookSerie bookSerie = saveArchiveAndCreateSerie(readableContent, bookArchive, seriesMap, parentPath, reImportIfExist);
             if (!readableContent.isBookFile()) {
@@ -284,7 +284,7 @@ public final class Importer {
 
         List<History> historyList = HistoryRepository.getBookHistory(bookArchive.getContentId(), BookArchive.class)
                 .stream()
-                .filter(history -> GUString.isNotEmpty(history.getChapterHash()))
+                .filter(history -> StringUtils.isNotEmpty(history.getChapterHash()))
                 .collect(Collectors.toList());
 
         // Исправление записей Серий/Архивов
@@ -295,7 +295,7 @@ public final class Importer {
                 .mapToLong(history -> {
                     int chapterPagesCount = bookArchive.getChapters()
                             .stream()
-                            .filter(chapter -> GUString.equalsIgnoreCase(chapter.getChapterId(), history.getChapterHash()))
+                            .filter(chapter -> StringUtils.equalsIgnoreCase(chapter.getChapterId(), history.getChapterHash()))
                             .mapToInt(BookChapter::getPagesCount)
                             .findFirst()
                             .orElse(0);
@@ -333,8 +333,8 @@ public final class Importer {
 
     private static BookSerie updateSerieFromBookArchive(BookSerie bookSerie, BookArchive bookArchive, String serieHash, String parentPath, boolean hasSerieCover, boolean asSingles, boolean isHasMetadata) {
         bookSerie.fromBaseBook(bookArchive);
-        if (GUString.isEmpty(bookSerie.getTitle()) || !isHasMetadata && !asSingles) {
-            bookSerie.setTitle(GUFile.getCurrentDirName(parentPath));
+        if (StringUtils.isEmpty(bookSerie.getTitle()) || !isHasMetadata && !asSingles) {
+            bookSerie.setTitle(FileUtils.getCurrentDirName(parentPath));
         }
         bookSerie.setSerieId(serieHash);
         bookSerie.setFolder(parentPath);
@@ -373,7 +373,7 @@ public final class Importer {
                     .peek(chapter -> logFile("Chapter with title = '" + chapter.getTitle() + "' added into db"))
                     .collect(Collectors.toList());
 
-            if (GUArray.isNotEmpty(chapters)) {
+            if (ArrayUtils.isNotEmpty(chapters)) {
                 bookArchive.setChapters(chapters);
                 daoManager.save(bookArchive);
             }

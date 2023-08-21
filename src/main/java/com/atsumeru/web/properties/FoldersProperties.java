@@ -1,9 +1,9 @@
 package com.atsumeru.web.properties;
 
 import com.atsumeru.web.configuration.FileWatcherConfig;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.model.importer.FolderProperty;
-import com.atsumeru.web.util.GUFile;
+import com.atsumeru.web.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
@@ -43,21 +43,21 @@ public class FoldersProperties {
 
     public static void removeFolder(FolderProperty folderProperty) {
         folderProperties = folderProperties.stream()
-                .filter(property -> !GUString.equalsIgnoreCase(property.getHash(), folderProperty.getHash()))
+                .filter(property -> !StringUtils.equalsIgnoreCase(property.getHash(), folderProperty.getHash()))
                 .collect(Collectors.toList());
 
         saveProperties();
     }
 
     public static boolean containsFolder(String path) {
-        String fixedPath = GUFile.addPathSlash(path);
+        String fixedPath = FileUtils.addPathSlash(path);
         return folderProperties.stream()
-                .map(property -> GUFile.addPathSlash(property.getPath()))
-                .anyMatch(propertyPath -> GUString.equalsIgnoreCase(propertyPath, fixedPath));
+                .map(property -> FileUtils.addPathSlash(property.getPath()))
+                .anyMatch(propertyPath -> StringUtils.equalsIgnoreCase(propertyPath, fixedPath));
     }
 
     private static void saveProperties() {
-        GUFile.writeStringToFile(FOLDERS_PROPERTIES_FILENAME, new Gson().toJson(folderProperties));
+        FileUtils.writeStringToFile(FOLDERS_PROPERTIES_FILENAME, new Gson().toJson(folderProperties));
         FileWatcherConfig.start();
     }
 

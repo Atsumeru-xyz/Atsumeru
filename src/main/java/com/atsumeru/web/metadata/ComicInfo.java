@@ -1,7 +1,7 @@
 package com.atsumeru.web.metadata;
 
 import com.atsumeru.web.model.book.BookArchive;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -69,7 +69,7 @@ public class ComicInfo {
                 }
             }
 
-            bookArchive.setYear(GUString.isNotEmpty(month) ? year + "-" + month + "-01" : year);
+            bookArchive.setYear(StringUtils.isNotEmpty(month) ? year + "-" + month + "-01" : year);
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();

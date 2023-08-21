@@ -5,7 +5,7 @@ import com.atsumeru.web.configuration.FileWatcherConfig;
 import com.atsumeru.web.interceptor.RequestLogInterceptor;
 import com.atsumeru.web.service.CoversSaverService;
 import com.atsumeru.web.service.ImportService;
-import com.atsumeru.web.util.GUApp;
+import com.atsumeru.web.util.AppUtils;
 import com.atsumeru.web.helper.RestHelper;
 import com.atsumeru.web.manager.Settings;
 import com.atsumeru.web.model.AtsumeruMessage;
@@ -74,7 +74,7 @@ public class SettingsApiController {
 
     private void restartServerDelayed() {
         new Thread(() -> {
-            GUApp.sleepWhile(1000, serverLockedSupplier);
+            AppUtils.sleepWhile(1000, serverLockedSupplier);
             AtsumeruApplication.restart();
         }).start();
     }

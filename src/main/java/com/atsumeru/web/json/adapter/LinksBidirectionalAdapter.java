@@ -1,8 +1,8 @@
 package com.atsumeru.web.json.adapter;
 
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GULinks;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.LinkUtils;
+import com.atsumeru.web.util.StringUtils;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
@@ -14,22 +14,22 @@ public class LinksBidirectionalAdapter implements JsonSerializer<String>, JsonDe
 
     @Override
     public JsonElement serialize(String src, Type typeOfSrc, JsonSerializationContext context) {
-        if (GUString.isEmpty(src)) {
+        if (StringUtils.isEmpty(src)) {
             return null;
         }
 
         String[] array = src.split(",");
-        if (GUArray.isEmpty(array)) {
+        if (ArrayUtils.isEmpty(array)) {
             return null;
         }
 
         JsonArray jsonArray = new JsonArray();
 
         Arrays.stream(array)
-                .filter(GUString::isNotEmpty)
+                .filter(StringUtils::isNotEmpty)
                 .forEach(link -> {
                     JsonObject links = new JsonObject();
-                    links.addProperty("source", GULinks.getHostName(link));
+                    links.addProperty("source", LinkUtils.getHostName(link));
                     links.addProperty("link", link);
                     jsonArray.add(links);
                 });
@@ -44,6 +44,6 @@ public class LinksBidirectionalAdapter implements JsonSerializer<String>, JsonDe
             json.getAsJsonArray().forEach(it -> list.add(it.getAsJsonObject().get("link").getAsString()));
         }
 
-        return GUString.join(",", list);
+        return StringUtils.join(",", list);
     }
 }

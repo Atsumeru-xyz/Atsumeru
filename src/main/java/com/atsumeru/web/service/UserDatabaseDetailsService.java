@@ -1,7 +1,7 @@
 package com.atsumeru.web.service;
 
-import com.atsumeru.web.repository.UserDatabaseRepository;
 import com.atsumeru.web.model.database.User;
+import com.atsumeru.web.repository.UserDatabaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

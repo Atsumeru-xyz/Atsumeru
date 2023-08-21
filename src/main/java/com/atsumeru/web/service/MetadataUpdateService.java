@@ -10,7 +10,7 @@ import com.atsumeru.web.model.importer.ReadableContent;
 import com.atsumeru.web.repository.BooksDatabaseRepository;
 import com.atsumeru.web.repository.dao.BooksDaoManager;
 import com.atsumeru.web.util.ContentDetector;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.archive.ArchiveReader;
 import com.atsumeru.web.archive.iterator.IArchiveIterator;
 import com.atsumeru.web.enums.BookType;
@@ -21,7 +21,7 @@ import com.atsumeru.web.manager.AtsumeruCacheManager;
 import com.atsumeru.web.manager.Settings;
 import com.atsumeru.web.model.book.chapter.BookChapter;
 import com.atsumeru.web.model.database.History;
-import com.atsumeru.web.util.GUFile;
+import com.atsumeru.web.util.FileUtils;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -214,7 +214,7 @@ public class MetadataUpdateService {
 
                                 // Update History assigned Chapter hash
                                 for (History history : historyList) {
-                                    if (GUString.equalsIgnoreCase(history.getChapterHash(), oldHash)) {
+                                    if (StringUtils.equalsIgnoreCase(history.getChapterHash(), oldHash)) {
                                         history.setChapterHash(chapter.getChapterId());
                                     }
                                 }
@@ -310,7 +310,7 @@ public class MetadataUpdateService {
                 contentToSave.put(ReadableContent.BOOK_JSON_INFO_FILENAME, BookInfo.toJSON(archive, serie.getBoundServices()).toString(4));
                 if (!Settings.isDisableChapters()) {
                     archive.getChapters().forEach(chapter -> contentToSave.put(
-                            GUFile.addPathSlash(chapter.getFolder()) + ReadableContent.CHAPTER_JSON_INFO_FILENAME,
+                            FileUtils.addPathSlash(chapter.getFolder()) + ReadableContent.CHAPTER_JSON_INFO_FILENAME,
                             BookInfo.toJson(chapter).toString(4)
                     ));
                 }
@@ -324,7 +324,7 @@ public class MetadataUpdateService {
         File contentFolder = getContentMetadataFolder(archive);
         contentFolder.mkdirs();
 
-        boolean isSaved = GUFile.writeStringToFile(
+        boolean isSaved = FileUtils.writeStringToFile(
                 new File(contentFolder, ReadableContent.BOOK_JSON_INFO_FILENAME),
                 BookInfo.toJSON(archive, serie.getBoundServices()).toString(4)
         );
@@ -333,7 +333,7 @@ public class MetadataUpdateService {
             for (BookChapter chapter : archive.getChapters()) {
                 File chapterFolder = new File(contentFolder, Optional.ofNullable(chapter.getFolder()).orElse(""));
                 chapterFolder.mkdirs();
-                isSaved = isSaved && GUFile.writeStringToFile(
+                isSaved = isSaved && FileUtils.writeStringToFile(
                         new File(chapterFolder, ReadableContent.CHAPTER_JSON_INFO_FILENAME),
                         BookInfo.toJson(chapter).toString(4)
                 );
@@ -361,7 +361,7 @@ public class MetadataUpdateService {
 
     private File getContentMetadataFolder(BookArchive archive) {
         File atsumeruFolder = new File(new File(archive.getFolder()).getParent(), ReadableContent.EXTERNAL_INFO_DIRECTORY_NAME);
-        return new File(atsumeruFolder, GUFile.getFileName(archive.getFolder()));
+        return new File(atsumeruFolder, FileUtils.getFileName(archive.getFolder()));
     }
 
     private IArchiveIterator createArchiveIterator(BookArchive archive) {

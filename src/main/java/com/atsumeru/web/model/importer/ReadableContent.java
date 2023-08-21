@@ -116,13 +116,13 @@ public class ReadableContent implements Closeable {
     public static File getSerieExternalCover(String archivePath) {
         return FileUtils.getAllFilesFromDirectory(new File(archivePath).getParentFile().getAbsolutePath(), null, false)
                 .stream()
-                .filter(file -> GUString.startsWithIgnoreCase(file.getName(), "cover."))
+                .filter(file -> StringUtils.startsWithIgnoreCase(file.getName(), "cover."))
                 .findFirst()
                 .orElse(null);
     }
 
     private boolean isSkipImport(String archiveHash, String oldArchiveHash) {
-        if (GUArray.isNotEmpty(archivesMap) && (archivesMap.containsKey(archiveHash) || archivesMap.containsKey(oldArchiveHash))) {
+        if (ArrayUtils.isNotEmpty(archivesMap) && (archivesMap.containsKey(archiveHash) || archivesMap.containsKey(oldArchiveHash))) {
             log(Importer.fileLogger, "Item with hash = " + archiveHash + " already exists!" + (reImportIfExist ? " Reimporting..." : ""));
             return !reImportIfExist;
         }
@@ -168,12 +168,12 @@ public class ReadableContent implements Closeable {
         log(Importer.fileLogger, "Reading and filling metadata...");
         fillBookArchive(bookArchive);
 
-        if (!GUString.equalsIgnoreCase(archiveHash, bookArchive.getContentId()) && isSkipImport(bookArchive.getContentId(), oldHash)) {
+        if (!StringUtils.equalsIgnoreCase(archiveHash, bookArchive.getContentId()) && isSkipImport(bookArchive.getContentId(), oldHash)) {
             return null;
         }
 
         // Установка хеша архива модели BookArchive, если хеш не был прочитан из метаданных
-        if (GUString.isEmpty(bookArchive.getContentId())) {
+        if (StringUtils.isEmpty(bookArchive.getContentId())) {
             bookArchive.setContentId(archivesMap.containsKey(archiveHash) ? archiveHash : oldHash);
         }
 
@@ -197,11 +197,11 @@ public class ReadableContent implements Closeable {
         }
 
         // Парсинг номеров томов
-        if (!ignoreVolumeNumbersDetection && GUString.isNotEmpty(bookArchive.getFolder())) {
+        if (!ignoreVolumeNumbersDetection && StringUtils.isNotEmpty(bookArchive.getFolder())) {
             ChapterRecognition.parseNumbers(bookArchive);
         }
 
-        if (isArchiveFile() && GUArray.isNotEmpty(getChapterPages())) {
+        if (isArchiveFile() && ArrayUtils.isNotEmpty(getChapterPages())) {
             // Импорт глав из архива. На основе директорий или из файлов chapter_info.json
             importChapters(getChapterPages(), getArchiveIterator(), bookArchive.getContentId());
         }
@@ -209,7 +209,7 @@ public class ReadableContent implements Closeable {
         // Чтение внешних метаданных Серии
         readExternalSerieInfo();
 
-        GUFile.closeQuietly(this);
+        FileUtils.closeQuietly(this);
         return this;
     }
 
@@ -244,7 +244,7 @@ public class ReadableContent implements Closeable {
                 BookInfo.fromJSON(archive, IOUtils.toString(getSerieJsonInfoStream(), StandardCharsets.UTF_8));
 
                 archive.setPagesCount(bookArchive.getPagesCount());
-                if (GUString.isEmpty(archive.getContentId())) {
+                if (StringUtils.isEmpty(archive.getContentId())) {
                     archive.setContentId(bookArchive.getContentId());
                 }
 
@@ -274,7 +274,7 @@ public class ReadableContent implements Closeable {
     private void findExternalSerieInfo() {
         if (!asSingle) {
             File serieInfoFile = new File(new File(archivePath).getParentFile(), SERIE_JSON_INFO_FILENAME);
-            if (GUFile.isFile(serieInfoFile)) {
+            if (FileUtils.isFile(serieInfoFile)) {
                 serieJsonInfoStream = Files.newInputStream(serieInfoFile.toPath());
             }
         }
@@ -282,10 +282,10 @@ public class ReadableContent implements Closeable {
 
     private void findExternalBookInfo() {
         File bookInfo = Stream.of(new File(new File(archivePath).getParentFile(), EXTERNAL_INFO_DIRECTORY_NAME))
-                .filter(GUFile::isDirectory)
+                .filter(FileUtils::isDirectory)
                 .peek(FilesHelper::setAttributeHidden)
-                .map(atsumeruFolder -> new File(atsumeruFolder, GUFile.getFileName(archivePath)))
-                .filter(GUFile::isDirectory)
+                .map(atsumeruFolder -> new File(atsumeruFolder, FileUtils.getFileName(archivePath)))
+                .filter(FileUtils::isDirectory)
                 .peek(contentFolder -> FileUtils.getAllFilesFromDirectory(contentFolder.toString(), new String[]{Constants.JSON}, true)
                         .stream()
                         .filter(file -> !file.toString().contains(BOOK_JSON_INFO_FILENAME))
@@ -299,7 +299,7 @@ public class ReadableContent implements Closeable {
                             }
                         }))
                 .map(contentFolder -> new File(contentFolder, BOOK_JSON_INFO_FILENAME))
-                .filter(GUFile::isFile)
+                .filter(FileUtils::isFile)
                 .findAny()
                 .orElse(null);
 
@@ -335,28 +335,28 @@ public class ReadableContent implements Closeable {
 
             if (!hasExternalMetadata) {
                 // Поиск XML файла с метаданными и получение InputStream, если файл найден
-                if (GUString.equalsIgnoreCase(fileName, ReadableContent.XML_INFO_FILENAME)) {
+                if (StringUtils.equalsIgnoreCase(fileName, ReadableContent.XML_INFO_FILENAME)) {
                     setXmlInfoStream(archiveIterator.getEntryInputStream());
                     log(logger, "Found " + ReadableContent.XML_INFO_FILENAME + " file");
                     continue;
                 }
 
                 // Поиск EPUB OPF файла с метаданными книги и получение InputStream, если файл найден
-                if (GUString.endsWithIgnoreCase(fileName, ReadableContent.OPF_INFO_EXTENSION)) {
+                if (StringUtils.endsWithIgnoreCase(fileName, ReadableContent.OPF_INFO_EXTENSION)) {
                     setOpfInfoStream(archiveIterator.getEntryInputStream());
                     log(logger, "Found EPUB .*" + ReadableContent.OPF_INFO_EXTENSION + " file");
                     continue;
                 }
 
                 // Поиск JSON файла с метаданными книги и получение InputStream, если файл найден
-                if (GUString.equalsIgnoreCase(fileName, ReadableContent.BOOK_JSON_INFO_FILENAME)) {
+                if (StringUtils.equalsIgnoreCase(fileName, ReadableContent.BOOK_JSON_INFO_FILENAME)) {
                     setBookJsonInfoStream(archiveIterator.getEntryInputStream());
                     log(logger, "Found " + ReadableContent.BOOK_JSON_INFO_FILENAME + " file");
                     continue;
                 }
 
                 // Поиск JSON файла с метаданными главы и получение InputStream, если файл найден
-                if (GUString.endsWithIgnoreCase(fileName, ReadableContent.CHAPTER_JSON_INFO_FILENAME)) {
+                if (StringUtils.endsWithIgnoreCase(fileName, ReadableContent.CHAPTER_JSON_INFO_FILENAME)) {
                     putChapterJsonInfoStream(entryName, archiveIterator.getEntryInputStream());
                     log(logger, "Found " + ReadableContent.CHAPTER_JSON_INFO_FILENAME + " file in path " + entryName);
                     continue;
@@ -372,7 +372,7 @@ public class ReadableContent implements Closeable {
                             setCoverStream(archiveIterator.getEntryInputStream());
                             setCoverFilePath(fileName);
                             log(logger, "Found cover image in path: " + fileName);
-                            zeroCoverFound = GUFile.getFileNameWithExt(fileName).toLowerCase().startsWith(ZERO_COVER_FILENAME_START);
+                            zeroCoverFound = FileUtils.getFileNameWithExt(fileName).toLowerCase().startsWith(ZERO_COVER_FILENAME_START);
                         }
                     }
 
@@ -403,7 +403,7 @@ public class ReadableContent implements Closeable {
         // Поиск и чтение обложки
         InputStream stream = fictionBook.getDescription().getTitleInfo().getCoverPage()
                 .stream()
-                .filter(image -> GUString.isNotEmpty(image.getValue()))
+                .filter(image -> StringUtils.isNotEmpty(image.getValue()))
                 .limit(1)
                 .map(Image::getValue)
                 .map(imageId -> imageId.replace("#", ""))
@@ -425,7 +425,7 @@ public class ReadableContent implements Closeable {
         PDDocument document = renderer.getDocumentNonCacheable();
         setPdDocumentInformationPair(new Pair<>(document.getNumberOfPages(), document.getDocumentInformation()));
         renderBookCover(renderer, 100);
-        GUFile.closeQuietly(document);
+        FileUtils.closeQuietly(document);
     }
 
     private void createForDVJU() {
@@ -460,7 +460,7 @@ public class ReadableContent implements Closeable {
                     logE(Importer.fileLogger, "Unable to read chapter_info.json stream...", ex);
                     return;
                 } finally {
-                    GUFile.closeQuietly(stream);
+                    FileUtils.closeQuietly(stream);
                 }
             } else {
                 chapter = new BookChapter(getChapterTitle(chapterPath, archivePath), chapterPath, archiveHash);
@@ -482,26 +482,26 @@ public class ReadableContent implements Closeable {
     }
 
     private String getChapterTitle(String chapterPath, String archivePath) {
-        if (GUString.isNotEmpty(chapterPath)) {
-            String chapterTitle = GUFile.getDirName(chapterPath);
-            if (GUString.isEmpty(chapterTitle)) {
+        if (StringUtils.isNotEmpty(chapterPath)) {
+            String chapterTitle = FileUtils.getDirName(chapterPath);
+            if (StringUtils.isEmpty(chapterTitle)) {
                 return chapterPath;
             }
             return chapterTitle;
         } else {
-            return GUFile.getFileName(archivePath);
+            return FileUtils.getFileName(archivePath);
         }
     }
 
     private boolean isCoverFile(String fileName) {
-        fileName = GUFile.getFileNameWithExt(fileName);
+        fileName = FileUtils.getFileNameWithExt(fileName);
         return fileName.startsWith(ZERO_COVER_FILENAME_START) || fileName.contains(COVER_FILENAME_START);
     }
 
     private void separateIntoChapters(Map<String, List<String>> chapters, String entryName) {
-        String chapterPath = GUFile.getPath(entryName);
+        String chapterPath = FileUtils.getPath(entryName);
         List<String> filePaths = chapters.get(chapterPath);
-        if (GUArray.isEmpty(filePaths)) {
+        if (ArrayUtils.isEmpty(filePaths)) {
             filePaths = new ArrayList<>();
             chapters.put(chapterPath, filePaths);
         }
@@ -534,8 +534,8 @@ public class ReadableContent implements Closeable {
             logW(Importer.fileLogger, "No supported info file found! Filling base info");
         }
 
-        if (GUString.isEmpty(bookArchive.getTitle())) {
-            bookArchive.setTitle(GUFile.getFileName(archivePath));
+        if (StringUtils.isEmpty(bookArchive.getTitle())) {
+            bookArchive.setTitle(FileUtils.getFileName(archivePath));
         }
 
         if (isBookFile) {
@@ -561,7 +561,7 @@ public class ReadableContent implements Closeable {
                     Constants.PNG
             );
 
-            if (serieCoverStream != null && GUString.isNotEmpty(serieHash)) {
+            if (serieCoverStream != null && StringUtils.isNotEmpty(serieHash)) {
                 ImageCache.saveToFile(
                         serieCoverStream,
                         serieHash,
@@ -575,7 +575,7 @@ public class ReadableContent implements Closeable {
     }
 
     private void putChapterJsonInfoStream(String entryName, InputStream stream) {
-        chapterJsonInfoStream.put(GUFile.getPath(entryName).replace("/", "|").replace("\\", "|"), stream);
+        chapterJsonInfoStream.put(FileUtils.getPath(entryName).replace("/", "|").replace("\\", "|"), stream);
     }
 
     private String createSerieHash(String itemHash, boolean asSingle) {
@@ -629,13 +629,13 @@ public class ReadableContent implements Closeable {
 
     @Override
     public void close() {
-        GUFile.closeQuietly(archiveIterator);
-        GUFile.closeQuietly(xmlInfoStream);
-        GUFile.closeQuietly(opfInfoStream);
-        GUFile.closeQuietly(bookJsonInfoStream);
-        GUFile.closeQuietly(serieJsonInfoStream);
-        GUFile.closeQuietly(coverStream);
-        GUFile.closeQuietly(serieCoverStream);
-        chapterJsonInfoStream.values().forEach(GUFile::closeQuietly);
+        FileUtils.closeQuietly(archiveIterator);
+        FileUtils.closeQuietly(xmlInfoStream);
+        FileUtils.closeQuietly(opfInfoStream);
+        FileUtils.closeQuietly(bookJsonInfoStream);
+        FileUtils.closeQuietly(serieJsonInfoStream);
+        FileUtils.closeQuietly(coverStream);
+        FileUtils.closeQuietly(serieCoverStream);
+        chapterJsonInfoStream.values().forEach(FileUtils::closeQuietly);
     }
 }

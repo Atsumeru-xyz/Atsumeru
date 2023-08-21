@@ -1,6 +1,6 @@
 package com.atsumeru.web.configuration;
 
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,7 @@ public class CustomLocaleResolver extends AcceptHeaderLocaleResolver implements 
     @Override
     public Locale resolveLocale(HttpServletRequest request) {
         String headerLang = request.getHeader("Accept-Language");
-        return GUString.isEmpty(headerLang)
+        return StringUtils.isEmpty(headerLang)
                 ? Locale.getDefault()
                 : Locale.lookup(Locale.LanguageRange.parse(headerLang), LOCALES);
     }

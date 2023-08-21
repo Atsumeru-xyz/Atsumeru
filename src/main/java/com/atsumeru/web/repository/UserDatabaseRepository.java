@@ -1,12 +1,12 @@
 package com.atsumeru.web.repository;
 
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.exception.UserNotFoundException;
 import com.atsumeru.web.helper.PasswordGenerator;
 import com.atsumeru.web.model.database.User;
 import com.atsumeru.web.repository.dao.UsersDaoManager;
-import com.atsumeru.web.util.GUFile;
-import com.atsumeru.web.util.WorkspaceUtils;
+import com.atsumeru.web.util.FileUtils;
+import com.atsumeru.web.util.Workspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,11 +85,11 @@ public class UserDatabaseRepository {
     }
 
     public boolean isUserExists(String userName) {
-        return GUString.isNotEmpty(userName) && usersDaoManager.query(userName) != null;
+        return StringUtils.isNotEmpty(userName) && usersDaoManager.query(userName) != null;
     }
 
     public void saveUser(User user, boolean isRawPassword) {
-        if (GUString.isEmpty(user.getAuthorities())) {
+        if (StringUtils.isEmpty(user.getAuthorities())) {
             user.setAuthorities("USER");
         }
         if (isRawPassword) {
@@ -118,13 +118,13 @@ public class UserDatabaseRepository {
 
     public void connect() {
         try {
-            usersDaoManager = new UsersDaoManager(WorkspaceUtils.DATABASES_DIR + "users.db");
+            usersDaoManager = new UsersDaoManager(Workspace.DATABASES_DIR + "users.db");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void close() {
-        GUFile.closeQuietly(usersDaoManager);
+        FileUtils.closeQuietly(usersDaoManager);
     }
 }

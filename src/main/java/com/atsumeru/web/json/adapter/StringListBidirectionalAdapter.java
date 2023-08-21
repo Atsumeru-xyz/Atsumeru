@@ -1,7 +1,7 @@
 package com.atsumeru.web.json.adapter;
 
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.StringUtils;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
@@ -12,12 +12,12 @@ public class StringListBidirectionalAdapter implements JsonSerializer<String>, J
 
     @Override
     public JsonElement serialize(String src, Type typeOfSrc, JsonSerializationContext context) {
-        if (GUString.isEmpty(src)) {
+        if (StringUtils.isEmpty(src)) {
             return null;
         }
 
         String[] array = src.split(",");
-        if (GUArray.isEmpty(array)) {
+        if (ArrayUtils.isEmpty(array)) {
             return null;
         }
 
@@ -36,6 +36,6 @@ public class StringListBidirectionalAdapter implements JsonSerializer<String>, J
             json.getAsJsonArray().forEach(it -> list.add(it.getAsString()));
         }
 
-        return GUString.join(",", list);
+        return StringUtils.join(",", list);
     }
 }

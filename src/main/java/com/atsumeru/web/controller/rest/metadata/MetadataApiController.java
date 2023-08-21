@@ -10,7 +10,7 @@ import com.atsumeru.web.helper.RestHelper;
 import com.atsumeru.web.model.AtsumeruMessage;
 import com.atsumeru.web.model.metadata.MetadataUpdateStatus;
 import com.atsumeru.web.service.MetadataUpdateService;
-import com.atsumeru.web.util.GUArray;
+import com.atsumeru.web.util.ArrayUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +46,7 @@ public class MetadataApiController {
                                                           @RequestParam(value = "into_db_only", defaultValue = "false") boolean insertIntoDBOnly) {
         List<BookSerie> seriesInDb = daoManager.query(bookSerie.getContentId(), BookSerie.class);
         List<BookArchive> archivesInDb = daoManager.query(bookSerie.getContentId(), BookArchive.class);
-        if (GUArray.isNotEmpty(seriesInDb)) {
+        if (ArrayUtils.isNotEmpty(seriesInDb)) {
             BookSerie serieInDb = seriesInDb.get(0);
             serieInDb.copyFromBaseBook(bookSerie);
             serieInDb.fromBoundServicesToIds();
@@ -64,7 +64,7 @@ public class MetadataApiController {
                             ? "Updated in database. Started local updating..."
                             : "Unable to start metadata update. One of the update services already running...",
                     HttpStatus.OK);
-        } else if (GUArray.isNotEmpty(archivesInDb) && !serieOnly) {
+        } else if (ArrayUtils.isNotEmpty(archivesInDb) && !serieOnly) {
             BookArchive archiveInDb = archivesInDb.get(0);
             archiveInDb.copyFromBaseBook(bookSerie);
             daoManager.save(archiveInDb);

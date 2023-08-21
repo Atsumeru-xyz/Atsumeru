@@ -1,6 +1,6 @@
 package com.atsumeru.web.helper;
 
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 
 public class HashHelper {
     public static final String VAR_SCHEME = "scheme";
@@ -50,9 +50,9 @@ public class HashHelper {
     private static String getUriHash2(String hashTag, String link) {
         String path = getPath(link);
         if (path == null) {
-            return GUString.md5Hex(link);
+            return StringUtils.md5Hex(link);
         }
         path = path.replace("//", "/");
-        return hashTag == null ? GUString.md5Hex(path) : GUString.md5Hex(hashTag + path);
+        return hashTag == null ? StringUtils.md5Hex(path) : StringUtils.md5Hex(hashTag + path);
     }
 }

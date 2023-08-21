@@ -9,7 +9,7 @@ import com.atsumeru.web.helper.RestHelper;
 import com.atsumeru.web.manager.AtsumeruCacheManager;
 import com.atsumeru.web.model.AtsumeruMessage;
 import com.atsumeru.web.model.database.Category;
-import com.atsumeru.web.util.GUEnum;
+import com.atsumeru.web.util.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,7 @@ public class CategoriesApiController {
                 .stream()
                 .filter(category -> CategoryRepository.isCategoryAllowedForUser(category, allowedCategories))
                 .filter(category -> {
-                    ContentType contentType = GUEnum.valueOfOrNull(ContentType.class, category.getContentType());
+                    ContentType contentType = EnumUtils.valueOfOrNull(ContentType.class, category.getContentType());
                     if (contentType == null) {
                         return true;
                     }

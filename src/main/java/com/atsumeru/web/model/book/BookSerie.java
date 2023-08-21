@@ -7,8 +7,8 @@ import com.atsumeru.web.model.book.service.BoundService;
 import com.atsumeru.web.model.book.volume.VolumeItem;
 import com.atsumeru.web.model.database.DatabaseFields;
 import com.atsumeru.web.model.database.History;
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.StringUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -131,15 +131,15 @@ public class BookSerie extends BaseBook {
                         new Pair<>(ServiceType.COMICSDB, comicsDBId),
                         new Pair<>(ServiceType.HENTAG, hentagId)
                 )
-                        .filter(pair -> GUString.isNotEmpty(pair.getSecond()))
+                        .filter(pair -> StringUtils.isNotEmpty(pair.getSecond()))
                         .map(pair -> new BoundService(pair.getFirst(), pair.getSecond()))
                         .collect(Collectors.toList()))
-                .filter(GUArray::isNotEmpty)
+                .filter(ArrayUtils::isNotEmpty)
                 .orElse(null);
     }
 
     public void fromBoundServicesToIds() {
-        if (GUArray.isNotEmpty(boundServices)) {
+        if (ArrayUtils.isNotEmpty(boundServices)) {
             resetBoundServicesIds();
             boundServices.forEach(service -> {
                 String id = service.getId();

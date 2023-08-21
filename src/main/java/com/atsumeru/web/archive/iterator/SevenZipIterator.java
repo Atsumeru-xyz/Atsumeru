@@ -1,7 +1,7 @@
 package com.atsumeru.web.archive.iterator;
 
-import com.atsumeru.web.util.GUFile;
-import com.atsumeru.web.util.WorkspaceUtils;
+import com.atsumeru.web.util.FileUtils;
+import com.atsumeru.web.util.Workspace;
 import lombok.Getter;
 import net.sf.sevenzipjbinding.*;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -41,7 +41,7 @@ public class SevenZipIterator implements IArchiveIterator {
 
     private SevenZipIterator() {
         try {
-            SevenZip.initSevenZipFromPlatformJAR(new File(WorkspaceUtils.BIN_DIR));
+            SevenZip.initSevenZipFromPlatformJAR(new File(Workspace.BIN_DIR));
         } catch (SevenZipNativeInitializationException e) {
             e.printStackTrace();
         }
@@ -72,19 +72,19 @@ public class SevenZipIterator implements IArchiveIterator {
                     fileNameConsumer.accept(entryPath);
                 }
 
-                String entryPathWithoutFile = GUFile.getPath(entryPath);
+                String entryPathWithoutFile = FileUtils.getPath(entryPath);
                 File outFile = new File(outputDir + entryPathWithoutFile);
                 outFile.mkdirs();
 
-                OutputStream out = new FileOutputStream(new File(outFile, GUFile.getFileNameWithExt(entryPath, true)));
+                OutputStream out = new FileOutputStream(new File(outFile, FileUtils.getFileNameWithExt(entryPath, true)));
                 IOUtils.copy(in, out);
 
                 if (progressConsumer != null) {
                     progressConsumer.accept(currentFile, countFiles);
                 }
 
-                GUFile.closeQuietly(in);
-                GUFile.closeQuietly(out);
+                FileUtils.closeQuietly(in);
+                FileUtils.closeQuietly(out);
 
                 currentFile++;
             }
@@ -103,7 +103,7 @@ public class SevenZipIterator implements IArchiveIterator {
             logger.error("Unable to open archive or unpack file");
             return false;
         } finally {
-            GUFile.closeQuietly(iterator);
+            FileUtils.closeQuietly(iterator);
         }
     }
 
@@ -243,8 +243,8 @@ public class SevenZipIterator implements IArchiveIterator {
     public void close() {
         iterator = null;
         entry = null;
-        GUFile.closeQuietly(randomAccessFile);
-        GUFile.closeQuietly(inArchive);
+        FileUtils.closeQuietly(randomAccessFile);
+        FileUtils.closeQuietly(inArchive);
     }
 
     private enum WriteMode { ADD, UPDATE }
@@ -304,7 +304,7 @@ public class SevenZipIterator implements IArchiveIterator {
             } finally {
                 for (int i = closeables.size() - 1; i >= 0; i--) {
                     try {
-                        GUFile.closeQuietly(closeables.get(i));
+                        FileUtils.closeQuietly(closeables.get(i));
                     } catch (Throwable e) {
                         logger.error("Error closing resource: " + e);
                         success = false;

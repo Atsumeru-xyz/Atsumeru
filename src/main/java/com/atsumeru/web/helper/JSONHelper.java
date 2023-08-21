@@ -1,6 +1,6 @@
 package com.atsumeru.web.helper;
 
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -80,7 +80,7 @@ public class JSONHelper {
     }
 
     public static void putJSON(JSONObject obj, String name, String value) throws JSONException {
-        if (!GUString.isEmpty(value)) {
+        if (!StringUtils.isEmpty(value)) {
             obj.put(name, value);
         }
     }

@@ -9,7 +9,7 @@ import com.atsumeru.web.model.covers.CoversCachingStatus;
 import com.atsumeru.web.repository.BooksDatabaseRepository;
 import com.atsumeru.web.repository.BooksRepository;
 import com.atsumeru.web.repository.dao.BooksDaoManager;
-import com.atsumeru.web.util.GUArray;
+import com.atsumeru.web.util.ArrayUtils;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
@@ -104,7 +104,7 @@ public class CoversSaverService {
         progress.set(0);
         total.set(booksWithoutCovers.size());
 
-        if (GUArray.isNotEmpty(booksWithoutCovers)) {
+        if (ArrayUtils.isNotEmpty(booksWithoutCovers)) {
             ProgressBar cliProgressBar = new ProgressBarBuilder()
                     .setTaskName("Caching Covers:")
                     .setInitialMax(booksWithoutCovers.size())

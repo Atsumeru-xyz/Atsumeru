@@ -2,7 +2,7 @@ package com.atsumeru.web.service;
 
 import com.atsumeru.web.model.book.BookSerie;
 import com.atsumeru.web.repository.BooksRepository;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.util.StreamUtils;
 import com.atsumeru.web.configuration.FileWatcherConfig;
 import com.atsumeru.web.exception.NoReadableFoundException;
@@ -20,8 +20,8 @@ import com.atsumeru.web.repository.BooksDatabaseRepository;
 import com.atsumeru.web.repository.CategoryRepository;
 import com.atsumeru.web.repository.MetacategoryRepository;
 import com.atsumeru.web.repository.dao.BooksDaoManager;
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUFile;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.FileUtils;
 import com.atsumeru.web.util.comparator.AlphanumComparator;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
@@ -74,12 +74,12 @@ public class ImportService {
         if (isImportActive() && (executorService.getActiveCount() == 0 && executorService.getQueue().size() == 0 && executorService.getCompletedTaskCount() > 0)) {
             List<String> changedSeriesPaths = FoldersProperties.getFolderProperties()
                     .stream()
-                    .filter(property -> GUArray.isNotNull(property.getInLibrarySeries()) && GUArray.isNotNull(property.getInLibraryArchives()))
+                    .filter(property -> ArrayUtils.isNotNull(property.getInLibrarySeries()) && ArrayUtils.isNotNull(property.getInLibraryArchives()))
                     .map(FolderProperty::getAddedSerieFolders)
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());
 
-            if (GUArray.isNotEmpty(changedSeriesPaths)) {
+            if (ArrayUtils.isNotEmpty(changedSeriesPaths)) {
                 Importer.calculateVolumesAndChaptersCount(changedSeriesPaths);
             }
 
@@ -131,7 +131,7 @@ public class ImportService {
                 tempProperty.setSingles(bookItem.isSingle());
                 if (bookItem instanceof BookSerie) {
                     List<BookArchive> archives = daoManager.queryArchivesForSerie((BookSerie) bookItem);
-                    if (GUArray.isNotEmpty(archives)) {
+                    if (ArrayUtils.isNotEmpty(archives)) {
                         String archivePath = archives.get(0).getFolder();
                         tempProperty.setSingleArchivePath(archivePath);
                     }
@@ -203,20 +203,17 @@ public class ImportService {
                 .collect(Collectors.toList());
 
         // todo: удаление архивов, которые есть в фс, но их путь не привязан ни к одному пути импорта
-
         archivesNotInFS.forEach(archive -> {
             archivesInDbMap.remove(archive.getContentId());
             archivesInFolder.remove(archive.getFolder());
         });
-
-        // todo: удаление серий, директории которых не пустые, но которые не содержат архивов
 
         // Поиск Серий, которых больше нет в файловой системе
         List<IBaseBookItem> seriesNotInFS = seriesInDbMap.values()
                 .stream()
                 .filter(serie -> {
                     File serieFolder = new File(serie.getFolder());
-                    return !GUFile.isDirectory(serieFolder) || GUFile.isDirectoryEmpty(serieFolder);
+                    return !FileUtils.isDirectory(serieFolder) || FileUtils.isDirectoryEmpty(serieFolder);
                 })
                 .collect(Collectors.toList());
 
@@ -232,8 +229,8 @@ public class ImportService {
                         || !archivesInFolder.containsKey(file.getAbsolutePath())
                         || archivesInFolder.get(file.getAbsolutePath()).fileSizeChanged(file))
                 .filter(file -> !property.isSingles()
-                        || GUString.isEmpty(property.getSingleArchivePath())
-                        || GUString.equals(file.getAbsolutePath(), property.getSingleArchivePath()))
+                        || StringUtils.isEmpty(property.getSingleArchivePath())
+                        || StringUtils.equals(file.getAbsolutePath(), property.getSingleArchivePath()))
                 .sorted((file1, file2) -> AlphanumComparator.compareStrings(file1.toString(), file2.toString()))
                 .collect(Collectors.toList());
 
@@ -278,7 +275,7 @@ public class ImportService {
     public static boolean remove(String folderHash) {
         return FoldersProperties.getFolderProperties()
                 .stream()
-                .filter(property -> GUString.equalsIgnoreCase(property.getHash(), folderHash))
+                .filter(property -> StringUtils.equalsIgnoreCase(property.getHash(), folderHash))
                 .findAny()
                 .map(property -> {
                     remove(property);

@@ -16,8 +16,8 @@ import com.atsumeru.web.model.database.History;
 import com.atsumeru.web.model.database.User;
 import com.atsumeru.web.repository.dao.BooksDaoManager;
 import com.atsumeru.web.service.UserDatabaseDetailsService;
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.util.comparator.AlphanumComparator;
 import kotlin.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -112,7 +112,7 @@ public class BooksRepository {
         List<IBaseBookItem> mangaList = getItemsList(itemHash, isSerie);
         IBaseBookItem serieItem = getSerieItem(mangaList, itemHash, isSerie);
 
-        if (GUArray.isEmpty(mangaList) || serieItem == null) {
+        if (ArrayUtils.isEmpty(mangaList) || serieItem == null) {
             throw new NoReadableFoundException();
         }
 
@@ -128,19 +128,19 @@ public class BooksRepository {
 
     public static List<IBaseBookItem> getSerieFranchiseBooks(User user, String itemHash) {
         IBaseBookItem serieItem = getSerieItem(null, itemHash, true);
-        Set<String> series = GUArray.splitString(serieItem.getSeries(), ",")
+        Set<String> series = ArrayUtils.splitString(serieItem.getSeries(), ",")
                 .stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toSet());
 
-        if (GUArray.isNotEmpty(series)) {
+        if (ArrayUtils.isNotEmpty(series)) {
             List<IBaseBookItem> list = daoManager.queryAll(BookSerie.class, LibraryPresentation.SERIES_AND_SINGLES)
                     .stream()
                     .map(BookSerie.class::cast)
-                    .filter(bookSerie -> GUArray.splitString(bookSerie.getSeries(), ",")
+                    .filter(bookSerie -> ArrayUtils.splitString(bookSerie.getSeries(), ",")
                             .stream()
                             .map(String::toLowerCase)
-                            .anyMatch(serie -> GUArray.isInSet(series, serie)))
+                            .anyMatch(serie -> ArrayUtils.isInSet(series, serie)))
                     .sorted(getPlotTypeComparator())
                     .collect(Collectors.toList());
 
@@ -162,7 +162,7 @@ public class BooksRepository {
     /* ***************************************** */
     public static BookChapter getChapter(String itemHash) {
         List<BookChapter> chapters = daoManager.query(itemHash, BookChapter.class);
-        if (GUArray.isNotEmpty(chapters)) {
+        if (ArrayUtils.isNotEmpty(chapters)) {
             return chapters.get(0);
         }
         throw new ChapterNotFoundException();
@@ -188,11 +188,11 @@ public class BooksRepository {
 
     @Nullable
     private static IBaseBookItem getSerieItem(List<IBaseBookItem> mangaList, String itemHash, boolean isSerie) {
-        if (!isSerie && GUArray.isNotEmpty(mangaList)) {
+        if (!isSerie && ArrayUtils.isNotEmpty(mangaList)) {
             return mangaList.get(0);
         } else {
             List<IBaseBookItem> serieList = daoManager.query(itemHash, BookSerie.class);
-            if (GUArray.isNotEmpty(serieList)) {
+            if (ArrayUtils.isNotEmpty(serieList)) {
                 return serieList.get(0);
             }
         }
@@ -290,7 +290,7 @@ public class BooksRepository {
 
     public static void createVolumesWithHistoryForItem(User user, List<IBaseBookItem> contentList, IBaseBookItem baseItem,
                                                        String itemHash, boolean isSerie, boolean withChapters, boolean includeFileInfo) {
-        if (GUArray.isEmpty(contentList)) {
+        if (ArrayUtils.isEmpty(contentList)) {
             return;
         }
 
@@ -315,7 +315,7 @@ public class BooksRepository {
 
     private static void createVolumesWithHistoryForItem(List<IBaseBookItem> contentList, IBaseBookItem baseItem, List<BookChapter> chapters,
                                                         List<History> historyList, boolean isSerie, boolean withChapters, boolean includeFileInfo) {
-        if (GUArray.isEmpty(contentList)) {
+        if (ArrayUtils.isEmpty(contentList)) {
             return;
         }
 
@@ -326,7 +326,7 @@ public class BooksRepository {
                 .map(content -> new Pair<>(
                                 content,
                                 historyList.stream()
-                                        .filter(history -> GUString.equalsIgnoreCase(content.getContentId(), history.getArchiveHash()))
+                                        .filter(history -> StringUtils.equalsIgnoreCase(content.getContentId(), history.getArchiveHash()))
                                         .findFirst()
                                         .orElse(null)
                         )
@@ -344,7 +344,7 @@ public class BooksRepository {
 
     public static List<IBaseBookItem> getArchivesForSerie(String serieHash) {
         List<IBaseBookItem> serieList = daoManager.query(serieHash, BookSerie.class);
-        if (GUArray.isNotEmpty(serieList)) {
+        if (ArrayUtils.isNotEmpty(serieList)) {
             IBaseBookItem baseItem = serieList.get(0);
             return daoManager.query("SERIE", String.valueOf(baseItem.getDbId()), BookArchive.class);
         }
@@ -352,15 +352,15 @@ public class BooksRepository {
     }
 
     public static boolean isSeriesHash(String itemHash) {
-        return GUString.isNotEmpty(itemHash) && itemHash.startsWith(Constants.SERIE_HASH_TAG);
+        return StringUtils.isNotEmpty(itemHash) && itemHash.startsWith(Constants.SERIE_HASH_TAG);
     }
 
     public static boolean isArchiveHash(@Nullable String itemHash) {
-        return GUString.isNotEmpty(itemHash) && itemHash.startsWith(Constants.ARCHIVE_HASH_TAG);
+        return StringUtils.isNotEmpty(itemHash) && itemHash.startsWith(Constants.ARCHIVE_HASH_TAG);
     }
 
     public static boolean isChapterHash(@Nullable String itemHash) {
-        return GUString.isNotEmpty(itemHash) && !itemHash.startsWith(Constants.ARCHIVE_HASH_TAG);
+        return StringUtils.isNotEmpty(itemHash) && !itemHash.startsWith(Constants.ARCHIVE_HASH_TAG);
     }
 
     private static String getOrderByColumnNameForSort(Sort sort) {

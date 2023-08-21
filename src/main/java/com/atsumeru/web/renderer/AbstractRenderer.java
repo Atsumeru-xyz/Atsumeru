@@ -1,7 +1,7 @@
 package com.atsumeru.web.renderer;
 
 import com.atsumeru.web.exception.DjVuReadingException;
-import com.atsumeru.web.util.GUFile;
+import com.atsumeru.web.util.FileUtils;
 import org.slf4j.Logger;
 import org.springframework.lang.Nullable;
 
@@ -46,7 +46,7 @@ public abstract class AbstractRenderer {
         try {
             ByteArrayOutputStream tmp = new ByteArrayOutputStream();
             ImageIO.write(bufferedImage, "jpeg", tmp);
-            GUFile.closeQuietly(tmp);
+            FileUtils.closeQuietly(tmp);
 
             int contentLength = tmp.size();
             if (response != null) {

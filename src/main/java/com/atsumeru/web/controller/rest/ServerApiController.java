@@ -12,8 +12,8 @@ import com.atsumeru.web.model.AtsumeruMessage;
 import com.atsumeru.web.model.ServerInfo;
 import com.atsumeru.web.model.book.chapter.BookChapter;
 import com.atsumeru.web.model.database.Category;
-import com.atsumeru.web.util.GUFile;
-import com.atsumeru.web.util.WorkspaceUtils;
+import com.atsumeru.web.util.FileUtils;
+import com.atsumeru.web.util.Workspace;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,8 +63,8 @@ public class ServerApiController {
     @GetMapping("/clear_cover_cache")
     public ResponseEntity<AtsumeruMessage> clearCache() {
         new Thread(() -> {
-            GUFile.deleteDirectory(new File(WorkspaceUtils.CACHE_DIR));
-            WorkspaceUtils.configureWorkspace();
+            FileUtils.deleteDirectory(new File(Workspace.CACHE_DIR));
+            Workspace.configureWorkspace();
             CoversSaverService.saveNonExistentCoversIntoCache();
         }).start();
 

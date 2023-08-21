@@ -1,6 +1,6 @@
 package com.atsumeru.web.helper;
 
-import com.atsumeru.web.util.GUFile;
+import com.atsumeru.web.util.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -18,7 +18,7 @@ public class ExternalIpChecker {
         } catch (Exception ex) {
             return null;
         } finally {
-            GUFile.closeQuietly(in);
+            FileUtils.closeQuietly(in);
         }
     }
 }

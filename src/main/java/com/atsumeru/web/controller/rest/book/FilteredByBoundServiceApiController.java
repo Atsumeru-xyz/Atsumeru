@@ -5,7 +5,7 @@ import com.atsumeru.web.repository.BooksDatabaseRepository;
 import com.atsumeru.web.enums.LibraryPresentation;
 import com.atsumeru.web.enums.ServiceType;
 import com.atsumeru.web.model.book.DownloadedLinks;
-import com.atsumeru.web.util.GUArray;
+import com.atsumeru.web.util.ArrayUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -40,12 +40,12 @@ public class FilteredByBoundServiceApiController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/check_downloaded")
     public DownloadedLinks checkLinksDownloaded(@RequestBody MultiValueMap<String, String> formData) {
-        List<String> links = GUArray.splitString(formData.getFirst("links"), ",");
+        List<String> links = ArrayUtils.splitString(formData.getFirst("links"), ",");
 
         Set<String> downloadedLinks = BooksDatabaseRepository.getInstance().getDaoManager().queryAll(BookSerie.class, LibraryPresentation.SERIES_AND_SINGLES)
                 .stream()
                 .map(BookSerie.class::cast)
-                .flatMap(serie -> GUArray.splitString(serie.getSerieLinks()).stream())
+                .flatMap(serie -> ArrayUtils.splitString(serie.getSerieLinks()).stream())
                 .collect(Collectors.toSet());
 
         Map<Boolean, List<String>> collected = links.stream().collect(Collectors.groupingBy(downloadedLinks::contains));

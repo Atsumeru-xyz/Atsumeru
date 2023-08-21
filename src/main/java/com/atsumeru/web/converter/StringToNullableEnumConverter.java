@@ -1,6 +1,6 @@
 package com.atsumeru.web.converter;
 
-import com.atsumeru.web.util.GUEnum;
+import com.atsumeru.web.util.EnumUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.convert.converter.Converter;
 
@@ -13,6 +13,6 @@ public class StringToNullableEnumConverter<E extends Enum<E>> implements Convert
 
     @Override
     public E convert(@NotNull String source) {
-        return GUEnum.valueOfOrNull(clazz, GUEnum.convertHumanizedToEnumName(source));
+        return EnumUtils.valueOfOrNull(clazz, EnumUtils.convertHumanizedToEnumName(source));
     }
 }

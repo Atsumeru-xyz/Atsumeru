@@ -1,4 +1,4 @@
-package com.atsumeru.web.util;
+package com.atsumeru.web.helper;
 
 import com.atsumeru.web.model.book.BaseBook;
 

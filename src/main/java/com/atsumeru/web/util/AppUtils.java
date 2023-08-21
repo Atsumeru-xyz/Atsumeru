@@ -2,7 +2,7 @@ package com.atsumeru.web.util;
 
 import java.util.function.Supplier;
 
-public class GUApp {
+public class AppUtils {
 
     public static void sleepThread(int millis) {
         if (millis > 0) {

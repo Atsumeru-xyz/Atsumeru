@@ -11,7 +11,6 @@ import com.atsumeru.web.exception.ArchiveReadingException;
 import com.atsumeru.web.exception.NoReadableFoundException;
 import com.atsumeru.web.exception.PageNotFoundException;
 import com.atsumeru.web.renderer.RendererFactory;
-import com.atsumeru.web.util.*;
 import lombok.SneakyThrows;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.io.IOUtils;
@@ -49,7 +48,7 @@ public class ArchiveHelper {
 
     private static void getBookPage(@Nullable HttpServletResponse response, OutputStream outputStream, @Nullable String archiveHash,
                                     @Nullable String chapterHash, int page, boolean convertImage, int tryCount) throws InterruptedException {
-        if (GUString.isEmpty(archiveHash) && GUString.isNotEmpty(chapterHash) || BooksRepository.isArchiveHash(archiveHash)) {
+        if (StringUtils.isEmpty(archiveHash) && StringUtils.isNotEmpty(chapterHash) || BooksRepository.isArchiveHash(archiveHash)) {
             long time = System.currentTimeMillis();
 
             // Поиск архива по archive_hash или chapter_hash
@@ -67,7 +66,7 @@ public class ArchiveHelper {
 
             // Открытие архива для чтения
             try (IArchiveIterator archiveIterator = ArchiveReader.getArchiveIterator(archiveItem.getFolder())) {
-                List<String> pages = GUString.isNotEmpty(chapterHash)
+                List<String> pages = StringUtils.isNotEmpty(chapterHash)
                         ? BooksRepository.getChapter(chapterHash).getPageEntryNames()
                         : archiveItem.getPageEntryNames();
 
@@ -98,7 +97,7 @@ public class ArchiveHelper {
 
     private static boolean writePageIntoResponse(@Nullable HttpServletResponse response, OutputStream outputStream, IArchiveIterator archiveIterator,
                                                  List<String> pages, int page, boolean convertImage, long time) throws IOException {
-        if (GUArray.isNotEmpty(pages) && pages.size() >= page) {
+        if (ArrayUtils.isNotEmpty(pages) && pages.size() >= page) {
             return writeEntryStreamIntoResponseOrOutputStream(
                     response,
                     outputStream,
@@ -140,8 +139,8 @@ public class ArchiveHelper {
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
-            GUFile.closeQuietly(tikaInputStream);
-            GUFile.closeQuietly(entryInputStream);
+            FileUtils.closeQuietly(tikaInputStream);
+            FileUtils.closeQuietly(entryInputStream);
         }
 
         return false;

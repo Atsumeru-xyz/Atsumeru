@@ -7,8 +7,8 @@ import com.atsumeru.web.helper.FilesHelper;
 import com.atsumeru.web.repository.BooksRepository;
 import com.atsumeru.web.model.book.chapter.BookChapter;
 import com.atsumeru.web.model.book.image.Images;
-import com.atsumeru.web.util.GUFile;
-import com.atsumeru.web.util.WorkspaceUtils;
+import com.atsumeru.web.util.FileUtils;
+import com.atsumeru.web.util.Workspace;
 import lombok.Getter;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.resizers.configurations.ScalingMode;
@@ -34,7 +34,7 @@ public class ImageCache {
     }
 
     public static File getImage(String imageHash, String extension, ImageCacheType cacheType) {
-        return new File(WorkspaceUtils.CACHE_DIR + cacheType.getFolder(), String.format("%s.%s", imageHash, extension));
+        return new File(Workspace.CACHE_DIR + cacheType.getFolder(), String.format("%s.%s", imageHash, extension));
     }
 
     public static byte[] getImageBytesFromCache(String imageHash, ImageCache.ImageCacheType cacheType) {
@@ -83,7 +83,7 @@ public class ImageCache {
     public static Images saveToFile(InputStream inputStream, String imageHash, String extension) {
         String imageName = String.format("%s.%s", imageHash, extension);
 
-        File thumbnailFolder = new File(WorkspaceUtils.CACHE_DIR + ImageCacheType.THUMBNAIL.getFolder());
+        File thumbnailFolder = new File(Workspace.CACHE_DIR + ImageCacheType.THUMBNAIL.getFolder());
         File thumbnailImage = new File(thumbnailFolder, imageName);
         thumbnailFolder.mkdirs();
 
@@ -93,7 +93,7 @@ public class ImageCache {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            GUFile.closeQuietly(inputStream);
+            FileUtils.closeQuietly(inputStream);
         }
 
         return new Images(thumbnailImage.getPath(), bImage);

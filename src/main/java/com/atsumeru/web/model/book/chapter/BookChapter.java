@@ -4,8 +4,8 @@ import com.atsumeru.web.model.book.BookArchive;
 import com.atsumeru.web.model.book.BookSerie;
 import com.atsumeru.web.model.database.History;
 import com.atsumeru.web.repository.BooksDatabaseRepository;
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.json.adapter.AdminFieldAdapter;
 import com.atsumeru.web.json.adapter.StringListBidirectionalAdapter;
 import com.google.gson.annotations.Expose;
@@ -144,7 +144,7 @@ public class BookChapter {
     }
 
     public void generateChapterId(String archiveHash) {
-        chapterId = GUString.md5Hex(archiveHash + title);
+        chapterId = StringUtils.md5Hex(archiveHash + title);
     }
 
     public void setSerie(BookSerie serie) {
@@ -158,12 +158,12 @@ public class BookChapter {
     }
 
     public void setPageEntryNames(List<String> pageEntryNames) {
-        this.pageEntryNames = GUString.join(".|.", pageEntryNames);
+        this.pageEntryNames = StringUtils.join(".|.", pageEntryNames);
         pagesCount = pageEntryNames.size();
     }
 
     public List<String> getPageEntryNames() {
-        return GUArray.splitString(pageEntryNames, ".\\|.");
+        return ArrayUtils.splitString(pageEntryNames, ".\\|.");
     }
 
     public BookArchive getArchive() {

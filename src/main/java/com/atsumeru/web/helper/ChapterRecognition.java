@@ -1,9 +1,9 @@
 package com.atsumeru.web.helper;
 
 import com.atsumeru.web.model.book.BookArchive;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.model.book.chapter.BookChapter;
-import com.atsumeru.web.util.GUType;
+import com.atsumeru.web.util.TypeUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -222,10 +222,10 @@ public class ChapterRecognition {
     }
 
     private static String getNameWithoutArchiveName(BookArchive bookArchive, String name) {
-        if (GUString.isNotEmpty(bookArchive.getTitle()) && GUString.equalsIgnoreCase(bookArchive.getTitle(), name)) {
+        if (StringUtils.isNotEmpty(bookArchive.getTitle()) && StringUtils.equalsIgnoreCase(bookArchive.getTitle(), name)) {
             return name.replace(bookArchive.getTitle().toLowerCase(), "").trim();
         }
-        if (GUString.isNotEmpty(bookArchive.getAltTitle()) && GUString.equalsIgnoreCase(bookArchive.getAltTitle(), name)) {
+        if (StringUtils.isNotEmpty(bookArchive.getAltTitle()) && StringUtils.equalsIgnoreCase(bookArchive.getAltTitle(), name)) {
             return name.replace(bookArchive.getAltTitle().toLowerCase(), "").trim();
         }
         return name;
@@ -254,7 +254,7 @@ public class ChapterRecognition {
     private static boolean updateYearMonthVolume(Matcher match, BookArchive bookArchive) {
         if (match != null && match.find()) {
             String initialGroup = match.group(1).replace(" - ", ".").replace("-", ".");
-            float initial = GUType.getFloatDef(initialGroup, UNKNOWN);
+            float initial = TypeUtils.getFloatDef(initialGroup, UNKNOWN);
             if (initial >= 0f) {
                 bookArchive.setVolume(initial);
                 return true;
@@ -267,7 +267,7 @@ public class ChapterRecognition {
         if (match != null && match.find()) {
             for (int group : groups) {
                 String initialGroup = match.group(group);
-                float initial = GUType.getFloatDef(initialGroup, UNKNOWN);
+                float initial = TypeUtils.getFloatDef(initialGroup, UNKNOWN);
                 if (initial >= 0f) {
                     bookArchive.setVolume(initial);
                     return true;
@@ -305,11 +305,11 @@ public class ChapterRecognition {
      * @return decimal/alpha float value
      */
     private static float checkForDecimal(String decimal, String alpha) {
-        if (GUString.isNotEmpty(decimal)) {
+        if (StringUtils.isNotEmpty(decimal)) {
             return Float.parseFloat(decimal);
         }
 
-        if (GUString.isNotEmpty(alpha)) {
+        if (StringUtils.isNotEmpty(alpha)) {
             if (alpha.contains("extra"))
                 return .99f;
 

@@ -1,6 +1,6 @@
 package com.atsumeru.web.archive.iterator;
 
-import com.atsumeru.web.util.GUFile;
+import com.atsumeru.web.util.FileUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +130,7 @@ public class ZipIterator implements IArchiveIterator {
             e.printStackTrace();
             return false;
         } finally {
-            GUFile.closeQuietly(fs);
+            FileUtils.closeQuietly(fs);
         }
     }
 
@@ -155,7 +155,7 @@ public class ZipIterator implements IArchiveIterator {
             e.printStackTrace();
             return false;
         } finally {
-            GUFile.closeQuietly(fileSystem);
+            FileUtils.closeQuietly(fileSystem);
         }
     }
 
@@ -163,6 +163,6 @@ public class ZipIterator implements IArchiveIterator {
     public void close() {
         iterator = null;
         entry = null;
-        GUFile.closeQuietly(zipFile);
+        FileUtils.closeQuietly(zipFile);
     }
 }

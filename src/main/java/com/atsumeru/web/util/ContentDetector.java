@@ -46,7 +46,7 @@ public class ContentDetector {
         } catch (Exception ex) {
             return "unknown";
         } finally {
-            GUFile.closeQuietly(tikaInputStream);
+            FileUtils.closeQuietly(tikaInputStream);
         }
     }
 
@@ -89,11 +89,11 @@ public class ContentDetector {
     }
 
     public static boolean isWebP(Path path) {
-        return GUString.equalsIgnoreCase(detectMediaType(path), WEBP_MIME_TYPE);
+        return StringUtils.equalsIgnoreCase(detectMediaType(path), WEBP_MIME_TYPE);
     }
 
     public static boolean isWebP(TikaInputStream tikaInputStream) {
-        return GUString.equalsIgnoreCase(detectMediaType(tikaInputStream), WEBP_MIME_TYPE);
+        return StringUtils.equalsIgnoreCase(detectMediaType(tikaInputStream), WEBP_MIME_TYPE);
     }
 
     static {

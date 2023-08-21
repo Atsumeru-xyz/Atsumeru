@@ -1,17 +1,16 @@
 package com.atsumeru.web.repository;
 
 import com.atsumeru.web.enums.*;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.component.Localizr;
-import com.atsumeru.web.enums.*;
 import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.model.book.volume.VolumeItem;
 import com.atsumeru.web.model.database.Category;
 import com.atsumeru.web.model.database.History;
 import com.atsumeru.web.model.database.User;
 import com.atsumeru.web.model.filter.Filters;
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUEnum;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.EnumUtils;
 import com.atsumeru.web.util.comparator.AlphanumComparator;
 import com.atsumeru.web.util.comparator.NaturalStringComparator;
 import org.springframework.util.MultiValueMap;
@@ -24,44 +23,44 @@ public class FilteredBooksRepository {
 
     public static List<IBaseBookItem> getFilteredList(User user, ContentType contentType, String category, LibraryPresentation libraryPresentation, String search,
                                                       Sort sort, boolean ascending, MultiValueMap<String, String> filtersMap, int page, int limit, boolean withVolumesAndHistory, boolean withChapters) {
-        Status status = GUEnum.valueOfOrNull(Status.class, filtersMap.getFirst("status"));
-        TranslationStatus translationStatus = GUEnum.valueOfOrNull(TranslationStatus.class, filtersMap.getFirst("translation_status"));
-        PlotType plotType = GUEnum.valueOfOrNull(PlotType.class, filtersMap.getFirst("plot_type"));
-        Censorship censorship = GUEnum.valueOfOrNull(Censorship.class, filtersMap.getFirst("censorship"));
-        Color color = GUEnum.valueOfOrNull(Color.class, filtersMap.getFirst("color"));
-        AgeRating ageRating = GUEnum.valueOfOrNull(AgeRating.class, filtersMap.getFirst("age_rating"));
+        Status status = EnumUtils.valueOfOrNull(Status.class, filtersMap.getFirst("status"));
+        TranslationStatus translationStatus = EnumUtils.valueOfOrNull(TranslationStatus.class, filtersMap.getFirst("translation_status"));
+        PlotType plotType = EnumUtils.valueOfOrNull(PlotType.class, filtersMap.getFirst("plot_type"));
+        Censorship censorship = EnumUtils.valueOfOrNull(Censorship.class, filtersMap.getFirst("censorship"));
+        Color color = EnumUtils.valueOfOrNull(Color.class, filtersMap.getFirst("color"));
+        AgeRating ageRating = EnumUtils.valueOfOrNull(AgeRating.class, filtersMap.getFirst("age_rating"));
 
-        LogicalMode authorsMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("authors_mode"));
-        LogicalMode artistsMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("artists_mode"));
-        LogicalMode publishersMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("publishers_mode"));
-        LogicalMode translatorsMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("translators_mode"));
-        LogicalMode genresMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("genres_mode"));
-        LogicalMode tagsMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("tags_mode"));
-        LogicalMode countriesMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("countries_mode"));
-        LogicalMode languagesMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("languages_mode"));
-        LogicalMode eventsMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("event_mode"));
-        LogicalMode charactersMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("characters_mode"));
-        LogicalMode seriesMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("series_mode"));
-        LogicalMode parodiesMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("parodies_mode"));
-        LogicalMode circlesMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("circles_mode"));
-        LogicalMode magazinesMode = GUEnum.valueOf(LogicalMode.class, filtersMap.getFirst("magazines_mode"));
+        LogicalMode authorsMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("authors_mode"));
+        LogicalMode artistsMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("artists_mode"));
+        LogicalMode publishersMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("publishers_mode"));
+        LogicalMode translatorsMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("translators_mode"));
+        LogicalMode genresMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("genres_mode"));
+        LogicalMode tagsMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("tags_mode"));
+        LogicalMode countriesMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("countries_mode"));
+        LogicalMode languagesMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("languages_mode"));
+        LogicalMode eventsMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("event_mode"));
+        LogicalMode charactersMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("characters_mode"));
+        LogicalMode seriesMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("series_mode"));
+        LogicalMode parodiesMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("parodies_mode"));
+        LogicalMode circlesMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("circles_mode"));
+        LogicalMode magazinesMode = EnumUtils.valueOf(LogicalMode.class, filtersMap.getFirst("magazines_mode"));
 
         return getFilteredList(user, contentType, category, libraryPresentation, search, sort, ascending, status, translationStatus, plotType, censorship, color, ageRating,
-                GUArray.splitString(filtersMap.getFirst("authors"), ","), authorsMode,
-                GUArray.splitString(filtersMap.getFirst("artists"), ","), artistsMode,
-                GUArray.splitString(filtersMap.getFirst("publishers"), ","), publishersMode,
-                GUArray.splitString(filtersMap.getFirst("translators"), ","), translatorsMode,
-                GUArray.splitString(filtersMap.getFirst("genres"), ","), genresMode,
-                GUArray.splitString(filtersMap.getFirst("tags"), ","), tagsMode,
-                GUArray.splitString(filtersMap.getFirst("countries"), ","), countriesMode,
-                GUArray.splitString(filtersMap.getFirst("languages"), ","), languagesMode,
-                GUArray.splitString(filtersMap.getFirst("events"), ","), eventsMode,
-                GUArray.splitString(filtersMap.getFirst("characters"), ","), charactersMode,
-                GUArray.splitString(filtersMap.getFirst("series"), ","), seriesMode,
-                GUArray.splitString(filtersMap.getFirst("parodies"), ","), parodiesMode,
-                GUArray.splitString(filtersMap.getFirst("circles"), ","), circlesMode,
-                GUArray.splitString(filtersMap.getFirst("magazines"), ","), magazinesMode,
-                GUArray.splitString(filtersMap.getFirst("years"), ","), page, limit,
+                ArrayUtils.splitString(filtersMap.getFirst("authors"), ","), authorsMode,
+                ArrayUtils.splitString(filtersMap.getFirst("artists"), ","), artistsMode,
+                ArrayUtils.splitString(filtersMap.getFirst("publishers"), ","), publishersMode,
+                ArrayUtils.splitString(filtersMap.getFirst("translators"), ","), translatorsMode,
+                ArrayUtils.splitString(filtersMap.getFirst("genres"), ","), genresMode,
+                ArrayUtils.splitString(filtersMap.getFirst("tags"), ","), tagsMode,
+                ArrayUtils.splitString(filtersMap.getFirst("countries"), ","), countriesMode,
+                ArrayUtils.splitString(filtersMap.getFirst("languages"), ","), languagesMode,
+                ArrayUtils.splitString(filtersMap.getFirst("events"), ","), eventsMode,
+                ArrayUtils.splitString(filtersMap.getFirst("characters"), ","), charactersMode,
+                ArrayUtils.splitString(filtersMap.getFirst("series"), ","), seriesMode,
+                ArrayUtils.splitString(filtersMap.getFirst("parodies"), ","), parodiesMode,
+                ArrayUtils.splitString(filtersMap.getFirst("circles"), ","), circlesMode,
+                ArrayUtils.splitString(filtersMap.getFirst("magazines"), ","), magazinesMode,
+                ArrayUtils.splitString(filtersMap.getFirst("years"), ","), page, limit,
                 withVolumesAndHistory, withChapters);
     }
 
@@ -81,8 +80,8 @@ public class FilteredBooksRepository {
         Map<String, Category> allowedCategoriesMap = user.getAllowedCategoriesMap();
         List<ContentType> allowedContentTypes = allowedCategoriesMap.values().stream()
                 .map(Category::getContentType)
-                .filter(GUString::isNotEmpty)
-                .map(type -> GUEnum.valueOfOrNull(ContentType.class, type))
+                .filter(StringUtils::isNotEmpty)
+                .map(type -> EnumUtils.valueOfOrNull(ContentType.class, type))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         List<String> allowedCategories = allowedCategoriesMap.values().stream()
@@ -96,32 +95,32 @@ public class FilteredBooksRepository {
 
         List<String> genreIds = genresToIds(genres);
         List<IBaseBookItem> filteredList = list.stream().filter(it -> {
-            if (GUString.isNotEmpty(search)) {
-                if (!(GUString.containsIgnoreCase(it.getTitle(), search)
-                        || GUString.containsIgnoreCase(it.getAltTitle(), search)
-                        || GUString.containsIgnoreCase(it.getJapTitle(), search)
-                        || GUString.containsIgnoreCase(it.getKorTitle(), search)
-                        || GUString.containsIgnoreCase(it.getAuthors(), search)
-                        || GUString.containsIgnoreCase(it.getArtists(), search)
-                        || GUString.containsIgnoreCase(it.getTranslators(), search)
-                        || GUString.containsIgnoreCase(it.getPublisher(), search)
-                        || GUString.containsIgnoreCase(it.getGenres(), search) // TODO: localized genres support
-                        || GUString.containsIgnoreCase(it.getTags(), search)
-                        || GUString.containsIgnoreCase(it.getYear(), search)
-                        || GUString.containsIgnoreCase(it.getCountry(), search)
-                        || GUString.containsIgnoreCase(it.getLanguage(), search)
-                        || GUString.containsIgnoreCase(it.getEvent(), search)
-                        || GUString.containsIgnoreCase(it.getCharacters(), search)
-                        || GUString.containsIgnoreCase(it.getSeries(), search)
-                        || GUString.containsIgnoreCase(it.getParodies(), search)
-                        || GUString.containsIgnoreCase(it.getCircles(), search)
-                        || GUString.containsIgnoreCase(it.getMagazines(), search)
-                        || GUString.containsIgnoreCase(it.getDescription(), search))) {
+            if (StringUtils.isNotEmpty(search)) {
+                if (!(StringUtils.containsIgnoreCase(it.getTitle(), search)
+                        || StringUtils.containsIgnoreCase(it.getAltTitle(), search)
+                        || StringUtils.containsIgnoreCase(it.getJapTitle(), search)
+                        || StringUtils.containsIgnoreCase(it.getKorTitle(), search)
+                        || StringUtils.containsIgnoreCase(it.getAuthors(), search)
+                        || StringUtils.containsIgnoreCase(it.getArtists(), search)
+                        || StringUtils.containsIgnoreCase(it.getTranslators(), search)
+                        || StringUtils.containsIgnoreCase(it.getPublisher(), search)
+                        || StringUtils.containsIgnoreCase(it.getGenres(), search) // TODO: localized genres support
+                        || StringUtils.containsIgnoreCase(it.getTags(), search)
+                        || StringUtils.containsIgnoreCase(it.getYear(), search)
+                        || StringUtils.containsIgnoreCase(it.getCountry(), search)
+                        || StringUtils.containsIgnoreCase(it.getLanguage(), search)
+                        || StringUtils.containsIgnoreCase(it.getEvent(), search)
+                        || StringUtils.containsIgnoreCase(it.getCharacters(), search)
+                        || StringUtils.containsIgnoreCase(it.getSeries(), search)
+                        || StringUtils.containsIgnoreCase(it.getParodies(), search)
+                        || StringUtils.containsIgnoreCase(it.getCircles(), search)
+                        || StringUtils.containsIgnoreCase(it.getMagazines(), search)
+                        || StringUtils.containsIgnoreCase(it.getDescription(), search))) {
                     return false;
                 }
             }
 
-            if (GUString.isNotEmpty(it.getCategories()) && GUString.isNotEmpty(category)) {
+            if (StringUtils.isNotEmpty(it.getCategories()) && StringUtils.isNotEmpty(category)) {
                 if (!it.getCategories().contains(category)) {
                     return false;
                 }
@@ -137,31 +136,31 @@ public class FilteredBooksRepository {
                 return false;
             }
 
-            if (!itemHasFiltersEntry(authors, GUArray.splitString(it.getAuthors(), ","), authorsMode)
-                    || !itemHasFiltersEntry(artists, GUArray.splitString(it.getArtists(), ","), artistsMode)
-                    || !itemHasFiltersEntry(publishers, GUArray.splitString(it.getPublisher(), ","), publishersMode)
-                    || !itemHasFiltersEntry(translators, GUArray.splitString(it.getTranslators(), ","), translatorsMode)
-                    || !itemHasFiltersEntry(years, GUArray.splitString(it.getYear(), ","), LogicalMode.OR)
-                    || !itemHasFiltersEntry(genreIds, GUArray.splitString(it.getGenres(), ","), genresMode)
-                    || !itemHasFiltersEntry(tags, GUArray.splitString(it.getTags(), ","), tagsMode)
-                    || !itemHasFiltersEntry(countries, GUArray.splitString(it.getCountry(), ","), countriesMode)
-                    || !itemHasFiltersEntry(languages, GUArray.splitString(it.getLanguage(), ","), languagesMode)
-                    || !itemHasFiltersEntry(events, GUArray.splitString(it.getEvent(), ","), eventsMode)
-                    || !itemHasFiltersEntry(characters, GUArray.splitString(it.getCharacters(), ","), charactersMode)
-                    || !itemHasFiltersEntry(series, GUArray.splitString(it.getSeries(), ","), seriesMode)
-                    || !itemHasFiltersEntry(parodies, GUArray.splitString(it.getParodies(), ","), parodiesMode)
-                    || !itemHasFiltersEntry(circles, GUArray.splitString(it.getCircles(), ","), circlesMode)
-                    || !itemHasFiltersEntry(magazines, GUArray.splitString(it.getMagazines(), ","), magazinesMode)) {
+            if (!itemHasFiltersEntry(authors, ArrayUtils.splitString(it.getAuthors(), ","), authorsMode)
+                    || !itemHasFiltersEntry(artists, ArrayUtils.splitString(it.getArtists(), ","), artistsMode)
+                    || !itemHasFiltersEntry(publishers, ArrayUtils.splitString(it.getPublisher(), ","), publishersMode)
+                    || !itemHasFiltersEntry(translators, ArrayUtils.splitString(it.getTranslators(), ","), translatorsMode)
+                    || !itemHasFiltersEntry(years, ArrayUtils.splitString(it.getYear(), ","), LogicalMode.OR)
+                    || !itemHasFiltersEntry(genreIds, ArrayUtils.splitString(it.getGenres(), ","), genresMode)
+                    || !itemHasFiltersEntry(tags, ArrayUtils.splitString(it.getTags(), ","), tagsMode)
+                    || !itemHasFiltersEntry(countries, ArrayUtils.splitString(it.getCountry(), ","), countriesMode)
+                    || !itemHasFiltersEntry(languages, ArrayUtils.splitString(it.getLanguage(), ","), languagesMode)
+                    || !itemHasFiltersEntry(events, ArrayUtils.splitString(it.getEvent(), ","), eventsMode)
+                    || !itemHasFiltersEntry(characters, ArrayUtils.splitString(it.getCharacters(), ","), charactersMode)
+                    || !itemHasFiltersEntry(series, ArrayUtils.splitString(it.getSeries(), ","), seriesMode)
+                    || !itemHasFiltersEntry(parodies, ArrayUtils.splitString(it.getParodies(), ","), parodiesMode)
+                    || !itemHasFiltersEntry(circles, ArrayUtils.splitString(it.getCircles(), ","), circlesMode)
+                    || !itemHasFiltersEntry(magazines, ArrayUtils.splitString(it.getMagazines(), ","), magazinesMode)) {
                 return false;
             }
 
             // TODO: filter by user created categories
-            if (GUArray.isNotEmpty(allowedCategoriesMap) && !allowedContentTypes.contains(it.getContentType())) {
+            if (ArrayUtils.isNotEmpty(allowedCategoriesMap) && !allowedContentTypes.contains(it.getContentType())) {
                 return false;
             }
 
-            if (GUArray.isNotEmpty(allowedCategories) && GUString.isNotEmpty(it.getCategories())) {
-                List<String> categories = GUArray.splitString(it.getCategories(), ",");
+            if (ArrayUtils.isNotEmpty(allowedCategories) && StringUtils.isNotEmpty(it.getCategories())) {
+                List<String> categories = ArrayUtils.splitString(it.getCategories(), ",");
                 boolean noneMatch = categories.stream().noneMatch(allowedCategories::contains);
                 return !noneMatch;
             }
@@ -202,7 +201,7 @@ public class FilteredBooksRepository {
 
     private static List<String> genresToIds(List<String> genres) {
         List<String> genreIds = new ArrayList<>();
-        if (GUArray.isNotEmpty(genres)) {
+        if (ArrayUtils.isNotEmpty(genres)) {
             genres.forEach(it -> {
                 Genre genre = Genre.getGenreFromString(it);
                 if (genre != null) {
@@ -215,8 +214,8 @@ public class FilteredBooksRepository {
     }
 
     private static boolean itemHasFiltersEntry(List<String> filters, List<String> values, LogicalMode logicalMode) {
-        if (GUArray.isNotEmpty(filters)) {
-            if (GUArray.isEmpty(values)) {
+        if (ArrayUtils.isNotEmpty(filters)) {
+            if (ArrayUtils.isEmpty(values)) {
                 for (String filter : filters) {
                     if (!isNegativeFilter(filter)) {
                         // Positive filter. Condition not met
@@ -264,7 +263,7 @@ public class FilteredBooksRepository {
     }
 
     private static boolean isNegativeFilter(String filter) {
-        return GUString.isNotEmpty(filter) && filter.startsWith("-");
+        return StringUtils.isNotEmpty(filter) && filter.startsWith("-");
     }
 
     private static Comparator<IBaseBookItem> getSortComparator(Sort sort) {
@@ -306,16 +305,16 @@ public class FilteredBooksRepository {
 
     public static Comparator<IBaseBookItem> getSerieComparator() {
         return ((Comparator<IBaseBookItem>) (item1, item2) -> AlphanumComparator.compareStrings(
-                GUArray.safeGetString(GUArray.splitString(item1.getSeries()), 0, ""),
-                GUArray.safeGetString(GUArray.splitString(item2.getSeries()), 0, "")
+                ArrayUtils.safeGetString(ArrayUtils.splitString(item1.getSeries()), 0, ""),
+                ArrayUtils.safeGetString(ArrayUtils.splitString(item2.getSeries()), 0, "")
         )).thenComparing((item1, item2) -> AlphanumComparator.compareStrings(item1.getYear(), item2.getYear()))
                 .thenComparing(TITLE_COMPARATOR);
     }
 
     public static Comparator<IBaseBookItem> getParodyComparator() {
         return ((Comparator<IBaseBookItem>) (item1, item2) -> AlphanumComparator.compareStrings(
-                GUArray.safeGetString(GUArray.splitString(item1.getParodies()), 0, ""),
-                GUArray.safeGetString(GUArray.splitString(item2.getParodies()), 0, "")
+                ArrayUtils.safeGetString(ArrayUtils.splitString(item1.getParodies()), 0, ""),
+                ArrayUtils.safeGetString(ArrayUtils.splitString(item2.getParodies()), 0, "")
         )).thenComparing(TITLE_COMPARATOR);
     }
 
@@ -325,7 +324,7 @@ public class FilteredBooksRepository {
 
     private static long getLastReadForBook(IBaseBookItem bookItem) {
         return Optional.ofNullable(bookItem.getVolumes())
-                .filter(GUArray::isNotEmpty)
+                .filter(ArrayUtils::isNotEmpty)
                 .map(list -> list.stream()
                         .map(VolumeItem::getHistory)
                         .filter(Objects::nonNull).max(Comparator.comparingLong(History::getLastReadAt))
@@ -341,7 +340,7 @@ public class FilteredBooksRepository {
 
         items = items.stream()
                 .filter(item -> contentType != null ? item.getContentType() == contentType && !item.isRemoved() : !item.isRemoved())
-                .filter(item -> GUString.isEmpty(category) || Optional.ofNullable(item.getCategories())
+                .filter(item -> StringUtils.isEmpty(category) || Optional.ofNullable(item.getCategories())
                         .map(categories -> categories.contains(category))
                         .orElse(false))
                 .collect(Collectors.toList());
@@ -385,21 +384,21 @@ public class FilteredBooksRepository {
             fillSetWithEnumName(colors, item.getColor());
             fillSetWithEnumName(ageRatings, item.getAgeRating());
 
-            GUArray.fillSetWithStringAsArray(authors, item.getAuthors());
-            GUArray.fillSetWithStringAsArray(artists, item.getArtists());
-            GUArray.fillSetWithList(publishers, Collections.singletonList(item.getPublisher()));
-            GUArray.fillSetWithStringAsArray(translators, item.getTranslators());
-            GUArray.fillSetWithStringAsArray(genres, item.getGenres());
-            GUArray.fillSetWithStringAsArray(tags, item.getTags());
-            GUArray.fillSetWithList(years, Collections.singletonList(item.getYear()));
-            GUArray.fillSetWithList(countries, Collections.singletonList(item.getCountry()));
-            GUArray.fillSetWithStringAsArray(languages, item.getLanguage());
-            GUArray.fillSetWithList(events, Collections.singletonList(item.getEvent()));
-            GUArray.fillSetWithStringAsArray(characters, item.getCharacters());
-            GUArray.fillSetWithStringAsArray(series, item.getSeries());
-            GUArray.fillSetWithStringAsArray(parodies, item.getParodies());
-            GUArray.fillSetWithStringAsArray(circles, item.getCircles());
-            GUArray.fillSetWithStringAsArray(magazines, item.getMagazines());
+            ArrayUtils.fillSetWithStringAsArray(authors, item.getAuthors());
+            ArrayUtils.fillSetWithStringAsArray(artists, item.getArtists());
+            ArrayUtils.fillSetWithList(publishers, Collections.singletonList(item.getPublisher()));
+            ArrayUtils.fillSetWithStringAsArray(translators, item.getTranslators());
+            ArrayUtils.fillSetWithStringAsArray(genres, item.getGenres());
+            ArrayUtils.fillSetWithStringAsArray(tags, item.getTags());
+            ArrayUtils.fillSetWithList(years, Collections.singletonList(item.getYear()));
+            ArrayUtils.fillSetWithList(countries, Collections.singletonList(item.getCountry()));
+            ArrayUtils.fillSetWithStringAsArray(languages, item.getLanguage());
+            ArrayUtils.fillSetWithList(events, Collections.singletonList(item.getEvent()));
+            ArrayUtils.fillSetWithStringAsArray(characters, item.getCharacters());
+            ArrayUtils.fillSetWithStringAsArray(series, item.getSeries());
+            ArrayUtils.fillSetWithStringAsArray(parodies, item.getParodies());
+            ArrayUtils.fillSetWithStringAsArray(circles, item.getCircles());
+            ArrayUtils.fillSetWithStringAsArray(magazines, item.getMagazines());
         });
 
         createFiltersFromSets(filters, sort, contentTypes, statuses, translationStatuses, plotTypes, censorships, colors, ageRatings, authors, artists,
@@ -443,13 +442,13 @@ public class FilteredBooksRepository {
     }
 
     private static void safeAddCollectionIntoFiltersList(List<Filters> filters, Collection<String> collection, String id, boolean hasAndMode, boolean singleMode) {
-        if (GUArray.isNotEmpty(collection)) {
+        if (ArrayUtils.isNotEmpty(collection)) {
             filters.add(Filters.create(id, Localizr.toLocale("filters." + id), hasAndMode, singleMode, new ArrayList<>(collection)));
         }
     }
 
     private static void fillListWithEnumNames(List<String> set, Class<? extends Enum<?>> e) {
-        String[] names = GUEnum.getNames(e);
+        String[] names = EnumUtils.getNames(e);
         for (String name : names) {
             fillListWithEnumName(set, name);
         }
@@ -460,14 +459,14 @@ public class FilteredBooksRepository {
     }
 
     private static void fillListWithEnumName(List<String> set, String enumName) {
-        if (GUString.isEmpty(enumName)) {
+        if (StringUtils.isEmpty(enumName)) {
             return;
         }
         set.add(enumName);
     }
 
     private static void fillSetWithEnumNames(Set<String> set, Class<? extends Enum<?>> e) {
-        String[] names = GUEnum.getNames(e);
+        String[] names = EnumUtils.getNames(e);
         for (String name : names) {
             fillSetWithEnumName(set, name);
         }
@@ -478,7 +477,7 @@ public class FilteredBooksRepository {
     }
 
     private static void fillSetWithEnumName(Set<String> set, String enumName) {
-        if (GUString.isEmpty(enumName)) {
+        if (StringUtils.isEmpty(enumName)) {
             return;
         }
         set.add(enumName);
@@ -486,8 +485,8 @@ public class FilteredBooksRepository {
 
     public static boolean isNotInSet(String itemsStr, Set<String> set) {
         return Optional.ofNullable(itemsStr)
-                .filter(GUString::isNotEmpty)
-                .map(items -> GUArray.splitString(items, ","))
+                .filter(StringUtils::isNotEmpty)
+                .map(items -> ArrayUtils.splitString(items, ","))
                 .map(Collection::stream)
                 .map(stream -> stream.map(String::toLowerCase))
                 .map(stream -> stream.noneMatch(set::contains))

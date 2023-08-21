@@ -6,12 +6,11 @@ import com.atsumeru.web.model.book.BookSerie;
 import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.repository.BooksDatabaseRepository;
 import com.atsumeru.web.service.ImportService;
-import com.atsumeru.web.util.GUFile;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.FileUtils;
+import com.atsumeru.web.util.StringUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,11 +78,11 @@ public class FolderProperty {
     }
 
     public void createHash() {
-        this.hash = GUString.md5Hex(path);
+        this.hash = StringUtils.md5Hex(path);
     }
 
     public String getHash() {
-        if (GUString.isEmpty(hash)) {
+        if (StringUtils.isEmpty(hash)) {
             createHash();
         }
         return hash;
@@ -116,8 +115,8 @@ public class FolderProperty {
             try {
                 return Files.list(file.getParentFile().toPath())
                         .map(Path::toFile)
-                        .filter(file1 -> !GUString.equalsIgnoreCase(file1.getName(), ReadableContent.EXTERNAL_INFO_DIRECTORY_NAME))
-                        .anyMatch(GUFile::isDirectory);
+                        .filter(file1 -> !StringUtils.equalsIgnoreCase(file1.getName(), ReadableContent.EXTERNAL_INFO_DIRECTORY_NAME))
+                        .anyMatch(FileUtils::isDirectory);
             } catch (IOException e) {
                 return false;
             }
@@ -127,7 +126,7 @@ public class FolderProperty {
     }
 
     public List<File> getArchivesInFolder() {
-        return Importer.listArchives(GUFile.removeLastPathSlash(getPath()), isRecursiveImport());
+        return Importer.listArchives(FileUtils.removeLastPathSlash(getPath()), isRecursiveImport());
     }
 
     public void loadInLibraryBooks() {

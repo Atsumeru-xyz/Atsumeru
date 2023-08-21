@@ -8,9 +8,9 @@ import com.atsumeru.web.controller.rest.service.ServicesApiController;
 import com.atsumeru.web.helper.ServerHelper;
 import com.atsumeru.web.logger.FileLogger;
 import com.atsumeru.web.manager.Settings;
-import com.atsumeru.web.util.GUString;
-import com.atsumeru.web.util.GUType;
-import com.atsumeru.web.util.WorkspaceUtils;
+import com.atsumeru.web.util.StringUtils;
+import com.atsumeru.web.util.TypeUtils;
+import com.atsumeru.web.util.Workspace;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,13 +45,13 @@ public class RequestLogInterceptor implements HandlerInterceptor {
         boolean isServiceStatusRequest = isServiceStatusRequest(requestedUrl);
         if (isLoggableRequest(requestedUrl) && !isServiceStatusRequest) {
             boolean doNotTrack = Optional.ofNullable(request.getHeader("DNT"))
-                    .map(value -> GUType.getIntDef(value, 0))
+                    .map(value -> TypeUtils.getIntDef(value, 0))
                     .map(value -> value == 1)
                     .orElse(false);
 
             String ipAddress = !doNotTrack
                     ? Optional.ofNullable(request.getHeader("X-Forwarded-For"))
-                            .filter(GUString::isNotEmpty)
+                            .filter(StringUtils::isNotEmpty)
                             .orElseGet(request::getRemoteAddr)
                     : "Private";
 
@@ -93,6 +93,6 @@ public class RequestLogInterceptor implements HandlerInterceptor {
     }
 
     static {
-        fileLogger = FileLogger.createLogger("RequestLog", WorkspaceUtils.LOGS_DIR + "requests.log");
+        fileLogger = FileLogger.createLogger("RequestLog", Workspace.LOGS_DIR + "requests.log");
     }
 }

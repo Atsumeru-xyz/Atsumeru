@@ -3,9 +3,9 @@ package com.atsumeru.web.repository;
 import com.atsumeru.web.model.book.BaseBook;
 import com.atsumeru.web.model.book.BookSerie;
 import com.atsumeru.web.model.book.IBaseBookItem;
-import com.atsumeru.web.util.GUString;
-import com.atsumeru.web.util.ValuesMapper;
-import com.atsumeru.web.util.GUArray;
+import com.atsumeru.web.util.StringUtils;
+import com.atsumeru.web.helper.ValuesMapper;
+import com.atsumeru.web.util.ArrayUtils;
 import com.atsumeru.web.util.comparator.AlphanumComparator;
 import com.atsumeru.web.component.Localizr;
 import com.atsumeru.web.enums.LibraryPresentation;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -99,8 +98,8 @@ public class MetacategoryRepository {
                 .map(BookSerie.class::cast)
                 .filter(BaseBook::notRemoved)
                 .map(item -> ValuesMapper.getMangaValue(item, metacategoryId.toLowerCase(), false))
-                .map(GUString::trimSquareBrackets)
-                .map(GUArray::splitString)
+                .map(StringUtils::trimSquareBrackets)
+                .map(ArrayUtils::splitString)
                 .flatMap(Collection::stream)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 

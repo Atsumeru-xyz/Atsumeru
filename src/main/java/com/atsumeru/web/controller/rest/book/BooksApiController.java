@@ -8,8 +8,7 @@ import com.atsumeru.web.repository.BooksRepository;
 import com.atsumeru.web.repository.CategoryRepository;
 import com.atsumeru.web.repository.FilteredBooksRepository;
 import com.atsumeru.web.repository.UserDatabaseRepository;
-import com.atsumeru.web.util.GUString;
-import com.atsumeru.web.enums.*;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.helper.RestHelper;
 import com.atsumeru.web.manager.AtsumeruCacheManager;
 import com.atsumeru.web.manager.ImageCache;
@@ -18,7 +17,7 @@ import com.atsumeru.web.model.AtsumeruMessage;
 import com.atsumeru.web.model.book.chapter.BookChapter;
 import com.atsumeru.web.model.book.volume.VolumeItem;
 import com.atsumeru.web.model.filter.Filters;
-import com.atsumeru.web.util.GUArray;
+import com.atsumeru.web.util.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -73,7 +72,7 @@ public class BooksApiController {
                                         @RequestParam(value = "with_volumes", defaultValue = "false") boolean withVolumesAndHistory,
                                         @RequestParam(value = "with_chapters", defaultValue = "false") boolean withChapters,
                                         @RequestParam(value = "all", defaultValue = "false") boolean getAll) {
-        if (GUString.isEmpty(search)) {
+        if (StringUtils.isEmpty(search)) {
             return BooksRepository.getBooks(
                     userService.getUserFromRequest(request),
                     libraryPresentation,
@@ -241,7 +240,7 @@ public class BooksApiController {
     public List<VolumeItem> getVolumes(HttpServletRequest request,
                                        @PathVariable(value = "book_hash") String bookHash,
                                        @RequestParam(value = "with_chapters", defaultValue = "false") boolean withChapters) {
-        return GUArray.getNotNullList(BooksRepository.getBookDetails(userService.getUserFromRequest(request), bookHash, true, withChapters).getVolumes());
+        return ArrayUtils.getNotNullList(BooksRepository.getBookDetails(userService.getUserFromRequest(request), bookHash, true, withChapters).getVolumes());
     }
 
     @GetMapping(value = {

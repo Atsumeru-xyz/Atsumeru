@@ -1,6 +1,6 @@
 package com.atsumeru.web.model.book.service;
 
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.enums.ServiceType;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -30,11 +30,11 @@ public class BoundService {
     }
 
     public String getId() {
-        return getRealId(GUString.getFirstNotEmptyValue(id, link));
+        return getRealId(StringUtils.getFirstNotEmptyValue(id, link));
     }
 
     private String getRealId(String idOrLink) {
-        return GUString.startsWithIgnoreCase(idOrLink, "http")
+        return StringUtils.startsWithIgnoreCase(idOrLink, "http")
                 ? serviceType.extractId(idOrLink)
                 : idOrLink;
     }

@@ -4,10 +4,10 @@ import com.atsumeru.web.model.book.BookArchive;
 import com.atsumeru.web.model.book.BookSerie;
 import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.repository.dao.BooksDaoManager;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.model.book.chapter.BookChapter;
 import com.atsumeru.web.service.UserDatabaseDetailsService;
-import com.atsumeru.web.util.GUArray;
+import com.atsumeru.web.util.ArrayUtils;
 import com.atsumeru.web.enums.LibraryPresentation;
 import com.atsumeru.web.model.database.History;
 import com.atsumeru.web.model.database.User;
@@ -84,7 +84,7 @@ public class HistoryRepository {
 
         if (isSeries) {
             items = items.stream()
-                    .filter(bookItem -> GUArray.isNotEmpty(bookItem.getVolumes()))
+                    .filter(bookItem -> ArrayUtils.isNotEmpty(bookItem.getVolumes()))
                     .map(HistoryRepository::setVolumesHistoryAndMapToTriple)
                     .filter(triple -> triple.getSecond().get())
                     .sorted(Comparator.comparing(triple -> triple.getFirst().get(), Comparator.reverseOrder()))
@@ -151,12 +151,12 @@ public class HistoryRepository {
 
     public static void saveReadedPage(User user, String archiveHash, String chapterHash, int currentPage) {
         List<History> historyList = historyDao.queryByHashForUser(
-                GUString.isNotEmpty(chapterHash) ? chapterHash : archiveHash,
+                StringUtils.isNotEmpty(chapterHash) ? chapterHash : archiveHash,
                 String.valueOf(user.getId()),
-                GUString.isNotEmpty(chapterHash) ? BookChapter.class : BookArchive.class
+                StringUtils.isNotEmpty(chapterHash) ? BookChapter.class : BookArchive.class
         );
 
-        History historyItem = GUArray.isEmpty(historyList)
+        History historyItem = ArrayUtils.isEmpty(historyList)
                 ? createHistoryItem(user, archiveHash, chapterHash)
                 : historyList.get(0);
 
@@ -169,7 +169,7 @@ public class HistoryRepository {
         IBaseBookItem libraryItem;
         int pagesCount;
 
-        if (GUString.isNotEmpty(chapterHash)) {
+        if (StringUtils.isNotEmpty(chapterHash)) {
             BookChapter chapter = BooksRepository.getChapter(chapterHash);
             libraryItem = chapter.getArchive();
             pagesCount = chapter.getPagesCount();

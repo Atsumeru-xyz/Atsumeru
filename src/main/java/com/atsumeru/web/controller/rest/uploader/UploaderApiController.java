@@ -2,17 +2,17 @@ package com.atsumeru.web.controller.rest.uploader;
 
 import com.atsumeru.web.repository.BooksRepository;
 import com.atsumeru.web.util.ContentDetector;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.archive.CBZPacker;
 import com.atsumeru.web.manager.AtsumeruCacheManager;
 import com.atsumeru.web.archive.iterator.SevenZipIterator;
-import com.atsumeru.web.util.GUEnum;
-import com.atsumeru.web.util.GUFile;
+import com.atsumeru.web.util.EnumUtils;
+import com.atsumeru.web.util.FileUtils;
 import com.atsumeru.web.component.Localizr;
 import com.atsumeru.web.configuration.FileWatcherConfig;
 import com.atsumeru.web.helper.RestHelper;
 import com.atsumeru.web.model.AtsumeruMessage;
-import com.atsumeru.web.util.WorkspaceUtils;
+import com.atsumeru.web.util.Workspace;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public class UploaderApiController {
             );
         }
         if (!file.isEmpty()) {
-            if (GUString.isEmpty(file.getOriginalFilename())) {
+            if (StringUtils.isEmpty(file.getOriginalFilename())) {
                 return RestHelper.createResponseMessage(
                         Localizr.toLocale("error.upload.empty_filename"),
                         HttpStatus.NOT_ACCEPTABLE.value(),
@@ -69,7 +69,7 @@ public class UploaderApiController {
             ResponseEntity<AtsumeruMessage> message = writeMultipartFile(file, outputFile, overrideFile);
 
             if (repackArchive && ContentDetector.isRepackableArchive(outputFile.toPath())) {
-                return repackArchive(outputFile, GUEnum.valueOf(CBZPacker.ArchiveType.class, archiveType));
+                return repackArchive(outputFile, EnumUtils.valueOf(CBZPacker.ArchiveType.class, archiveType));
             }
 
             AtsumeruCacheManager.evictAll();
@@ -105,7 +105,7 @@ public class UploaderApiController {
                         HttpStatus.OK
                 );
             } finally {
-                GUFile.closeQuietly(bos);
+                FileUtils.closeQuietly(bos);
             }
         } else {
             return RestHelper.createResponseMessage(
@@ -120,11 +120,11 @@ public class UploaderApiController {
     private ResponseEntity<AtsumeruMessage> repackArchive(File inputFile, CBZPacker.ArchiveType archiveType) {
         String absoluteFilePath = inputFile.getAbsolutePath();
         String outputArchivePath = inputFile.getParent();
-        String fileName = GUFile.getFileName(absoluteFilePath);
-        String fileExt = GUFile.getFileExt(absoluteFilePath);
-        String outputTempDir = WorkspaceUtils.TEMP_DIR + GUFile.addPathSlash(fileName);
+        String fileName = FileUtils.getFileName(absoluteFilePath);
+        String fileExt = FileUtils.getFileExt(absoluteFilePath);
+        String outputTempDir = Workspace.TEMP_DIR + FileUtils.addPathSlash(fileName);
 
-        if (GUString.equalsIgnoreCase(fileExt, archiveType.toString())) {
+        if (StringUtils.equalsIgnoreCase(fileExt, archiveType.toString())) {
             return RestHelper.createResponseMessage(
                     Localizr.toLocale("success.upload.file_uploaded_not_repacked"),
                     HttpStatus.OK
@@ -146,7 +146,7 @@ public class UploaderApiController {
 
             packer.pack();
             inputFile.delete();
-            GUFile.deleteDirectory(new File(outputTempDir));
+            FileUtils.deleteDirectory(new File(outputTempDir));
             logger.info("Deleted file after repack: " + absoluteFilePath);
 
             return RestHelper.createResponseMessage(

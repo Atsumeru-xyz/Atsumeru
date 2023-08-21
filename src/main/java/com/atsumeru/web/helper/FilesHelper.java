@@ -15,8 +15,8 @@ import com.atsumeru.web.repository.BooksRepository;
 import com.atsumeru.web.repository.dao.BooksDaoManager;
 import com.atsumeru.web.service.UserDatabaseDetailsService;
 import com.atsumeru.web.util.ContentDetector;
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUFile;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.security.core.Authentication;
 
@@ -89,7 +89,7 @@ public class FilesHelper {
     private static void getOriginalImageFromArchive(HttpServletResponse response, String imageHash, boolean convertImage) {
         if (BooksRepository.isSeriesHash(imageHash)) {
             List<IBaseBookItem> archivesList = BooksRepository.getArchivesForSerie(imageHash);
-            if (GUArray.isNotEmpty(archivesList)) {
+            if (ArrayUtils.isNotEmpty(archivesList)) {
                 IBaseBookItem book = archivesList.get(0);
 
                 File externalCover = ReadableContent.getSerieExternalCover(book.getFolder());
@@ -119,7 +119,7 @@ public class FilesHelper {
         if (BooksRepository.isSeriesHash(itemHash)) {
             asSingle = BooksRepository.getBookDetails(itemHash).isSingle();
             List<IBaseBookItem> archivesList = BooksRepository.getArchivesForSerie(imageHash);
-            if (GUArray.isNotEmpty(archivesList)) {
+            if (ArrayUtils.isNotEmpty(archivesList)) {
                 itemHash = archivesList.get(0).getCover();
             }
         }
@@ -127,7 +127,7 @@ public class FilesHelper {
         BooksDaoManager daoManager = BooksDatabaseRepository.getInstance().getDaoManager();
         List<BookArchive> archives = daoManager.query(itemHash, BookArchive.class);
 
-        if (GUArray.isNotEmpty(archives)) {
+        if (ArrayUtils.isNotEmpty(archives)) {
             Images images = ReadableContent.saveCoverImage(archives.get(0), asSingle);
             archives.forEach(baseBook -> {
                 baseBook.setCoverAccent(Optional.ofNullable(images)
@@ -137,14 +137,14 @@ public class FilesHelper {
             });
         }
 
-        return GUFile.isFileExist(ImageCache.getImage(imageHash, Constants.PNG, ImageCache.ImageCacheType.THUMBNAIL));
+        return FileUtils.isFileExist(ImageCache.getImage(imageHash, Constants.PNG, ImageCache.ImageCacheType.THUMBNAIL));
     }
 
     private static void writeResponseStream(HttpServletResponse response, File file) throws FileNotFoundException {
         try (FileInputStream fis = new FileInputStream(file)) {
             response.setContentType(Files.probeContentType(file.toPath()));
             response.setContentLength((int) file.length());
-            response.setHeader("Content-Disposition", "attachment; filename=" + GUFile.getFileNameWithExt(file.getPath(), true));
+            response.setHeader("Content-Disposition", "attachment; filename=" + FileUtils.getFileNameWithExt(file.getPath(), true));
             IOUtils.copy(fis, response.getOutputStream());
         } catch (IOException ex) {
             throw new FileNotFoundException(ex.getMessage());
@@ -185,7 +185,7 @@ public class FilesHelper {
     public static String safeProbeContentType(String path) {
         try {
             return Optional.ofNullable(Files.probeContentType(Paths.get(path)))
-                    .orElseGet(() -> MIME_TYPES.get(GUFile.getFileExt(path).toLowerCase()));
+                    .orElseGet(() -> MIME_TYPES.get(FileUtils.getFileExt(path).toLowerCase()));
         } catch (Exception ex) {
             return "image/jpeg";
         }

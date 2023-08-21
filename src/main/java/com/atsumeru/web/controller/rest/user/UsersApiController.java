@@ -8,14 +8,14 @@ import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.repository.BooksDatabaseRepository;
 import com.atsumeru.web.repository.CategoryRepository;
 import com.atsumeru.web.repository.UserDatabaseRepository;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.enums.LibraryPresentation;
 import com.atsumeru.web.helper.RestHelper;
 import com.atsumeru.web.manager.AtsumeruCacheManager;
 import com.atsumeru.web.model.AtsumeruMessage;
 import com.atsumeru.web.model.UserAccessConstants;
 import com.atsumeru.web.model.database.User;
-import com.atsumeru.web.util.GUArray;
+import com.atsumeru.web.util.ArrayUtils;
 import com.atsumeru.web.util.comparator.AlphanumComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,8 +64,8 @@ public class UsersApiController {
                         .stream()
                         .map(IBaseBookItem.class::cast)
                         .map(IBaseBookItem::getTags)
-                        .filter(GUString::isNotEmpty)
-                        .map(GUArray::splitString)
+                        .filter(StringUtils::isNotEmpty)
+                        .map(ArrayUtils::splitString)
                         .flatMap(Collection::stream)
                         .distinct()
                         .sorted(AlphanumComparator::compareStrings)
@@ -80,7 +80,7 @@ public class UsersApiController {
         String responseMessage = checkUserCreateOrUpdateError(user, userExists, false);
         HttpStatus statusCode = HttpStatus.BAD_REQUEST;
 
-        if (GUString.isEmpty(responseMessage)) {
+        if (StringUtils.isEmpty(responseMessage)) {
             userService.saveUser(user, true);
             responseMessage = String.valueOf(userService.getUserByUsername(user.getUserName()).getId());
             statusCode = HttpStatus.CREATED;
@@ -99,9 +99,9 @@ public class UsersApiController {
         String responseMessage = checkUserCreateOrUpdateError(user, anotherUsersWithUsernameExists, true);
         HttpStatus statusCode = HttpStatus.BAD_REQUEST;
 
-        if (GUString.isEmpty(responseMessage)) {
+        if (StringUtils.isEmpty(responseMessage)) {
             userInDb = userService.getUserById(user.getId());
-            if (GUString.isEmpty(user.getPassword())) {
+            if (StringUtils.isEmpty(user.getPassword())) {
                 user.setPassword(userInDb.getPassword());
             }
             userService.saveUser(user, !user.getPassword().equals(userInDb.getPassword()));
@@ -125,11 +125,11 @@ public class UsersApiController {
 
     @Nullable
     private String checkUserCreateOrUpdateError(@NonNull User user, boolean userExists, boolean allowEmptyPassword) {
-        if (!allowEmptyPassword && (GUString.isEmpty(user.getPassword()) || user.getPassword().length() < 6)) {
+        if (!allowEmptyPassword && (StringUtils.isEmpty(user.getPassword()) || user.getPassword().length() < 6)) {
             return "Password must be at least 6 characters long!";
-        } else if (GUString.isEmpty(user.getUserName())) {
+        } else if (StringUtils.isEmpty(user.getUserName())) {
             return "Username can't be empty!";
-        } else if (GUString.isEmpty(user.getRoles())) {
+        } else if (StringUtils.isEmpty(user.getRoles())) {
             return "Roles can't be empty!";
         } else if (userExists) {
             return "User " + user.getUserName() + " already exists!";

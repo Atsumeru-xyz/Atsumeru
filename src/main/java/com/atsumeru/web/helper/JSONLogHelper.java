@@ -1,7 +1,7 @@
 package com.atsumeru.web.helper;
 
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,7 +10,7 @@ import java.util.Collection;
 public class JSONLogHelper {
 
     public static void putJSON(JSONObject obj, String name, Collection<?> collection) throws JSONException {
-        if (GUArray.isNotEmpty(collection)) {
+        if (ArrayUtils.isNotEmpty(collection)) {
             obj.put(name, collection);
         }
     }
@@ -22,7 +22,7 @@ public class JSONLogHelper {
     }
 
     public static void putJSON(JSONObject obj, String name, String value) throws JSONException {
-        if (!GUString.isEmpty(value)) {
+        if (!StringUtils.isEmpty(value)) {
             obj.put(name, value);
         }
     }

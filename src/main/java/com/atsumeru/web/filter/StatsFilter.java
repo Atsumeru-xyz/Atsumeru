@@ -1,6 +1,6 @@
 package com.atsumeru.web.filter;
 
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.controller.rest.service.ServicesApiController;
 import com.atsumeru.web.helper.JavaHelper;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class StatsFilter implements Filter {
         try {
             chain.doFilter(req, resp);
         } finally {
-            if (JavaHelper.isDebug() && !GUString.equalsIgnoreCase(requestURI, ServicesApiController.getStatusEndpoint())) {
+            if (JavaHelper.isDebug() && !StringUtils.equalsIgnoreCase(requestURI, ServicesApiController.getStatusEndpoint())) {
                 Instant finish = Instant.now();
                 long time = Duration.between(start, finish).toMillis();
                 logger.info("{}: {} ms ", requestURI, time);

@@ -1,7 +1,7 @@
 package com.atsumeru.web.model.database;
 
 import com.atsumeru.web.component.Localizr;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.enums.ContentType;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -52,12 +52,12 @@ public class Category {
     }
 
     public static Category createFromName(String categoryName, int order) {
-        return new Category(CATEGORY_TAG + GUString.md5Hex(categoryName), categoryName, null, order);
+        return new Category(CATEGORY_TAG + StringUtils.md5Hex(categoryName), categoryName, null, order);
     }
 
     public static Category createFromContentType(ContentType contentType, int order) {
         return new Category(
-                CATEGORY_TAG + GUString.md5Hex(contentType.name() + contentType.ordinal()),
+                CATEGORY_TAG + StringUtils.md5Hex(contentType.name() + contentType.ordinal()),
                 Localizr.toLocale("enum." + contentType.name().toLowerCase()),
                 contentType,
                 order

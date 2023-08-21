@@ -1,6 +1,6 @@
 package com.atsumeru.web.archive;
 
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
@@ -131,7 +131,7 @@ public class CBZPacker {
     }
 
     private String fixPath(String path) {
-        if (GUString.isEmpty(path)) {
+        if (StringUtils.isEmpty(path)) {
             return path;
         }
         if (path.endsWith("\"")) {

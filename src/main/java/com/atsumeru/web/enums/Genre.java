@@ -1,6 +1,6 @@
 package com.atsumeru.web.enums;
 
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,7 +95,7 @@ public enum Genre {
     }
 
     public static boolean addGenreFromString(ArrayList<Genre> genres, String genreStr) {
-        if (GUString.isEmpty(genreStr)) {
+        if (StringUtils.isEmpty(genreStr)) {
             return false;
         }
         genreStr = genreStr.toLowerCase().trim();

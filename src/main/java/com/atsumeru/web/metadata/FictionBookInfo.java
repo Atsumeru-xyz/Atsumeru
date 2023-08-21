@@ -2,7 +2,7 @@ package com.atsumeru.web.metadata;
 
 import com.atsumeru.web.component.Localizr;
 import com.atsumeru.web.model.book.BookArchive;
-import com.atsumeru.web.util.GUType;
+import com.atsumeru.web.util.TypeUtils;
 import com.kursx.parser.fb2.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -41,7 +41,7 @@ public class FictionBookInfo {
             bookArchive.setLanguage(fictionBook.getLang());
             bookArchive.setVolume(Optional.ofNullable(titleInfo.getSequence())
                     .map(Sequence::getNumber)
-                    .map(number -> GUType.getFloatDef(number, -1f))
+                    .map(number -> TypeUtils.getFloatDef(number, -1f))
                     .orElse(-1f));
             bookArchive.setTags(titleInfo.getGenres()
                     .stream()

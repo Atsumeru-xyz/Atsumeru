@@ -1,7 +1,7 @@
 package com.atsumeru.web.enums;
 
 import com.atsumeru.web.model.database.DatabaseFields;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
@@ -44,7 +44,7 @@ public enum ServiceType {
                 secondGroup = matcher.group(2);
             } catch (Exception ignored) {
             }
-            return GUString.getFirstNotEmptyValue(firstGroup, secondGroup);
+            return StringUtils.getFirstNotEmptyValue(firstGroup, secondGroup);
         }
         return null;
     }
@@ -55,7 +55,7 @@ public enum ServiceType {
 
     public static @Nullable ServiceType getTypeBySimpleName(@Nullable String name) {
         return Arrays.stream(ServiceType.values())
-                .filter(serviceType -> GUString.equalsIgnoreCase(serviceType.name(), name) || GUString.equalsIgnoreCase(serviceType.getSimpleName(), name))
+                .filter(serviceType -> StringUtils.equalsIgnoreCase(serviceType.name(), name) || StringUtils.equalsIgnoreCase(serviceType.getSimpleName(), name))
                 .findFirst()
                 .orElse(null);
     }

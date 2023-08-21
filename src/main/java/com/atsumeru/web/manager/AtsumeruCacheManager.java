@@ -1,7 +1,7 @@
 package com.atsumeru.web.manager;
 
 import com.djvu2image.DjVuBook;
-import com.atsumeru.web.util.GUFile;
+import com.atsumeru.web.util.FileUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -33,7 +33,7 @@ public class AtsumeruCacheManager extends CachingConfigurerSupport implements Ap
     public static final Cache<File, PDDocument> PDF_CACHE = Caffeine.newBuilder()
             .maximumSize(20)
             .expireAfterAccess(1, TimeUnit.MINUTES)
-            .removalListener((file, pdf, cause) -> GUFile.closeQuietly((Closeable) pdf))
+            .removalListener((file, pdf, cause) -> FileUtils.closeQuietly((Closeable) pdf))
             .build();
 
     public static final Cache<File, DjVuBook> DJVU_CACHE = Caffeine.newBuilder()

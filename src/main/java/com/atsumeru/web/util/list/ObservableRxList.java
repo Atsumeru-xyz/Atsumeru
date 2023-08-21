@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+@Deprecated
 public class ObservableRxList<T> {
     protected final List<T> list;
     protected final PublishSubject<List<T>> subject;

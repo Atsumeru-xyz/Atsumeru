@@ -1,7 +1,7 @@
 package com.atsumeru.web;
 
 import com.atsumeru.web.repository.BooksDatabaseRepository;
-import com.atsumeru.web.util.WorkspaceUtils;
+import com.atsumeru.web.util.Workspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -19,13 +19,13 @@ import java.util.Arrays;
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class, JacksonAutoConfiguration.class })
 public class AtsumeruApplication implements ApplicationRunner {
     private static final Logger logger = LoggerFactory.getLogger(AtsumeruApplication.class.getSimpleName());
-    private static final String DB_PATH = WorkspaceUtils.DATABASES_DIR + "library.db";
+    private static final String DB_PATH = Workspace.DATABASES_DIR + "library.db";
 
     private static ConfigurableApplicationContext context;
 
     public static void main(String[] args) {
         setOrmLiteLogLevel();
-        WorkspaceUtils.configureWorkspace();
+        Workspace.configureWorkspace();
         BooksDatabaseRepository.connect(DB_PATH);
 
         context = SpringApplication.run(AtsumeruApplication.class, args);

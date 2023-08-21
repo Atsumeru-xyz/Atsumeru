@@ -3,12 +3,10 @@ package com.atsumeru.web.metadata;
 import com.atsumeru.web.enums.*;
 import com.atsumeru.web.model.book.BookSerie;
 import com.atsumeru.web.util.*;
-import com.atsumeru.web.enums.*;
 import com.atsumeru.web.helper.JSONHelper;
 import com.atsumeru.web.model.book.BookArchive;
 import com.atsumeru.web.model.book.chapter.BookChapter;
 import com.atsumeru.web.model.book.service.BoundService;
-import com.atsumeru.web.util.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,15 +44,15 @@ public class BookInfo {
         putJSON(obj, "description", archive.getDescription());
 
         // Info lists
-        putJSON(obj, "authors", GUArray.splitString(archive.getAuthors()));
-        putJSON(obj, "artists", GUArray.splitString(archive.getArtists()));
-        putJSON(obj, "languages", GUArray.splitString(archive.getLanguage()));
-        putJSON(obj, "translators", GUArray.splitString(archive.getTranslators()));
-        putJSON(obj, "series", GUArray.splitString(archive.getSeries()));
-        putJSON(obj, "parodies", GUArray.splitString(archive.getParodies()));
-        putJSON(obj, "circles", GUArray.splitString(archive.getCircles()));
-        putJSON(obj, "magazines", GUArray.splitString(archive.getMagazines()));
-        putJSON(obj, "characters", GUArray.splitString(archive.getCharacters()));
+        putJSON(obj, "authors", ArrayUtils.splitString(archive.getAuthors()));
+        putJSON(obj, "artists", ArrayUtils.splitString(archive.getArtists()));
+        putJSON(obj, "languages", ArrayUtils.splitString(archive.getLanguage()));
+        putJSON(obj, "translators", ArrayUtils.splitString(archive.getTranslators()));
+        putJSON(obj, "series", ArrayUtils.splitString(archive.getSeries()));
+        putJSON(obj, "parodies", ArrayUtils.splitString(archive.getParodies()));
+        putJSON(obj, "circles", ArrayUtils.splitString(archive.getCircles()));
+        putJSON(obj, "magazines", ArrayUtils.splitString(archive.getMagazines()));
+        putJSON(obj, "characters", ArrayUtils.splitString(archive.getCharacters()));
 
         // Volumes/Chapters
         putJSON(obj, "volume", archive.getVolume());
@@ -62,8 +60,8 @@ public class BookInfo {
         putJSON(obj, "chapters", archive.getChaptersCount());
 
         // Genres/Tags
-        putJSON(obj, "genres", GUArray.splitString(archive.getGenres()));
-        putJSON(obj, "tags", GUArray.splitString(archive.getTags()));
+        putJSON(obj, "genres", ArrayUtils.splitString(archive.getGenres()));
+        putJSON(obj, "tags", ArrayUtils.splitString(archive.getTags()));
 
         // Age Rating
         putJSON(obj, "age_rating", archive.getAgeRating());
@@ -98,7 +96,7 @@ public class BookInfo {
         }
 
         // Basic Metadata
-        archive.setIsUniqueContentID(GUString.isNotEmpty(archive.getContentId()));
+        archive.setIsUniqueContentID(StringUtils.isNotEmpty(archive.getContentId()));
         archive.setContentLink(JSONHelper.getStringSafe(obj, "link"));
         archive.setContentLinks(getLinks(obj));
         archive.setCover(JSONHelper.getStringSafe(obj, "cover"));
@@ -114,11 +112,11 @@ public class BookInfo {
         // Main info
         List<String> authors = JSONHelper.getStringList(obj, "authors");
         String author = JSONHelper.getStringSafe(obj, "author");
-        if (GUString.isNotEmpty(author)) {
+        if (StringUtils.isNotEmpty(author)) {
             authors.add(author);
         }
 
-        archive.setAuthors(GUString.join(",", authors));
+        archive.setAuthors(StringUtils.join(",", authors));
         archive.setCountry(JSONHelper.getStringSafe(obj, "country"));
         archive.setPublisher(JSONHelper.getStringSafe(obj, "publisher"));
         archive.setYear(JSONHelper.getStringSafe(obj, "published"));
@@ -127,30 +125,30 @@ public class BookInfo {
         archive.setChaptersCount(getChaptersCount(obj));
 
         archive.setGenres(getGenres(obj));
-        archive.setTags(GUString.join(",", JSONHelper.getStringList(obj, "tags")));
-        archive.setArtists(GUString.join(",", JSONHelper.getStringList(obj, "artists")));
-        archive.setTranslators(GUString.join(",", JSONHelper.getStringList(obj, "translators")));
-        archive.setLanguage(GUString.join(",", JSONHelper.getStringList(obj, "languages")));
-        archive.setSeries(GUString.join(",", JSONHelper.getStringList(obj, "series")));
-        archive.setParodies(GUString.join(",", JSONHelper.getStringList(obj, "parodies")));
-        archive.setCircles(GUString.join(",", JSONHelper.getStringList(obj, "circles")));
-        archive.setMagazines(GUString.join(",", JSONHelper.getStringList(obj, "magazines")));
-        archive.setCharacters(GUString.join(",", JSONHelper.getStringList(obj, "characters")));
+        archive.setTags(StringUtils.join(",", JSONHelper.getStringList(obj, "tags")));
+        archive.setArtists(StringUtils.join(",", JSONHelper.getStringList(obj, "artists")));
+        archive.setTranslators(StringUtils.join(",", JSONHelper.getStringList(obj, "translators")));
+        archive.setLanguage(StringUtils.join(",", JSONHelper.getStringList(obj, "languages")));
+        archive.setSeries(StringUtils.join(",", JSONHelper.getStringList(obj, "series")));
+        archive.setParodies(StringUtils.join(",", JSONHelper.getStringList(obj, "parodies")));
+        archive.setCircles(StringUtils.join(",", JSONHelper.getStringList(obj, "circles")));
+        archive.setMagazines(StringUtils.join(",", JSONHelper.getStringList(obj, "magazines")));
+        archive.setCharacters(StringUtils.join(",", JSONHelper.getStringList(obj, "characters")));
         archive.setEvent(JSONHelper.getStringSafe(obj, "event"));
         archive.setDescription(JSONHelper.getStringSafe(obj, "description"));
 
         // Age Rating
-        AgeRating ageRating = GUEnum.valueOf(AgeRating.class, JSONHelper.getStringSafe(obj, "age_rating"));
+        AgeRating ageRating = EnumUtils.valueOf(AgeRating.class, JSONHelper.getStringSafe(obj, "age_rating"));
         archive.setIsMature(ageRating == AgeRating.MATURE);
         archive.setIsAdult(ageRating == AgeRating.ADULTS_ONLY);
 
         // Statuses
-        archive.setStatus(GUEnum.valueOf(Status.class, JSONHelper.getStringSafe(obj, "status")).toString());
-        archive.setTranslationStatus(GUEnum.valueOf(TranslationStatus.class, JSONHelper.getStringSafe(obj, "translation_status")).toString());
-        archive.setPlotType(GUEnum.valueOf(PlotType.class, JSONHelper.getStringSafe(obj, "plot_type")).toString());
-        archive.setCensorship(GUEnum.valueOf(Censorship.class, JSONHelper.getStringSafe(obj, "censorship")).toString());
-        archive.setContentType(GUEnum.valueOf(ContentType.class, JSONHelper.getStringSafe(obj, "content_type")).toString());
-        archive.setColor(GUEnum.valueOf(Color.class, JSONHelper.getStringSafe(obj, "color")).toString());
+        archive.setStatus(EnumUtils.valueOf(Status.class, JSONHelper.getStringSafe(obj, "status")).toString());
+        archive.setTranslationStatus(EnumUtils.valueOf(TranslationStatus.class, JSONHelper.getStringSafe(obj, "translation_status")).toString());
+        archive.setPlotType(EnumUtils.valueOf(PlotType.class, JSONHelper.getStringSafe(obj, "plot_type")).toString());
+        archive.setCensorship(EnumUtils.valueOf(Censorship.class, JSONHelper.getStringSafe(obj, "censorship")).toString());
+        archive.setContentType(EnumUtils.valueOf(ContentType.class, JSONHelper.getStringSafe(obj, "content_type")).toString());
+        archive.setColor(EnumUtils.valueOf(Color.class, JSONHelper.getStringSafe(obj, "color")).toString());
 
         // Score
         archive.setScore(
@@ -182,16 +180,16 @@ public class BookInfo {
         putJSON(obj, "description", chapter.getDescription());
 
         // Info lists
-        putJSON(obj, "authors", GUArray.splitString(chapter.getAuthors()));
-        putJSON(obj, "artists", GUArray.splitString(chapter.getArtists()));
-        putJSON(obj, "languages", GUArray.splitString(chapter.getLanguage()));
-        putJSON(obj, "translators", GUArray.splitString(chapter.getTranslators()));
-        putJSON(obj, "parodies", GUArray.splitString(chapter.getParodies()));
-        putJSON(obj, "characters", GUArray.splitString(chapter.getCharacters()));
+        putJSON(obj, "authors", ArrayUtils.splitString(chapter.getAuthors()));
+        putJSON(obj, "artists", ArrayUtils.splitString(chapter.getArtists()));
+        putJSON(obj, "languages", ArrayUtils.splitString(chapter.getLanguage()));
+        putJSON(obj, "translators", ArrayUtils.splitString(chapter.getTranslators()));
+        putJSON(obj, "parodies", ArrayUtils.splitString(chapter.getParodies()));
+        putJSON(obj, "characters", ArrayUtils.splitString(chapter.getCharacters()));
 
         // Genres/Tags
-        putJSON(obj, "genres", GUArray.splitString(chapter.getGenres()));
-        putJSON(obj, "tags", GUArray.splitString(chapter.getTags()));
+        putJSON(obj, "genres", ArrayUtils.splitString(chapter.getGenres()));
+        putJSON(obj, "tags", ArrayUtils.splitString(chapter.getTags()));
 
         // Statuses
         putJSON(obj, "censorship", chapter.getCensorship());
@@ -206,8 +204,8 @@ public class BookInfo {
         chapter.setTitle(
                 NotEmptyString.ofNullable(JSONHelper.getStringSafe(obj, "title"))
                         .orElse(NotEmptyString.ofNullable(chapterFolder)
-                                .apply(GUFile::getDirName)
-                                .orElse(GUFile.getFileName(archivePath)))
+                                .apply(FileUtils::getDirName)
+                                .orElse(FileUtils.getFileName(archivePath)))
         );
         chapter.setAltTitle(JSONHelper.getStringSafe(obj, "alt_title"));
 
@@ -216,34 +214,34 @@ public class BookInfo {
                 Optional.ofNullable(JSONHelper.getObjectSafe(obj, "atsumeru"))
                         .map(atsumeruObj ->
                                 Optional.ofNullable(JSONHelper.getStringSafe(atsumeruObj, "hash"))
-                                        .orElseGet(() -> GUString.md5Hex(archiveHash + chapter.getTitle()))
+                                        .orElseGet(() -> StringUtils.md5Hex(archiveHash + chapter.getTitle()))
                         )
-                        .orElse(GUString.md5Hex(archiveHash + chapter.getTitle()))
+                        .orElse(StringUtils.md5Hex(archiveHash + chapter.getTitle()))
         );
 
         chapter.setFolder(chapterFolder);
 
-        chapter.setAuthors(GUString.join(",", JSONHelper.getStringList(obj, "authors")));
-        chapter.setArtists(GUString.join(",", JSONHelper.getStringList(obj, "artists")));
-        chapter.setTranslators(GUString.join(",", JSONHelper.getStringList(obj, "translators")));
-        chapter.setLanguage(GUString.join(",", JSONHelper.getStringList(obj, "languages")));
-        chapter.setParodies(GUString.join(",", JSONHelper.getStringList(obj, "parodies")));
-        chapter.setCharacters(GUString.join(",", JSONHelper.getStringList(obj, "characters")));
+        chapter.setAuthors(StringUtils.join(",", JSONHelper.getStringList(obj, "authors")));
+        chapter.setArtists(StringUtils.join(",", JSONHelper.getStringList(obj, "artists")));
+        chapter.setTranslators(StringUtils.join(",", JSONHelper.getStringList(obj, "translators")));
+        chapter.setLanguage(StringUtils.join(",", JSONHelper.getStringList(obj, "languages")));
+        chapter.setParodies(StringUtils.join(",", JSONHelper.getStringList(obj, "parodies")));
+        chapter.setCharacters(StringUtils.join(",", JSONHelper.getStringList(obj, "characters")));
 
-        chapter.setCensorship(GUEnum.valueOf(Censorship.class, JSONHelper.getStringSafe(obj, "censorship")).toString());
-        chapter.setColor(GUEnum.valueOf(Color.class, JSONHelper.getStringSafe(obj, "color")).toString());
+        chapter.setCensorship(EnumUtils.valueOf(Censorship.class, JSONHelper.getStringSafe(obj, "censorship")).toString());
+        chapter.setColor(EnumUtils.valueOf(Color.class, JSONHelper.getStringSafe(obj, "color")).toString());
 
         chapter.setDescription(JSONHelper.getStringSafe(obj, "description"));
 
         chapter.setGenres(getGenres(obj));
-        chapter.setTags(GUString.join(",", JSONHelper.getStringList(obj, "tags")));
+        chapter.setTags(StringUtils.join(",", JSONHelper.getStringList(obj, "tags")));
     }
 
     private static String getGenres(JSONObject obj) {
         try {
             List<String> genreOrdinals = JSONHelper.getStringList(obj, "genres");
-            if (GUArray.isNotEmpty(genreOrdinals)) {
-                return GUString.join(",", genreOrdinals);
+            if (ArrayUtils.isNotEmpty(genreOrdinals)) {
+                return StringUtils.join(",", genreOrdinals);
             }
         } catch (Exception ignored) {
         }
@@ -258,14 +256,14 @@ public class BookInfo {
                 if (object instanceof JSONObject) {
                     JSONObject linksObject = (JSONObject) object;
                     String link = JSONHelper.getStringSafe(linksObject, "link");
-                    if (GUString.isNotEmpty(link)) {
+                    if (StringUtils.isNotEmpty(link)) {
                         links.add(link);
                     }
                 }
             }
         }
 
-        return GUString.join(",", links);
+        return StringUtils.join(",", links);
     }
 
     private static long getChaptersCount(JSONObject obj) {
@@ -284,12 +282,12 @@ public class BookInfo {
                 if (object instanceof JSONObject) {
                     JSONObject servicesObject = (JSONObject) object;
 
-                    ServiceType serviceType = GUEnum.valueOfOrNull(ServiceType.class, JSONHelper.getStringSafe(servicesObject, "service_type"));
+                    ServiceType serviceType = EnumUtils.valueOfOrNull(ServiceType.class, JSONHelper.getStringSafe(servicesObject, "service_type"));
                     if (serviceType != null) {
                         String id = JSONHelper.getStringSafe(servicesObject, "id");
                         String link = JSONHelper.getStringSafe(servicesObject, "link");
 
-                        if (GUString.isNotEmpty(id)) {
+                        if (StringUtils.isNotEmpty(id)) {
                             boundServices.add(new BoundService(serviceType, id, link));
                         }
                     }
@@ -309,14 +307,14 @@ public class BookInfo {
     }
 
     public static void putLinks(JSONObject obj, String linksStr) {
-        List<String> links = GUArray.splitString(linksStr, ",");
-        if (GUArray.isNotEmpty(links)) {
+        List<String> links = ArrayUtils.splitString(linksStr, ",");
+        if (ArrayUtils.isNotEmpty(links)) {
             JSONArray linksArray = new JSONArray();
             links.stream()
-                    .filter(GUString::isNotEmpty)
+                    .filter(StringUtils::isNotEmpty)
                     .forEach(link -> {
                         JSONObject linksObj = new JSONObject();
-                        putJSON(linksObj, "source", GULinks.getHostName(link));
+                        putJSON(linksObj, "source", LinkUtils.getHostName(link));
                         putJSON(linksObj, "link", link);
                         linksArray.put(linksObj);
                     });
@@ -326,7 +324,7 @@ public class BookInfo {
     }
 
     public static void putBoundServices(JSONObject obj, List<BoundService> boundServices) {
-        if (GUArray.isNotEmpty(boundServices)) {
+        if (ArrayUtils.isNotEmpty(boundServices)) {
             JSONArray servicesArray = new JSONArray();
 
             boundServices.forEach(boundService -> {

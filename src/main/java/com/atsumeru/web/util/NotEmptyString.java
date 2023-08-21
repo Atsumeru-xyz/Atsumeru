@@ -26,33 +26,33 @@ public class NotEmptyString {
     }
 
     public String get() {
-        if (GUString.isEmpty(value)) {
+        if (StringUtils.isEmpty(value)) {
             throw new NoSuchElementException("No value present");
         }
         return value;
     }
 
     public NotEmptyString apply(Function<String, String> function) {
-        if (GUString.isNotEmpty(value)) {
+        if (StringUtils.isNotEmpty(value)) {
             value = function.apply(value);
         }
         return this;
     }
 
     public boolean isPresent() {
-        return GUString.isNotEmpty(value);
+        return StringUtils.isNotEmpty(value);
     }
 
     public String orElse(String other) {
-        return GUString.isNotEmpty(value) ? value : other;
+        return StringUtils.isNotEmpty(value) ? value : other;
     }
 
     public String orElseGet(Supplier<String> other) {
-        return GUString.isNotEmpty(value) ? value : other.get();
+        return StringUtils.isNotEmpty(value) ? value : other.get();
     }
 
     public <X extends Throwable> String orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        if (GUString.isNotEmpty(value)) {
+        if (StringUtils.isNotEmpty(value)) {
             return value;
         } else {
             throw exceptionSupplier.get();

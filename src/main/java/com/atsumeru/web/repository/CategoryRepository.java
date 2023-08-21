@@ -1,12 +1,12 @@
 package com.atsumeru.web.repository;
 
 import com.atsumeru.web.model.book.BookSerie;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.repository.dao.BooksDaoManager;
 import com.atsumeru.web.model.book.IBaseBookItem;
 import com.atsumeru.web.enums.ContentType;
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUEnum;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.EnumUtils;
 import com.atsumeru.web.enums.LibraryPresentation;
 import com.atsumeru.web.model.database.Category;
 import lombok.Getter;
@@ -14,12 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -56,8 +54,8 @@ public class CategoryRepository {
                             .map(CategoryRepository::createDbIdForCategoryRealId)
                             .collect(Collectors.toList());
 
-                    String categories = GUString.join(",", dbCategories);
-                    bookItem.setCategories(GUString.isNotEmpty(categories) ? categories : null);
+                    String categories = StringUtils.join(",", dbCategories);
+                    bookItem.setCategories(StringUtils.isNotEmpty(categories) ? categories : null);
                 })
                 .collect(Collectors.toList());
 
@@ -71,7 +69,7 @@ public class CategoryRepository {
         changedCategories.forEach(changedCategory -> {
             Category categoryInDb = CategoryRepository.categories
                     .stream()
-                    .filter(category -> GUString.equalsIgnoreCase(category.getCategoryId(), changedCategory.getCategoryId()))
+                    .filter(category -> StringUtils.equalsIgnoreCase(category.getCategoryId(), changedCategory.getCategoryId()))
                     .findFirst()
                     .orElse(null);
 
@@ -86,7 +84,7 @@ public class CategoryRepository {
 
     public static boolean createCategory(String categoryName) {
         boolean hasCategory = getCategories().stream()
-                .anyMatch(category -> GUString.equalsIgnoreCase(categoryName, category.getName()));
+                .anyMatch(category -> StringUtils.equalsIgnoreCase(categoryName, category.getName()));
 
         if (!hasCategory) {
             daoManager.save(Category.createFromName(categoryName, CategoryRepository.getLastCategoryOrder()));
@@ -112,7 +110,7 @@ public class CategoryRepository {
 
     public static boolean deleteCategory(String categoryId) {
         boolean hasCategory = getCategories().stream()
-                .anyMatch(category -> GUString.equalsIgnoreCase(categoryId, category.getCategoryId()));
+                .anyMatch(category -> StringUtils.equalsIgnoreCase(categoryId, category.getCategoryId()));
 
         if (hasCategory) {
             daoManager.removeByColumnIn("CATEGORY_ID", Collections.singletonList(categoryId), Category.class);
@@ -126,7 +124,7 @@ public class CategoryRepository {
     public static ContentType getContentTypeForCategory(String categoryId, ContentType defaultType) {
         Category category = getCategoryById(categoryId);
         return Optional.ofNullable(category)
-                .map(value -> GUEnum.valueOfOrNull(ContentType.class, category.getContentType()))
+                .map(value -> EnumUtils.valueOfOrNull(ContentType.class, category.getContentType()))
                 .orElse(defaultType);
     }
 
@@ -140,7 +138,7 @@ public class CategoryRepository {
 
     public static String createDbIdForCategoryId(String categoryId) {
         Category category = getCategoryById(categoryId);
-        if (category != null && GUString.isEmpty(category.getContentType())) {
+        if (category != null && StringUtils.isEmpty(category.getContentType())) {
             return createDbIdForCategoryRealId(String.valueOf(category.getId()));
         }
         return null;
@@ -151,7 +149,7 @@ public class CategoryRepository {
     }
 
     public static int getLastCategoryOrder() {
-        Category lastCategory = GUArray.getLastItem(CategoryRepository.getCategories());
+        Category lastCategory = ArrayUtils.getLastItem(CategoryRepository.getCategories());
         if (lastCategory != null) {
             return lastCategory.getOrder() + 1;
         }
@@ -168,7 +166,7 @@ public class CategoryRepository {
 
         ContentType.getSupportedTypes().forEach(contentType -> {
             long count = daoManager.countForContentType(contentType, BookSerie.class);
-            if (count > 0 && categories.stream().noneMatch(category -> GUString.equalsIgnoreCase(contentType.name(), category.getContentType()))) {
+            if (count > 0 && categories.stream().noneMatch(category -> StringUtils.equalsIgnoreCase(contentType.name(), category.getContentType()))) {
                 Category category = Category.createFromContentType(contentType, CategoryRepository.getLastCategoryOrder());
                 categories.add(category);
                 daoManager.save(category);
@@ -184,7 +182,7 @@ public class CategoryRepository {
 
     public static Category getCategoryById(String id) {
         return categories.stream()
-                .filter(category -> GUString.equalsIgnoreCase(category.getCategoryId(), id))
+                .filter(category -> StringUtils.equalsIgnoreCase(category.getCategoryId(), id))
                 .findFirst()
                 .orElse(null);
     }
@@ -197,7 +195,7 @@ public class CategoryRepository {
     }
 
     public static boolean isCategoryAllowedForUser(Category category, Map<String, Category> allowedCategories) {
-        return GUArray.isEmpty(allowedCategories) || allowedCategories.containsKey(category.getCategoryId());
+        return ArrayUtils.isEmpty(allowedCategories) || allowedCategories.containsKey(category.getCategoryId());
     }
 
     static {

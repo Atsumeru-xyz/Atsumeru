@@ -1,12 +1,11 @@
 package com.atsumeru.web.model.book;
 
 import com.atsumeru.web.enums.*;
-import com.atsumeru.web.util.GUString;
-import com.atsumeru.web.enums.*;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.model.book.service.BoundService;
 import com.atsumeru.web.model.book.volume.VolumeItem;
 import com.atsumeru.web.enums.Genre;
-import com.atsumeru.web.util.GUEnum;
+import com.atsumeru.web.util.EnumUtils;
 import com.atsumeru.web.json.adapter.AdminFieldAdapter;
 import com.atsumeru.web.json.adapter.CategoriesFieldAdapter;
 import com.atsumeru.web.json.adapter.StringListBidirectionalAdapter;
@@ -391,32 +390,32 @@ public abstract class BaseBook implements IBaseBookItem {
 
     @Override
     public ContentType getContentType() {
-        return GUEnum.valueOf(ContentType.class, contentType);
+        return EnumUtils.valueOf(ContentType.class, contentType);
     }
 
     @Override
     public Status getStatus() {
-        return GUEnum.valueOf(Status.class, status);
+        return EnumUtils.valueOf(Status.class, status);
     }
 
     @Override
     public TranslationStatus getTranslationStatus() {
-        return GUEnum.valueOf(TranslationStatus.class, translationStatus);
+        return EnumUtils.valueOf(TranslationStatus.class, translationStatus);
     }
 
     @Override
     public PlotType getPlotType() {
-        return GUEnum.valueOf(PlotType.class, plotType);
+        return EnumUtils.valueOf(PlotType.class, plotType);
     }
 
     @Override
     public Censorship getCensorship() {
-        return GUEnum.valueOf(Censorship.class, censorship);
+        return EnumUtils.valueOf(Censorship.class, censorship);
     }
 
     @Override
     public Color getColor() {
-        return GUEnum.valueOf(Color.class, color);
+        return EnumUtils.valueOf(Color.class, color);
     }
 
     @Override
@@ -436,7 +435,7 @@ public abstract class BaseBook implements IBaseBookItem {
     }
 
     public void setCoverAccent(String accent) {
-        if (GUString.isEmpty(coverAccent)) {
+        if (StringUtils.isEmpty(coverAccent)) {
             coverAccent = accent;
         }
     }

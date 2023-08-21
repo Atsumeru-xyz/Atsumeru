@@ -3,9 +3,9 @@ package com.atsumeru.web.controller.rest.sync;
 import com.atsumeru.web.repository.BooksRepository;
 import com.atsumeru.web.repository.HistoryRepository;
 import com.atsumeru.web.repository.UserDatabaseRepository;
-import com.atsumeru.web.util.GUString;
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUType;
+import com.atsumeru.web.util.StringUtils;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.TypeUtils;
 import com.atsumeru.web.helper.RestHelper;
 import com.atsumeru.web.model.AtsumeruMessage;
 import com.atsumeru.web.model.database.History;
@@ -35,21 +35,21 @@ public class SyncApiController {
                                                               @RequestParam(value = "archive_hash", required = false) String archiveHash,
                                                               @RequestParam(value = "chapter_hash", required = false) String chapterHash,
                                                               @RequestParam(value = "page") int page) {
-        HistoryRepository.saveReadedPage(userService.getUserFromRequest(request), GUString.getFirstNotEmptyValue(hash, archiveHash), chapterHash, page);
+        HistoryRepository.saveReadedPage(userService.getUserFromRequest(request), StringUtils.getFirstNotEmptyValue(hash, archiveHash), chapterHash, page);
         return RestHelper.createResponseMessage("Synced successfully", HttpStatus.OK);
     }
 
     @PostMapping(value = "/push")
     @CacheEvict(cacheNames = {"history", "books", "books_by_bound_service"}, allEntries = true)
     public ResponseEntity<AtsumeruMessage> postPushReadHistory(HttpServletRequest request, @RequestBody MultiValueMap<String, String> formData) {
-        if (GUArray.isNotEmpty(formData)) {
+        if (ArrayUtils.isNotEmpty(formData)) {
             for (Map.Entry<String, List<String>> entry : formData.entrySet()) {
                 String hash = entry.getKey();
                 HistoryRepository.saveReadedPage(
                         userService.getUserFromRequest(request),
                         BooksRepository.isArchiveHash(hash) ? hash : null,
                         BooksRepository.isChapterHash(hash) ? hash : null,
-                        GUType.getIntDef(entry.getValue().get(0),0)
+                        TypeUtils.getIntDef(entry.getValue().get(0),0)
                 );
             }
             return RestHelper.createResponseMessage("Synced successfully", HttpStatus.OK);

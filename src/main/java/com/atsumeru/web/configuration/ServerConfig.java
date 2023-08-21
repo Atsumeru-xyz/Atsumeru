@@ -1,7 +1,7 @@
 package com.atsumeru.web.configuration;
 
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUType;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.TypeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +19,6 @@ public class ServerConfig {
 
     private boolean getArgsBooleanValue(String optionName, boolean def) {
         List<String> args = applicationArguments.getOptionValues(optionName);
-        return GUArray.isEmpty(args) || GUType.getBoolDef(args.get(0), def);
+        return ArrayUtils.isEmpty(args) || TypeUtils.getBoolDef(args.get(0), def);
     }
 }

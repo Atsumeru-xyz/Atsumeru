@@ -1,7 +1,7 @@
 package com.atsumeru.web.repository;
 
 import com.atsumeru.web.repository.dao.BooksDaoManager;
-import com.atsumeru.web.util.GUFile;
+import com.atsumeru.web.util.FileUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -53,6 +53,6 @@ public class BooksDatabaseRepository {
     }
 
     public void close() {
-        GUFile.closeQuietly(daoManager);
+        FileUtils.closeQuietly(daoManager);
     }
 }

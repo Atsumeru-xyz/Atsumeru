@@ -1,8 +1,8 @@
 package com.atsumeru.web.manager;
 
-import com.atsumeru.web.util.GUFile;
-import com.atsumeru.web.util.GUType;
-import com.atsumeru.web.util.WorkspaceUtils;
+import com.atsumeru.web.util.FileUtils;
+import com.atsumeru.web.util.TypeUtils;
+import com.atsumeru.web.util.Workspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -30,12 +30,12 @@ public class Settings {
         properties = new Properties();
         FileInputStream fis = null;
         try {
-            properties.load(fis = new FileInputStream(WorkspaceUtils.WORKING_DIR + PROPERTIES_FILENAME));
+            properties.load(fis = new FileInputStream(Workspace.WORKING_DIR + PROPERTIES_FILENAME));
             logger.info("Settings loaded");
         } catch (IOException e) {
             logger.error("Unable to load " + PROPERTIES_FILENAME);
         } finally {
-            GUFile.closeQuietly(fis);
+            FileUtils.closeQuietly(fis);
         }
     }
 
@@ -45,7 +45,7 @@ public class Settings {
     }
 
     private static void saveProperties() {
-        try (FileOutputStream outputStream = new FileOutputStream(WorkspaceUtils.WORKING_DIR + PROPERTIES_FILENAME)) {
+        try (FileOutputStream outputStream = new FileOutputStream(Workspace.WORKING_DIR + PROPERTIES_FILENAME)) {
             properties.store(outputStream, "Auto save properties: " + new Date());
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,7 +57,7 @@ public class Settings {
     private static final boolean DEFAULT_ALLOW_LOADING_LIST_WITH_VOLUMES = true;
 
     public static boolean isAllowListLoadingWithVolumes() {
-        return GUType.getBoolDef(properties.getProperty(KEY_ALLOW_LOADING_LIST_WITH_VOLUMES), DEFAULT_ALLOW_LOADING_LIST_WITH_VOLUMES);
+        return TypeUtils.getBoolDef(properties.getProperty(KEY_ALLOW_LOADING_LIST_WITH_VOLUMES), DEFAULT_ALLOW_LOADING_LIST_WITH_VOLUMES);
     }
 
     public static void putAllowListLoadingWithVolumes(boolean value) {
@@ -68,7 +68,7 @@ public class Settings {
     private static final boolean DEFAULT_ALLOW_LOADING_LIST_WITH_CHAPTERS = true;
 
     public static boolean isAllowListLoadingWithChapters() {
-        return GUType.getBoolDef(properties.getProperty(KEY_ALLOW_LOADING_LIST_WITH_CHAPTERS), DEFAULT_ALLOW_LOADING_LIST_WITH_CHAPTERS);
+        return TypeUtils.getBoolDef(properties.getProperty(KEY_ALLOW_LOADING_LIST_WITH_CHAPTERS), DEFAULT_ALLOW_LOADING_LIST_WITH_CHAPTERS);
     }
 
     public static void putAllowListLoadingWithChapters(boolean value) {
@@ -79,7 +79,7 @@ public class Settings {
     private static final boolean DEFAULT_DISABLE_BONJOUR_SERVICE = false;
 
     public static boolean isDisableBonjourService() {
-        return GUType.getBoolDef(properties.getProperty(KEY_DISABLE_BONJOUR_SERVICE), DEFAULT_DISABLE_BONJOUR_SERVICE);
+        return TypeUtils.getBoolDef(properties.getProperty(KEY_DISABLE_BONJOUR_SERVICE), DEFAULT_DISABLE_BONJOUR_SERVICE);
     }
 
     public static void putDisableBonjourService(boolean value) {
@@ -90,7 +90,7 @@ public class Settings {
     private static final boolean DEFAULT_DISABLE_REQUEST_LOGGING_INTO_CONSOLE = false;
 
     public static boolean isDisableRequestLoggingIntoConsole() {
-        return GUType.getBoolDef(properties.getProperty(KEY_DISABLE_REQUEST_LOGGING_INTO_CONSOLE), DEFAULT_DISABLE_REQUEST_LOGGING_INTO_CONSOLE);
+        return TypeUtils.getBoolDef(properties.getProperty(KEY_DISABLE_REQUEST_LOGGING_INTO_CONSOLE), DEFAULT_DISABLE_REQUEST_LOGGING_INTO_CONSOLE);
     }
 
     public static void putDisableRequestLoggingIntoConsole(boolean value) {
@@ -101,7 +101,7 @@ public class Settings {
     private static final boolean DEFAULT_DISABLE_FILE_WATCHER = false;
 
     public static boolean isDisableFileWatcher() {
-        return GUType.getBoolDef(properties.getProperty(KEY_DISABLE_FILE_WATCHER), DEFAULT_DISABLE_FILE_WATCHER);
+        return TypeUtils.getBoolDef(properties.getProperty(KEY_DISABLE_FILE_WATCHER), DEFAULT_DISABLE_FILE_WATCHER);
     }
 
     public static void putDisableFileWatcher(boolean value) {
@@ -112,7 +112,7 @@ public class Settings {
     private static final boolean DEFAULT_DISABLE_WATCH_FOR_MODIFIED_FILES = false;
 
     public static boolean isDisableWatchForModifiedFiles() {
-        return GUType.getBoolDef(properties.getProperty(KEY_DISABLE_WATCH_FOR_MODIFIED_FILES), DEFAULT_DISABLE_WATCH_FOR_MODIFIED_FILES);
+        return TypeUtils.getBoolDef(properties.getProperty(KEY_DISABLE_WATCH_FOR_MODIFIED_FILES), DEFAULT_DISABLE_WATCH_FOR_MODIFIED_FILES);
     }
 
     public static void putDisableWatchForModifiedFiles(boolean value) {
@@ -123,7 +123,7 @@ public class Settings {
     private static final boolean DEFAULT_DISABLE_CHAPTERS = false;
 
     public static boolean isDisableChapters() {
-        return GUType.getBoolDef(properties.getProperty(KEY_DISABLE_CHAPTERS), DEFAULT_DISABLE_CHAPTERS);
+        return TypeUtils.getBoolDef(properties.getProperty(KEY_DISABLE_CHAPTERS), DEFAULT_DISABLE_CHAPTERS);
     }
 
     public static void putDisableChapters(boolean value) {

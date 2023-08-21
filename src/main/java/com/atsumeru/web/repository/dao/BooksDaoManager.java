@@ -3,14 +3,14 @@ package com.atsumeru.web.repository.dao;
 import com.atsumeru.web.model.book.BookArchive;
 import com.atsumeru.web.model.book.BookSerie;
 import com.atsumeru.web.model.book.IBaseBookItem;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.enums.ContentType;
 import com.atsumeru.web.enums.LibraryPresentation;
 import com.atsumeru.web.helper.OrmLiteUpgradeTable;
 import com.atsumeru.web.model.book.chapter.BookChapter;
 import com.atsumeru.web.model.database.Category;
 import com.atsumeru.web.model.database.History;
-import com.atsumeru.web.util.GUArray;
+import com.atsumeru.web.util.ArrayUtils;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
@@ -234,7 +234,7 @@ public class BooksDaoManager extends BaseDaoManager {
 
         try {
             Where<?, String> where = queryBuilder.where();
-            if (GUString.isNotEmpty(dbCategoryId)) {
+            if (StringUtils.isNotEmpty(dbCategoryId)) {
                 where.like("CATEGORIES", "%" + dbCategoryId + "%");
             } else if (contentType != null) {
                 where.isNull("CATEGORIES").and().eq("CONTENT_TYPE", contentType.name());
@@ -445,7 +445,7 @@ public class BooksDaoManager extends BaseDaoManager {
 
     @SuppressWarnings("unchecked")
     public <T> List<T> queryArchivesForSeries(List<Long> serieIds) {
-        if (GUArray.isNotEmpty(serieIds)) {
+        if (ArrayUtils.isNotEmpty(serieIds)) {
             try {
                 return (List<T>) archivesDao.queryBuilder()
                         .where()
@@ -460,7 +460,7 @@ public class BooksDaoManager extends BaseDaoManager {
 
     public List<BookChapter> queryChaptersForArchives(Collection<Long> archiveIds) {
         try {
-            if (GUArray.isEmpty(archiveIds)) {
+            if (ArrayUtils.isEmpty(archiveIds)) {
                 return new ArrayList<>();
             }
             return chaptersDao.queryBuilder()
@@ -475,7 +475,7 @@ public class BooksDaoManager extends BaseDaoManager {
 
     public List<BookChapter> queryChapters(List<String> archiveHashs) {
         try {
-            if (GUArray.isEmpty(archiveHashs)) {
+            if (ArrayUtils.isEmpty(archiveHashs)) {
                 return new ArrayList<>();
             }
             return chaptersDao.queryBuilder()
@@ -587,7 +587,7 @@ public class BooksDaoManager extends BaseDaoManager {
                                 LibraryPresentation libraryPresentation) throws SQLException {
         queryBuilder.orderBy(orderByColumnName, ascendingOrder).offset(offset).limit(limit);
 
-        if (GUString.isNotEmpty(groupBy)) {
+        if (StringUtils.isNotEmpty(groupBy)) {
             queryBuilder.groupBy(groupBy);
         }
 
@@ -607,7 +607,7 @@ public class BooksDaoManager extends BaseDaoManager {
             hasAtLeastOneWhere = true;
         }
 
-        if (GUString.isNotEmpty(category)) {
+        if (StringUtils.isNotEmpty(category)) {
             if (hasAtLeastOneWhere) {
                 where.and();
             }
@@ -621,7 +621,7 @@ public class BooksDaoManager extends BaseDaoManager {
             hasAtLeastOneWhere = true;
         }
 
-        if (GUArray.isNotEmpty(allowedContentTypes) && where != null) {
+        if (ArrayUtils.isNotEmpty(allowedContentTypes) && where != null) {
             if (hasAtLeastOneWhere) {
                 where.and();
             }

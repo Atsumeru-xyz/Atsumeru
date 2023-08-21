@@ -1,8 +1,8 @@
 package com.atsumeru.web.model.database;
 
 import com.atsumeru.web.repository.CategoryRepository;
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.json.adapter.StringListBidirectionalAdapter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
@@ -60,9 +60,9 @@ public class User {
     private String disallowedTags;
 
     public Set<String> getAuthoritiesSet() {
-        Set<String> authorities = new HashSet<>(GUArray.splitString(getAuthorities(), ","));
+        Set<String> authorities = new HashSet<>(ArrayUtils.splitString(getAuthorities(), ","));
 
-        List<String> roles = GUArray.splitString(getRoles(), ",");
+        List<String> roles = ArrayUtils.splitString(getRoles(), ",");
         roles.forEach(role -> authorities.add(role.startsWith("ROLE_") ? role : "ROLE_" + role));
 
         return authorities;
@@ -70,7 +70,7 @@ public class User {
 
     public Map<String, Category> getAllowedCategoriesMap() {
         Map<String, Category> allowedCategories = new HashMap<>();
-        List<String> categoryIds = GUArray.splitString(getAllowedCategories(), ",");
+        List<String> categoryIds = ArrayUtils.splitString(getAllowedCategories(), ",");
         categoryIds.forEach(id -> {
             Category category = CategoryRepository.getCategoryById(id);
             if (category != null) {
@@ -83,7 +83,7 @@ public class User {
     public List<String> getAllowedContentTypes() {
         return getAllowedCategoriesMap().values().stream()
                 .map(Category::getContentType)
-                .filter(GUString::isNotEmpty)
+                .filter(StringUtils::isNotEmpty)
                 .collect(Collectors.toList());
     }
 
@@ -97,8 +97,8 @@ public class User {
     @NonNull
     public Set<String> getDisallowedGenres() {
         return Optional.ofNullable(disallowedGenres)
-                .filter(GUString::isNotEmpty)
-                .map(genres -> GUArray.splitString(genres, ","))
+                .filter(StringUtils::isNotEmpty)
+                .map(genres -> ArrayUtils.splitString(genres, ","))
                 .map(genres -> genres.stream()
                         .map(String::toLowerCase)
                         .collect(Collectors.toSet()))
@@ -108,8 +108,8 @@ public class User {
     @NonNull
     public Set<String> getDisallowedTags() {
         return Optional.ofNullable(disallowedTags)
-                .filter(GUString::isNotEmpty)
-                .map(tags -> GUArray.splitString(tags, ","))
+                .filter(StringUtils::isNotEmpty)
+                .map(tags -> ArrayUtils.splitString(tags, ","))
                 .map(tags -> tags.stream()
                         .map(String::toLowerCase)
                         .collect(Collectors.toSet()))

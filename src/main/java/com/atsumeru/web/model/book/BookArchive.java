@@ -1,6 +1,6 @@
 package com.atsumeru.web.model.book;
 
-import com.atsumeru.web.util.GUString;
+import com.atsumeru.web.util.StringUtils;
 import com.atsumeru.web.component.Localizr;
 import com.atsumeru.web.enums.ContentType;
 import com.atsumeru.web.enums.Status;
@@ -9,9 +9,9 @@ import com.atsumeru.web.model.book.chapter.BookChapter;
 import com.atsumeru.web.model.book.volume.VolumeItem;
 import com.atsumeru.web.model.database.History;
 import com.atsumeru.web.repository.BooksDatabaseRepository;
-import com.atsumeru.web.util.GUArray;
-import com.atsumeru.web.util.GUFile;
-import com.atsumeru.web.util.GUType;
+import com.atsumeru.web.util.ArrayUtils;
+import com.atsumeru.web.util.FileUtils;
+import com.atsumeru.web.util.TypeUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -73,7 +73,7 @@ public class BookArchive extends BaseBook {
         VolumeItem volumeItem = new VolumeItem();
         volumeItem.setId(getContentId());
         volumeItem.setTitle(isSingleMode ? getTitle() : getVolumeTitle(archiveMode));
-        if (!GUString.equalsIgnoreCase(volumeItem.getTitle(), getTitle())) {
+        if (!StringUtils.equalsIgnoreCase(volumeItem.getTitle(), getTitle())) {
             volumeItem.setAdditionalTitle(getTitle());
         }
         volumeItem.setYear(getYear());
@@ -84,17 +84,17 @@ public class BookArchive extends BaseBook {
         volumeItem.setPagesCount(getPagesCount());
         volumeItem.setHistory(history);
 
-        if (withChapters && GUArray.isNotEmpty(chapters)) {
+        if (withChapters && ArrayUtils.isNotEmpty(chapters)) {
             volumeItem.setChapters(fillChaptersHistory(
                     chapters.stream()
-                            .filter(chapter -> GUString.equalsIgnoreCase(getContentId(), chapter.getArchiveId()))
+                            .filter(chapter -> StringUtils.equalsIgnoreCase(getContentId(), chapter.getArchiveId()))
                             .collect(Collectors.toList()),
                     historyList)
             );
         }
 
         if (includeFileInfo) {
-            volumeItem.setFileName(GUFile.getFileNameWithExt(getFolder(), true));
+            volumeItem.setFileName(FileUtils.getFileNameWithExt(getFolder(), true));
             volumeItem.setFilePath(getFolder());
         }
         return volumeItem;
@@ -103,10 +103,10 @@ public class BookArchive extends BaseBook {
     private String getVolumeTitle(boolean archiveMode) {
         if (getVolume() < 0) {
             return getContentType() != ContentType.DOUJINSHI
-                    ? GUFile.getFileName(getFolder())
+                    ? FileUtils.getFileName(getFolder())
                     : getTitle();
         } else {
-            String number = GUType.isTrailingSignificant(getVolume())
+            String number = TypeUtils.isTrailingSignificant(getVolume())
                     ? String.format(getContentType() != ContentType.COMICS ? "%04.1f" : "%05.1f", getVolume()).replace(",", ".")
                     : String.format(getContentType() != ContentType.COMICS ? "%02d" : "%03d", getVolume().intValue());
             return String.format(
@@ -120,7 +120,7 @@ public class BookArchive extends BaseBook {
     private Collection<BookChapter> fillChaptersHistory(List<BookChapter> chapters, List<History> historyList) {
         for (BookChapter chapter : chapters) {
             for (History chapterHistory : historyList) {
-                if (GUString.equalsIgnoreCase(chapter.getChapterId(), chapterHistory.getArchiveHash())) {
+                if (StringUtils.equalsIgnoreCase(chapter.getChapterId(), chapterHistory.getArchiveHash())) {
                     chapter.setHistory(chapterHistory);
                     break;
                 }
@@ -147,7 +147,7 @@ public class BookArchive extends BaseBook {
         setFolder(book.getFolder());
 
         File file = new File(book.getFolder());
-        if (GUFile.isFile(file)) {
+        if (FileUtils.isFile(file)) {
             setFileSize(file.length());
         }
 
@@ -184,7 +184,7 @@ public class BookArchive extends BaseBook {
     public synchronized void setChapters(List<BookChapter> chapters) {
         try {
             synchronized (this) {
-                if (GUArray.isEmpty(this.chapters)) {
+                if (ArrayUtils.isEmpty(this.chapters)) {
                     this.chapters = BooksDatabaseRepository.getInstance()
                             .getDaoManager()
                             .getArchivesDao()
@@ -259,11 +259,11 @@ public class BookArchive extends BaseBook {
 
     @Override
     public List<String> getPageEntryNames() {
-        return GUArray.splitString(pageEntryNames, ".\\|.");
+        return ArrayUtils.splitString(pageEntryNames, ".\\|.");
     }
 
     public void setPageEntryNames(List<String> pageEntryNames) {
-        this.pageEntryNames = GUString.join(".|.", pageEntryNames);
+        this.pageEntryNames = StringUtils.join(".|.", pageEntryNames);
         setPagesCount(pageEntryNames.size());
     }
 
