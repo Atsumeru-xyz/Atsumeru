@@ -15,7 +15,7 @@ public enum ServiceType {
     SHIKIMORI("shiki", "https://shikimori.me/mangas/%s", Pattern.compile("/(\\d+)|/\\w(\\d+)"), DatabaseFields.SHIKIMORI_ID),
     KITSU("kt", "https://kitsu.io/manga/%s", Pattern.compile("manga/(.*)/|manga/(.*)"), DatabaseFields.KITSU_ID),
     ANILIST("al", "https://anilist.co/manga/%s", Pattern.compile("manga/(\\d+)"), DatabaseFields.ANILIST_ID),
-    MANGAUPDATES("mu", "https://www.mangaupdates.com/series.html?id=%s", Pattern.compile("\\?id=(\\d+)"), DatabaseFields.MANGAUPDATES_ID),
+    MANGAUPDATES("mu", "https://www.mangaupdates.com/series/%s", Pattern.compile("series/(.*?)/|series/(.*?)$"), DatabaseFields.MANGAUPDATES_ID),
     ANIMEPLANET("ap", "https://www.anime-planet.com/manga/%s", Pattern.compile("manga/(.*)/|manga/(.*)"), DatabaseFields.ANIMEPLANET_ID),
     COMICVINE("cv", "https://comicvine.gamespot.com/comic/%s/", Pattern.compile("(\\d+-\\d+)"), DatabaseFields.COMICVINE_ID),
     COMICSDB("cdb", "https://comicsdb.ru/publishers/%s", Pattern.compile("publishers/(.*)"), DatabaseFields.COMICSDB_ID),
