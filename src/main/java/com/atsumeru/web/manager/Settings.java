@@ -11,9 +11,12 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.Properties;
 
@@ -27,10 +30,15 @@ public class Settings {
     @EventListener(ApplicationReadyEvent.class)
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public void init() {
+        Workspace.moveLegacyConfig(
+                new File(Workspace.WORKING_DIR + PROPERTIES_FILENAME),
+                new File(Workspace.CONFIG_DIR + PROPERTIES_FILENAME)
+        );
+
         properties = new Properties();
         FileInputStream fis = null;
         try {
-            properties.load(fis = new FileInputStream(Workspace.WORKING_DIR + PROPERTIES_FILENAME));
+            properties.load(fis = new FileInputStream(Workspace.CACHE_DIR + PROPERTIES_FILENAME));
             logger.info("Settings loaded");
         } catch (IOException e) {
             logger.error("Unable to load " + PROPERTIES_FILENAME);
@@ -45,7 +53,7 @@ public class Settings {
     }
 
     private static void saveProperties() {
-        try (FileOutputStream outputStream = new FileOutputStream(Workspace.WORKING_DIR + PROPERTIES_FILENAME)) {
+        try (FileOutputStream outputStream = new FileOutputStream(Workspace.CONFIG_DIR + PROPERTIES_FILENAME)) {
             properties.store(outputStream, "Auto save properties: " + new Date());
         } catch (IOException e) {
             e.printStackTrace();
