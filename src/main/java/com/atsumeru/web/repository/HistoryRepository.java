@@ -69,8 +69,7 @@ public class HistoryRepository {
         // Группируем Архивы по ID Серий
         Map<Long, List<IBaseBookItem>> archives = archivesList
                 .stream()
-                .map(BookArchive.class::cast)
-                .collect(Collectors.groupingBy(BookArchive::getSerieDbId, Collectors.mapping(Function.identity(), Collectors.toList())));
+                .collect(Collectors.groupingBy(IBaseBookItem::getSerieDbId, Collectors.mapping(Function.identity(), Collectors.toList())));
 
         // Собираем все Серии для записей Истории и создаем каждой серии Тома
         boolean includeFileInfo = UserDatabaseDetailsService.isIncludeFileInfoIntoResponse();
