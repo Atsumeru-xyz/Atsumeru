@@ -38,7 +38,7 @@ public class Settings {
         properties = new Properties();
         FileInputStream fis = null;
         try {
-            properties.load(fis = new FileInputStream(Workspace.CACHE_DIR + PROPERTIES_FILENAME));
+            properties.load(fis = new FileInputStream(Workspace.CONFIG_DIR + PROPERTIES_FILENAME));
             logger.info("Settings loaded");
         } catch (IOException e) {
             logger.error("Unable to load " + PROPERTIES_FILENAME);
