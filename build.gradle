@@ -21,7 +21,7 @@ plugins {
 apply plugin: 'io.franzbecker.gradle-lombok'
 
 group 'com.atsumeru.web'
-version '1.0.2'
+version '1.0.3'
 
 compileJava.options.encoding = 'UTF-8'
 System.setProperty('file.encoding', 'UTF-8')
