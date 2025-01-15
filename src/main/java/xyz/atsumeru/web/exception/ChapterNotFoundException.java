@@ -1,0 +1,4 @@
+package xyz.atsumeru.web.exception;
+
+public class ChapterNotFoundException extends RuntimeException {
+}
