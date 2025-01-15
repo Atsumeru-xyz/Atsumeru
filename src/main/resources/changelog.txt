@@ -1,3 +1,20 @@
+Version 1.1
+[Core]
+- code refactoring
+- migrate to Spring Boot 3
+- migrate to Spring Boot Security 3
+- bump required Java version to 17 with support up to 22
+- removed Logback, Tomcat, Hashids, RxJava, RxBonjour dependencies
+- removed Bonjour service and not implemented ConnectKey generator
+- updated vulnerable CLI ProgressBar, Gson, Json, Apache Commons/Tika dependencies
+- server preparation logic (Workspace, Settings, Dao, etc...) migrated to Spring Components
+- FileSystem watcher migrated to Spring Service and depends on ImportFolders and Settings Beans
+- chapters are disabled by default
+
+Версия 1.0.3
+[Ядро]
+- исправлена загрузка сохраненной конфигурации после перезапуска сервера
+
 Версия 1.0.2
 [Ядро]
 - новый эндпоинт для получения списка Серий указанной "Серии/Франшизы":
