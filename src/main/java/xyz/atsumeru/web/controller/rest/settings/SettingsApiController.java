@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.settings;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import java.util.function.Supplier;
 @RestController
 @RequestMapping("/api/v1/settings")
 @PreAuthorize("hasRole('ADMIN')")
+@Tag(name = "Settings", description = "API controlling server settings")
 public class SettingsApiController {
     private final Supplier<Boolean> serverLockedSupplier = () -> MetadataUpdateService.isUpdateActive() || ImportService.isImportActive() || CoversSaverService.isCachingActive();
 
@@ -31,6 +34,7 @@ public class SettingsApiController {
         this.context = context;
     }
 
+    @Operation(summary = "Get settings", description = "Get current server settings")
     @GetMapping("/get")
     public ResponseEntity<?> getSettings() {
         if (serverLockedSupplier.get()) {
@@ -49,6 +53,7 @@ public class SettingsApiController {
         );
     }
 
+    @Operation(summary = "Update settings", description = "Update server settings")
     @PostMapping("/update")
     public ResponseEntity<AtsumeruMessage> updateSettings(@RequestBody ServerSettings settings) {
         boolean currentDisableChapters = Settings.isDisableChapters();

@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.book;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.cache.annotation.Cacheable;
@@ -39,6 +41,7 @@ import java.util.stream.Collectors;
 @Controller
 @RestController
 @RequestMapping("/api/v1/books")
+@Tag(name = "Books", description = "API for requesting info associated with Books: List, Details, File of Series, Volumes, Chapters, etc")
 public class BooksApiController {
     private final UsersRepository userService;
 
@@ -49,6 +52,7 @@ public class BooksApiController {
     //*****************************//
     //*         Books             *//
     //*****************************//
+    @Operation(summary = "Books list", description = "Get list of Books by type, with simple filtering, sorting and with/without additional metadata")
     @GetMapping("")
     @Cacheable(value = "books", key="#request.userPrincipal.name.concat('-')" +
             ".concat(\"\" + #contentType).concat('-')" +
@@ -106,6 +110,7 @@ public class BooksApiController {
     //*****************************//
     //*         Filters           *//
     //*****************************//
+    @Operation(summary = "Filters list", description = "Get available filters list for specific LibraryPresentation")
     @GetMapping("/filters")
     @Cacheable(value = "filters", key="#request.userPrincipal.name.concat('-')" +
             ".concat(\"\" + #contentType).concat('-')" +
@@ -122,6 +127,7 @@ public class BooksApiController {
         );
     }
 
+    @Operation(summary = "Filtered Books list", description = "Get filtered list of Books like base list endpoint, but with extended filtering")
     @PostMapping("/filtered")
     public List<IBaseBookItem> getFilteredBooks(HttpServletRequest request,
                                                 @RequestParam(value = "type", defaultValue = "", required = false) ContentType contentType,
@@ -150,6 +156,7 @@ public class BooksApiController {
                 Settings.isAllowListLoadingWithChapters() && withChapters);
     }
 
+    @Operation(summary = "Filtered Books list", description = "Get filtered list of Books like base list endpoint, but with extended filtering")
     @GetMapping("/filtered")
     public List<IBaseBookItem> getFilteredBooks(HttpServletRequest request,
                                                 @RequestParam(value = "type", defaultValue = "", required = false) ContentType contentType,
@@ -217,6 +224,7 @@ public class BooksApiController {
     //*****************************//
     //*         Details          *//
     //*****************************//
+    @Operation(summary = "Book details", description = "Get Book details by Book Hash")
     @GetMapping("/{book_hash}")
     public IBaseBookItem getBookDetails(HttpServletRequest request, @PathVariable(value = "book_hash") String bookHash,
                                         @RequestParam(value = "with_volumes", defaultValue = "false") boolean withVolumesAndHistory,
@@ -224,6 +232,7 @@ public class BooksApiController {
         return BooksRepository.getBookDetails(userService.getUserFromRequest(request), bookHash, withVolumesAndHistory, withChapters);
     }
 
+    @Operation(summary = "List of Books for Serie franchise", description = "Get list of Books associated with Serie franchise by Serie Hash")
     @GetMapping(value = {
             "/{serie_hash}/serie",
             "/{serie_hash}/franchise"
@@ -235,6 +244,7 @@ public class BooksApiController {
     //*****************************//
     //*         Volumes           *//
     //*****************************//
+    @Operation(summary = "List of Book Volumes", description = "Get list of Book Volumes by Book Hash")
     @GetMapping(value = {
             "/{book_hash}/volumes",
             "/{book_hash}/issues"
@@ -245,6 +255,7 @@ public class BooksApiController {
         return ArrayUtils.getNotNullList(BooksRepository.getBookDetails(userService.getUserFromRequest(request), bookHash, true, withChapters).getVolumes());
     }
 
+    @Operation(summary = "Volume or Issue", description = "Get Volume or Issue by Book and Volume Hashes")
     @GetMapping(value = {
             "/volumes/{archive_hash}",
             "/issues/{archive_hash}",
@@ -258,6 +269,7 @@ public class BooksApiController {
         return getVolumes(request, archiveHash, withChapters).get(0);
     }
 
+    @Operation(summary = "List of Book Chapters", description = "Get list of Book Chapters by Book Hash")
     //*****************************//
     //*         Chapters          *//
     //*****************************//
@@ -273,6 +285,7 @@ public class BooksApiController {
                 .collect(Collectors.toList());
     }
 
+    @Operation(summary = "List of Volume Chapters", description = "Get list of Volume Chapters by Book and Volume Hashes")
     @GetMapping(value = {
             "/volumes/{archive_hash}/chapters",
             "/issues/{archive_hash}/chapters",
@@ -285,6 +298,7 @@ public class BooksApiController {
         return getChapters(request, archiveHash);
     }
 
+    @Operation(summary = "Chapter", description = "Get Chapter by Book and Chapter Hashes")
     @GetMapping(value = {
             "/chapters/{chapter_hash}",
             "/{book_hash}/chapters/{chapter_hash}"
@@ -297,6 +311,7 @@ public class BooksApiController {
     //*****************************//
     //*         Pages             *//
     //*****************************//
+    @Operation(summary = "Page image", description = "Get page image by Book, Volume or Chapter Hashes and Page number with optional converting to PNG")
     @GetMapping(value = {
             "/{archive_or_chapter_hash}/page/{page}",
             "/{book_hash}/volumes/{archive_hash}/page/{page}",
@@ -324,6 +339,7 @@ public class BooksApiController {
     //*****************************//
     //*         Downloads         *//
     //*****************************//
+    @Operation(summary = "Download Volume", description = "Download Volume archive file by Volume Hash")
     @GetMapping("/download/{archive_hash}")
     public void downloadBook(HttpServletResponse response, @PathVariable(value = "archive_hash") String archiveHash) throws IOException {
         FilesHelper.downloadFile(response, SecurityContextHolder.getContext().getAuthentication(), archiveHash);
@@ -332,6 +348,7 @@ public class BooksApiController {
     //*****************************//
     //*         Deletion          *//
     //*****************************//
+    @Operation(summary = "Delete Book", description = "Delete Book from database by Book Hash. This operation is non-destructible and only makes Book invisible")
     @DeleteMapping("/delete/{book_hash}")
     public ResponseEntity<AtsumeruMessage> deleteArchive(HttpServletRequest request, @PathVariable(value = "book_hash") String bookHash) {
         BooksRepository.deleteBook(userService.getUserFromRequest(request), bookHash);
@@ -342,6 +359,7 @@ public class BooksApiController {
     //*****************************//
     //*         Covers            *//
     //*****************************//
+    @Operation(summary = "Book Cover", description = "Get Book cover image by Cover Hash with optional converting to PNG")
     @GetMapping(value = "/cover/{image_hash}", produces = MediaType.IMAGE_PNG_VALUE)
     public @ResponseBody byte[] getBookCover(HttpServletResponse response,
                                              @PathVariable(value = "image_hash") String imageHash,

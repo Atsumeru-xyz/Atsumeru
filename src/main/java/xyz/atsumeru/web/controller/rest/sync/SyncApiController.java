@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.sync;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import java.util.Map;
 @Controller
 @RestController
 @RequestMapping("/api/v1/books/sync")
+@Tag(name = "Sync", description = "API for synchronizing read history")
 public class SyncApiController {
     private final UsersRepository userService;
 
@@ -30,6 +33,7 @@ public class SyncApiController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Push", description = "Push read history (current page) for Book and Volume/Chapter by Hashes")
     @GetMapping(value = "/push")
     @CacheEvict(cacheNames = {"history", "books", "books_by_bound_service"}, allEntries = true)
     public ResponseEntity<AtsumeruMessage> getPushReadHistory(HttpServletRequest request,
@@ -41,6 +45,7 @@ public class SyncApiController {
         return RestHelper.createResponseMessage("Synced successfully", HttpStatus.OK);
     }
 
+    @Operation(summary = "Batch push", description = "Batch push read history (current page) for Book and Volume/Chapter by Hashes")
     @PostMapping(value = "/push")
     @CacheEvict(cacheNames = {"history", "books", "books_by_bound_service"}, allEntries = true)
     public ResponseEntity<AtsumeruMessage> postPushReadHistory(HttpServletRequest request, @RequestBody MultiValueMap<String, String> formData) {
@@ -59,6 +64,7 @@ public class SyncApiController {
         return RestHelper.createResponseMessage("Sync error. No form_data values", HttpStatus.NOT_ACCEPTABLE.value(), HttpStatus.OK);
     }
 
+    @Operation(summary = "Pull", description = "Pull read history for Book or Volume/Chapter by Hash")
     @GetMapping(value = "/pull/{book_or_archive_hash}")
     public List<History> getBookHistory(HttpServletRequest request, @PathVariable(value = "book_or_archive_hash") String bookOrArchiveHash) {
         return HistoryRepository.getBookHistory(userService.getUserFromRequest(request), bookOrArchiveHash);

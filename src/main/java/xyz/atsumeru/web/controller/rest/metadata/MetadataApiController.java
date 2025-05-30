@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.metadata;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +24,12 @@ import java.util.List;
 @RestController
 @RequestMapping(MetadataApiController.ROOT_ENDPOINT)
 @PreAuthorize("hasRole('ADMIN') or hasAuthority('METADATA_UPDATER')")
+@Tag(name = "Metadata", description = "API for controlling Metadata service")
 public class MetadataApiController {
     public static final String ROOT_ENDPOINT = "/api/v1/metadata";
     private static final String STATUS_ENDPOINT = "/status";
 
+    @Operation(summary = "Status", description = "Get metadata update status info")
     @GetMapping(STATUS_ENDPOINT)
     public MetadataUpdateStatus getStatus() {
         return new MetadataUpdateStatus(
@@ -36,6 +40,7 @@ public class MetadataApiController {
         );
     }
 
+    @Operation(summary = "Update/Edit", description = "Update metadata of Book or Serie with injecting changes into db-only or into actual archives")
     @PatchMapping({"/update", "/edit"})
     @CacheEvict(cacheNames = {"books", "books_by_bound_service", "filters", "hub-updates", "history"}, allEntries = true)
     public ResponseEntity<AtsumeruMessage> updateMetadata(@RequestBody BookSerie bookSerie,
@@ -80,6 +85,7 @@ public class MetadataApiController {
         return RestHelper.createResponseMessage("Candidate for metadata injecting not found in database", HttpStatus.NOT_FOUND);
     }
 
+    @Operation(summary = "Create unique Hashes", description = "Request Metadata service to create unique Hashes for Series and Books and write them into database and archives")
     @GetMapping("/create_unique_hashes")
     @CacheEvict(cacheNames = {"books", "books_by_bound_service", "filters", "hub-updates", "history"}, allEntries = true)
     public ResponseEntity<AtsumeruMessage> createUniqueIds(@RequestParam(value = "into_archives", defaultValue = "false") boolean insertIntoArchives,
@@ -92,6 +98,7 @@ public class MetadataApiController {
                 HttpStatus.OK);
     }
 
+    @Operation(summary = "Inject all", description = "Inject all metadata from database into archives")
     @GetMapping("/inject_all")
     @CacheEvict(cacheNames = {"books", "books_by_bound_service", "filters", "hub-updates", "history"}, allEntries = true)
     public ResponseEntity<AtsumeruMessage> injectAllFromDatabase() {

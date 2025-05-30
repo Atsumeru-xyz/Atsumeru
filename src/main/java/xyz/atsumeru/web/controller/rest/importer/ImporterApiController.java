@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.importer;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +27,12 @@ import java.util.List;
 @RestController
 @RequestMapping(ImporterApiController.ROOT_ENDPOINT)
 @PreAuthorize("hasRole('ADMIN') or hasAuthority('IMPORTER')")
+@Tag(name = "Importer", description = "API for controlling Importer service")
 public class ImporterApiController {
     protected static final String ROOT_ENDPOINT = "/api/v1/importer";
     private static final String STATUS_ENDPOINT = "/status";
 
+    @Operation(summary = "Status", description = "Get import status info")
     @GetMapping(STATUS_ENDPOINT)
     public ImportStatus getStatus() {
         return new ImportStatus(
@@ -40,6 +44,7 @@ public class ImporterApiController {
         );
     }
 
+    @Operation(summary = "List import folders", description = "Get list of Importer import folders")
     @GetMapping("/list")
     public List<ImportFolder> listFolders() {
         List<ImportFolder> properties = ImportFolders.getFolderProperties();
@@ -53,6 +58,7 @@ public class ImporterApiController {
         return properties;
     }
 
+    @Operation(summary = "Add import folders", description = "Add new import folder into Importer")
     @PostMapping("/add")
     @CacheEvict(cacheNames = {"books", "books_by_bound_service", "filters", "hub-updates", "history"}, allEntries = true)
     public ResponseEntity<AtsumeruMessage> addFolder(@RequestBody ImportFolder importFolder) {
@@ -72,6 +78,7 @@ public class ImporterApiController {
         );
     }
 
+    @Operation(summary = "Remove import folder", description = "Remove import folder and associated Books from Importer")
     @DeleteMapping("/remove/{hash}")
     @CacheEvict(cacheNames = {"books", "books_by_bound_service", "filters", "hub-updates", "history"}, allEntries = true)
     public ResponseEntity<AtsumeruMessage> removeFolder(@PathVariable(value = "hash") String folderHash) {
@@ -82,12 +89,14 @@ public class ImporterApiController {
         );
     }
 
+    @Operation(summary = "Request scan", description = "Request Importer scan of Books in import folders. This operation only search for new or deleted files")
     @GetMapping("/scan")
     @CacheEvict(cacheNames = {"books", "books_by_bound_service", "filters", "hub-updates", "history"}, allEntries = true)
     public ResponseEntity<AtsumeruMessage> scan() {
         return rescan(false, false);
     }
 
+    @Operation(summary = "Request rescan", description = "Request Importer rescan of Books in import folders")
     @GetMapping("/rescan")
     @CacheEvict(cacheNames = {"books", "books_by_bound_service", "filters", "hub-updates", "history"}, allEntries = true)
     public ResponseEntity<AtsumeruMessage> rescan(@RequestParam(value = "fully", defaultValue = "true") boolean rescanFully,
@@ -96,6 +105,7 @@ public class ImporterApiController {
         return RestHelper.createResponseMessage(rescanFully ? "Rescan started" : "Scan started", HttpStatus.OK);
     }
 
+    @Operation(summary = "Request folder or Serie rescan", description = "Request Importer specific rescan of Folder of Book by hash")
     @GetMapping("/rescan/{hash}")
     @CacheEvict(cacheNames = {"books", "books_by_bound_service", "filters", "hub-updates", "history"}, allEntries = true)
     public ResponseEntity<AtsumeruMessage> rescan(@PathVariable(value = "hash") String folderOrSerieHash,

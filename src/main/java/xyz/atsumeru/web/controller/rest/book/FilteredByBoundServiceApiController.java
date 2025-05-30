@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.book;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,8 +24,10 @@ import java.util.stream.Collectors;
 @Controller
 @RestController
 @RequestMapping("/api/v1/books/")
+@Tag(name = "Filtering by Bound Service", description = "API for Books requesting by Bound Service connection")
 public class FilteredByBoundServiceApiController {
 
+    @Operation(summary = "Books by Bound Service", description = "Get Books list by Bound Service Name and ID")
     @Cacheable(value = "books_by_bound_service", key = "#request.userPrincipal.name.concat('-')" +
             ".concat(\"\" + #boundServiceName).concat('-')" +
             ".concat(#boundServiceId).concat('-')")
@@ -40,6 +44,7 @@ public class FilteredByBoundServiceApiController {
                 ).orElse(null);
     }
 
+    @Operation(summary = "Check Book present", description = "Check if Book is present in database by Download Link")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/check_downloaded")
     public DownloadedLinks checkLinksDownloaded(@RequestBody MultiValueMap<String, String> formData) {

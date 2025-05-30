@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.filesystem;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,12 +23,14 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/files/explore")
 @PreAuthorize("hasRole('ADMIN') or hasAuthority('IMPORTER')")
+@Tag(name = "Filesystem", description = "API for browsing server filesystem")
 public class FileSystemApiController {
     private static final String RECYCLE_BIN_FOLDER = "$recycle.bin";
     private static final String SVI_FOLDER = "system volume information";
 
     private final FileSystem fs = FileSystems.getDefault();
 
+    @Operation(summary = "Directory listing", description = "Get directory listing")
     @PostMapping
     public DirectoryListingDto getDirectoryListing(@RequestBody(required = false) DirectoryRequestDto request) {
         if (request == null || request.path.isEmpty()) {

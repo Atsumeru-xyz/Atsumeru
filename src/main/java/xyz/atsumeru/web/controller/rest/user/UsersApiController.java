@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.user;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/users")
 @PreAuthorize("hasRole('ADMIN')")
+@Tag(name = "Users", description = "API for managing Users")
 public class UsersApiController {
     private final UsersRepository userService;
 
@@ -40,16 +43,19 @@ public class UsersApiController {
         this.userService = userService;
     }
 
+    @Operation(summary = "About me", description = "Get info about current user")
     @GetMapping("/me")
     public AtsumeruUser aboutMe(HttpServletRequest request) {
         return userService.getUserFromRequest(request);
     }
 
+    @Operation(summary = "User list", description = "Get list of created users")
     @GetMapping("/list")
     public List<AtsumeruUser> listUsers() {
         return userService.getAllUsers();
     }
 
+    @Operation(summary = "User access constants", description = "Get list of available user Roles and Authorities")
     @GetMapping({"/constants", "/authorities", "/roles"})
     public UserAccessConstants listUserAccessConstants() {
         return new UserAccessConstants(
@@ -73,6 +79,7 @@ public class UsersApiController {
         );
     }
 
+    @Operation(summary = "Create user", description = "Create new user with Roles, Authorities and optional access restrictions to Categories, Genres and Tags")
     @PutMapping("/create")
     public ResponseEntity<AtsumeruMessage> createUser(@RequestBody AtsumeruUser atsumeruUser) {
         boolean userExists = userService.isUserExists(atsumeruUser);
@@ -89,6 +96,7 @@ public class UsersApiController {
         return RestHelper.createResponseMessage(responseMessage, statusCode.value(), HttpStatus.OK);
     }
 
+    @Operation(summary = "Update/Edit user", description = "Update user. Change Password, Roles, Authorities and optional access restrictions")
     @PatchMapping({"/update", "/edit"})
     public ResponseEntity<AtsumeruMessage> updateUser(@RequestBody AtsumeruUser atsumeruUser) {
         AtsumeruUser atsumeruUserInDb = userService.getUserById(atsumeruUser.getId());
@@ -114,6 +122,7 @@ public class UsersApiController {
         return RestHelper.createResponseMessage(responseMessage, statusCode.value(), HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete user", description = "Delete user by id")
     @DeleteMapping("/delete")
     public ResponseEntity<AtsumeruMessage> deleteUser(@RequestParam(name = "user_id") int userId) {
         boolean success = userService.deleteUser(userId);

@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.service;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +19,7 @@ import xyz.atsumeru.web.service.MetadataUpdateService;
 @RestController
 @RequestMapping(ServicesApiController.ROOT_ENDPOINT)
 @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('IMPORTER', 'METADATA_UPDATER')")
+@Tag(name = "Services", description = "API for requesting Services status")
 public class ServicesApiController {
     protected static final String ROOT_ENDPOINT = "/api/v1/services";
     private static final String STATUS_ENDPOINT = "/status";
@@ -35,6 +38,7 @@ public class ServicesApiController {
         }
     }
 
+    @Operation(summary = "Status", description = "Get all running services Status (Imported, Metadata, Covers Caching)")
     @GetMapping(STATUS_ENDPOINT)
     public ServicesStatus getStatus() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

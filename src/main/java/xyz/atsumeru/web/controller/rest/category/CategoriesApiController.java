@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.category;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @Controller
 @RestController
 @RequestMapping("/api/v1/books/categories")
+@Tag(name = "Categories", description = "API for requesting Categories specific info")
 public class CategoriesApiController {
     private final UsersRepository userService;
 
@@ -33,6 +36,7 @@ public class CategoriesApiController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Categories list", description = "Get list of available created Categories")
     @GetMapping("")
     public List<Category> getCategoryList(HttpServletRequest request) {
         Map<String, Category> allowedCategories = userService.getUserFromRequest(request).getAllowedCategoriesMap();
@@ -54,6 +58,7 @@ public class CategoriesApiController {
                 .collect(Collectors.toList());
     }
 
+    @Operation(summary = "Set Categories", description = "Associate Books by Hash with Categories by Category id")
     @PostMapping("/set")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AtsumeruMessage> setCategories(@RequestBody MultiValueMap<String, String> contentIdsWithCategories) {
@@ -62,6 +67,7 @@ public class CategoriesApiController {
         return RestHelper.createResponseMessage("Categories set for provided content list", HttpStatus.OK);
     }
 
+    @Operation(summary = "Order Categories", description = "Change Categories order")
     @PostMapping("/order")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AtsumeruMessage> orderCategories(@RequestBody List<Category> changedCategories) {
@@ -69,6 +75,7 @@ public class CategoriesApiController {
         return RestHelper.createResponseMessage("Categories ordered", HttpStatus.OK);
     }
 
+    @Operation(summary = "Create Category", description = "Create new Category with provided unique name")
     @PutMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AtsumeruMessage> createCategory(@RequestParam(value = "name") String categoryName) {
@@ -79,6 +86,7 @@ public class CategoriesApiController {
         );
     }
 
+    @Operation(summary = "Edit Category", description = "Edit Category name by id")
     @PatchMapping("/edit")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AtsumeruMessage> editCategory(@RequestParam(value = "id") String categoryId,
@@ -90,6 +98,7 @@ public class CategoriesApiController {
         );
     }
 
+    @Operation(summary = "Delete Category", description = "Delete Category by id")
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AtsumeruMessage> deleteCategory(@RequestParam(value = "id") String categoryId) {

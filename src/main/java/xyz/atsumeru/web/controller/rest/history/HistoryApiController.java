@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.history;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ import java.util.List;
 @Controller
 @RestController
 @RequestMapping("/api/v1/books")
+@Tag(name = "History", description = "API for requesting user History")
 public class HistoryApiController {
     private final UsersRepository userService;
 
@@ -27,6 +30,7 @@ public class HistoryApiController {
     //*****************************//
     //*          History          *//
     //*****************************//
+    @Operation(summary = "History list", description = "Get user History list by LibraryPresentation")
     @GetMapping("/history")
     @Cacheable(value = "history", key="#request.userPrincipal.name.concat('-')" +
             ".concat(#libraryPresentation.toString()).concat('-')" +

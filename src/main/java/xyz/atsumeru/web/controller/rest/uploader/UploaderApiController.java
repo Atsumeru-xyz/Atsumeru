@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.uploader;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +36,14 @@ import static java.util.zip.Deflater.NO_COMPRESSION;
 @RestController
 @RequestMapping(UploaderApiController.ROOT_ENDPOINT)
 @PreAuthorize("hasRole('ADMIN') or hasAuthority('UPLOADER')")
+@Tag(name = "Upload", description = "API for uploading new archives into server")
 public class UploaderApiController {
     private static final Logger logger = LoggerFactory.getLogger(UploaderApiController.class.getSimpleName());
 
     public static final String ROOT_ENDPOINT = "/api/v1/uploader";
     private static final String UPLOAD_ENDPOINT = "/upload";
 
+    @Operation(summary = "Upload file", description = "Upload archive file into server with optional parameters (override existing, repack, archive type)")
     @PostMapping(UPLOAD_ENDPOINT)
     public ResponseEntity<AtsumeruMessage> uploadFile(@RequestParam("hash") String hash,
                                                       @RequestParam(value = "override", defaultValue = "false", required = false) boolean overrideFile,

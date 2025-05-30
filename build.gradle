@@ -53,6 +53,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-web'
 
+    // OpenAPI & SwaggerUI
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
     // ORM
     implementation "com.j256.ormlite:ormlite-core:5.1"
     implementation "com.j256.ormlite:ormlite-jdbc:5.1"

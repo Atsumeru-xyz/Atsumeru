@@ -1,5 +1,7 @@
 package xyz.atsumeru.web.controller.rest.hub;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import java.util.List;
 @Controller
 @RestController
 @RequestMapping("/api/v1/books")
+@Tag(name = "Hub", description = "API for requesting Hub specific data about new updates on server")
 public class HubApiController {
     private final UsersRepository userService;
 
@@ -32,6 +35,7 @@ public class HubApiController {
     //*****************************//
     //*    Hub: New and Latest    *//
     //*****************************//
+    @Operation(summary = "New Updates", description = "Get list of new updates on server for LibraryPresentation, type and category")
     @GetMapping(value = {
             "/new",
             "/updates"
