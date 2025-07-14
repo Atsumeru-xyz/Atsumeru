@@ -235,6 +235,8 @@ public final class Importer {
 
         if (!isBook) {
             bookArchiveInDb.setPageEntryNames(readableContent.getPageEntryNames());
+        } else {
+            bookArchiveInDb.setPagesCount(readableContent.getBookArchive().getPagesCount());
         }
 
         if (seriesMap.containsKey(serieHash)) {
