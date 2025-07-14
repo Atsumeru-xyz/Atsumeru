@@ -1,3 +1,10 @@
+Version 1.3
+[Core]
+- add support of JPEG2000 and JBIG2 images into PDF module
+
+[Import]
+- fix pages count not setting when importing books (PDF, DJVU)
+
 Version 1.2
 [Core]
 - add OpenAPI schema and API documentation via Swagger-UI
