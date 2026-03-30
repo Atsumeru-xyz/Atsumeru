@@ -3,6 +3,7 @@ package xyz.atsumeru.web.model.database;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
@@ -17,10 +18,12 @@ public class Category {
     public static final String CATEGORY_TAG = "atsumeru-category";
 
     @Exclude
+    @Schema(name = "_id")
     @SerializedName("_id")
     @DatabaseField(generatedId = true)
     private Long id;
 
+    @Schema(name = "id")
     @SerializedName("id")
     @DatabaseField(columnName = "CATEGORY_ID")
     private String categoryId;
@@ -29,6 +32,7 @@ public class Category {
     @DatabaseField(columnName = "NAME")
     private String name;
 
+    @Schema(name = "content_type")
     @SerializedName("content_type")
     @DatabaseField(columnName = "CONTENT_TYPE")
     private String contentType;

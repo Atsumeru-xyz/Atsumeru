@@ -4,6 +4,7 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import xyz.atsumeru.web.AtsumeruApplication;
 import xyz.atsumeru.web.json.adapter.AdminFieldAdapter;
@@ -23,6 +24,7 @@ import java.util.Optional;
 @DatabaseTable(tableName = "BOOK_CHAPTERS")
 public class BookChapter {
     @Exclude
+    @Schema(name = "_id")
     @SerializedName("_id")
     @DatabaseField(generatedId = true)
     private Long id;
@@ -35,6 +37,7 @@ public class BookChapter {
     @DatabaseField(foreign = true, columnName = "ARCHIVE")
     private BookArchive archive;
 
+    @Schema(name = "id")
     @SerializedName("id")
     @DatabaseField(columnName = "CHAPTER_ID")
     private String chapterId;
@@ -50,6 +53,7 @@ public class BookChapter {
     @DatabaseField(columnName = "TITLE")
     private String title;
 
+    @Schema(name = "alt_title")
     @SerializedName("alt_title")
     @DatabaseField(columnName = "ALTERNATIVE_TITLE")
     private String altTitle;
@@ -58,6 +62,7 @@ public class BookChapter {
     @DatabaseField(columnName = "FOLDER")
     private String folder;
 
+    @Schema(name = "chapter")
     @SerializedName("chapter")
     @DatabaseField(columnName = "CHAPTER")
     private Float chapter;
@@ -75,6 +80,7 @@ public class BookChapter {
     private String translators;
 
     @DatabaseField(columnName = "LANGUAGE")
+    @Schema(name = "language")
     @SerializedName("language")
     private String language;
 
@@ -103,14 +109,17 @@ public class BookChapter {
     @JsonAdapter(StringListBidirectionalAdapter.class)
     private String tags;
 
+    @Schema(name = "pages_count")
     @SerializedName("pages_count")
     @DatabaseField(columnName = "PAGES_COUNT")
     private int pagesCount;
 
+    @Schema(name = "created_at")
     @SerializedName("created_at")
     @DatabaseField(columnName = "CREATED_AT")
     private Long createdAt;
 
+    @Schema(name = "updated_at")
     @SerializedName("updated_at")
     @DatabaseField(columnName = "UPDATED_AT")
     private Long updatedAt;

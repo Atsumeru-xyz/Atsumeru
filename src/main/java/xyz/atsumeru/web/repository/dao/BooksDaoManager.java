@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 @Component
 @DependsOn("workspace")
 public class BooksDaoManager extends BaseDaoManager {

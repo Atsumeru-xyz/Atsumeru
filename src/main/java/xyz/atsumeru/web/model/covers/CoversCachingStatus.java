@@ -1,13 +1,16 @@
 package xyz.atsumeru.web.model.covers;
 
 import com.google.gson.annotations.SerializedName;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
 public class CoversCachingStatus {
+    @Schema(name = "covers_caching_active")
     @SerializedName("covers_caching_active")
     private boolean isCoversCachingActive;
 
+    @Schema(name = "running_ms")
     @SerializedName("running_ms")
     private long runningMs;
 

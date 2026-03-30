@@ -6,6 +6,7 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import xyz.atsumeru.web.AtsumeruApplication;
@@ -42,14 +43,17 @@ public class BookArchive extends BaseBook {
     @ForeignCollectionField(columnName = "CHAPTERS")
     private ForeignCollection<BookChapter> chapters;
 
+    @Schema(name = "id")
     @SerializedName("id")
     @DatabaseField(columnName = "MANGA_ID")
     private String mangaId;
 
+    @Schema(name = "link")
     @SerializedName("link")
     @DatabaseField(columnName = "MANGA_LINK")
     private String mangaLink;
 
+    @Schema(name = "links")
     @SerializedName("links")
     @DatabaseField(columnName = "MANGA_LINKS")
     @JsonAdapter(LinksBidirectionalAdapter.class)
@@ -58,6 +62,7 @@ public class BookArchive extends BaseBook {
     @DatabaseField(columnName = "TITLE")
     private String title;
 
+    @Schema(name = "volume")
     @SerializedName("volume")
     @DatabaseField(columnName = "VOLUME")
     private Float volume;

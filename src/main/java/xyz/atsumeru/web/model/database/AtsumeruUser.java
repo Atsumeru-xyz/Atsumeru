@@ -5,6 +5,7 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NonNull;
 import xyz.atsumeru.web.json.adapter.StringListBidirectionalAdapter;
@@ -21,6 +22,7 @@ public class AtsumeruUser {
     @DatabaseField(generatedId = true)
     private Long id;
 
+    @Schema(name = "user_name")
     @SerializedName("user_name")
     @DatabaseField(columnName = "USERNAME")
     private String userName;
@@ -38,16 +40,19 @@ public class AtsumeruUser {
     private String authorities;
 
     @JsonAdapter(StringListBidirectionalAdapter.class)
+    @Schema(name = "allowed_categories")
     @SerializedName("allowed_categories")
     @DatabaseField(columnName = "ALLOWED_CATEGORIES")
     private String allowedCategories;
 
     @JsonAdapter(StringListBidirectionalAdapter.class)
+    @Schema(name = "disallowed_genres")
     @SerializedName("disallowed_genres")
     @DatabaseField(columnName = "DISALLOWED_GENRES")
     private String disallowedGenres;
 
     @JsonAdapter(StringListBidirectionalAdapter.class)
+    @Schema(name = "disallowed_tags")
     @SerializedName("disallowed_tags")
     @DatabaseField(columnName = "DISALLOWED_TAGS")
     private String disallowedTags;

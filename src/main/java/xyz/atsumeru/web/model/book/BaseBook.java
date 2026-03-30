@@ -1,9 +1,9 @@
 package xyz.atsumeru.web.model.book;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Setter;
 import xyz.atsumeru.web.enums.*;
@@ -24,18 +24,22 @@ import java.util.stream.Collectors;
 @Data
 public abstract class BaseBook implements IBaseBookItem {
     @Exclude
+    @Schema(name = "_id")
     @SerializedName("_id")
     @DatabaseField(generatedId = true)
     private Long id;
 
+    @Schema(name = "alt_title")
     @SerializedName("alt_title")
     @DatabaseField(columnName = "ALTERNATIVE_TITLE")
     private String altTitle;
 
+    @Schema(name = "jap_title")
     @SerializedName("jap_title")
     @DatabaseField(columnName = "JAP_TITLE")
     private String japTitle;
 
+    @Schema(name = "kor_title")
     @SerializedName("kor_title")
     @DatabaseField(columnName = "KOR_TITLE")
     private String korTitle;
@@ -82,9 +86,11 @@ public abstract class BaseBook implements IBaseBookItem {
 
     @DatabaseField(columnName = "LANGUAGE")
     @JsonAdapter(StringListBidirectionalAdapter.class)
+    @Schema(name = "languages")
     @SerializedName("languages")
     private String language;
 
+    @Schema(name = "content_type")
     @SerializedName("content_type")
     @DatabaseField(columnName = "CONTENT_TYPE")
     private String contentType;
@@ -98,18 +104,22 @@ public abstract class BaseBook implements IBaseBookItem {
     @DatabaseField(columnName = "EVENT")
     private String event;
 
+    @Schema(name = "is_mature")
     @SerializedName("is_mature")
     @DatabaseField(columnName = "IS_MATURE")
     private Boolean isMature;
 
+    @Schema(name = "is_adult")
     @SerializedName("is_adult")
     @DatabaseField(columnName = "IS_ADULT")
     private Boolean isAdult;
 
+    @Schema(name = "volumes_count")
     @SerializedName("volumes_count")
     @DatabaseField(columnName = "VOLUMES_COUNT")
     private Long volumesCount;
 
+    @Schema(name = "chapters_count")
     @SerializedName("chapters_count")
     @DatabaseField(columnName = "CHAPTERS_COUNT")
     private Long chaptersCount;
@@ -120,10 +130,12 @@ public abstract class BaseBook implements IBaseBookItem {
     @DatabaseField(columnName = "STATUS")
     private String status;
 
+    @Schema(name = "translation_status")
     @SerializedName("translation_status")
     @DatabaseField(columnName = "TRANSLATION_STATUS")
     private String translationStatus;
 
+    @Schema(name = "plot_type")
     @SerializedName("plot_type")
     @DatabaseField(columnName = "PLOT_TYPE")
     private String plotType;
@@ -156,14 +168,17 @@ public abstract class BaseBook implements IBaseBookItem {
     @DatabaseField(columnName = "SCORE")
     private String score;
 
+    @Schema(name = "cover_accent")
     @SerializedName("cover_accent")
     @DatabaseField(columnName = "COVER_ACCENT")
     private String coverAccent;
 
+    @Schema(name = "created_at")
     @SerializedName("created_at")
     @DatabaseField(columnName = "CREATED_AT")
     private Long createdAt;
 
+    @Schema(name = "updated_at")
     @SerializedName("updated_at")
     @DatabaseField(columnName = "UPDATED_AT")
     private Long updatedAt;
@@ -177,6 +192,7 @@ public abstract class BaseBook implements IBaseBookItem {
     private boolean removed;
 
     @Setter
+    @Schema(name = "bound_services")
     @SerializedName("bound_services")
     protected List<BoundService> boundServices;
 
@@ -310,12 +326,12 @@ public abstract class BaseBook implements IBaseBookItem {
     }
 
     @Override
-    public Boolean getMature() {
+    public Boolean getIsMature() {
         return Optional.ofNullable(isMature).orElse(false);
     }
 
     @Override
-    public Boolean getAdult() {
+    public Boolean getIsAdult() {
         return Optional.ofNullable(isAdult).orElse(false);
     }
 
@@ -400,13 +416,5 @@ public abstract class BaseBook implements IBaseBookItem {
     @Override
     public void setVolume(float volume) {
         // stub
-    }
-
-    public boolean getIsMature() {
-        return Optional.ofNullable(isMature).orElse(false);
-    }
-
-    public boolean getIsAdult() {
-        return Optional.ofNullable(isAdult).orElse(false);
     }
 }

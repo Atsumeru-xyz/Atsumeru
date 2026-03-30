@@ -1,13 +1,16 @@
 package xyz.atsumeru.web.model.metadata;
 
 import com.google.gson.annotations.SerializedName;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
 public class MetadataUpdateStatus {
+    @Schema(name = "metadata_update_active")
     @SerializedName("metadata_update_active")
     private boolean isUpdateActive;
 
+    @Schema(name = "running_ms")
     @SerializedName("running_ms")
     private long runningMs;
 

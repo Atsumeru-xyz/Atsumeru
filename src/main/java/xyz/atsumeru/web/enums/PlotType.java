@@ -1,5 +1,8 @@
 package xyz.atsumeru.web.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum PlotType {
     UNKNOWN(Integer.MAX_VALUE),
     MAIN_STORY(0),         // Основная история
@@ -23,9 +26,5 @@ public enum PlotType {
 
     PlotType(int order) {
         this.order = order;
-    }
-
-    public int getOrder() {
-        return order;
     }
 }

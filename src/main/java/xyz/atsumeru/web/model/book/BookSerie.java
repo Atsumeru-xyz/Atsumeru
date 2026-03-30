@@ -4,6 +4,7 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import io.swagger.v3.oas.annotations.media.Schema;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.Data;
@@ -31,23 +32,28 @@ import java.util.stream.Stream;
 @EqualsAndHashCode(callSuper = true)
 @DatabaseTable(tableName = "BOOK_SERIES")
 public class BookSerie extends BaseBook {
+    @Schema(name = "id")
     @SerializedName("id")
     @DatabaseField(columnName = "SERIE_ID")
     private String serieId;
 
+    @Schema(name = "link")
     @SerializedName("link")
     @DatabaseField(columnName = "SERIE_LINK")
     private String serieLink;
 
+    @Schema(name = "links")
     @SerializedName("links")
     @DatabaseField(columnName = "SERIE_LINKS")
     @JsonAdapter(LinksBidirectionalAdapter.class)
     private String serieLinks;
 
+    @Schema(name = "title")
     @SerializedName("title")
     @DatabaseField(columnName = "TITLE")
     private String serieTitle;
 
+    @Schema(name = "is_single")
     @SerializedName("is_single")
     @DatabaseField(columnName = "IS_SINGLE")
     private Boolean isSingle;

@@ -1,12 +1,14 @@
 package xyz.atsumeru.web.model.book.service;
 
 import com.google.gson.annotations.SerializedName;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import xyz.atsumeru.web.enums.ServiceType;
 import xyz.atsumeru.web.util.StringUtils;
 
 public class BoundService {
     @Getter
+    @Schema(name = "service_type")
     @SerializedName("service_type")
     private final ServiceType serviceType;
 

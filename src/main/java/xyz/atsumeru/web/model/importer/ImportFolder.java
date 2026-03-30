@@ -1,6 +1,7 @@
 package xyz.atsumeru.web.model.importer;
 
 import com.google.gson.annotations.SerializedName;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import xyz.atsumeru.web.AtsumeruApplication;
 import xyz.atsumeru.web.importer.Importer;
@@ -25,27 +26,35 @@ public class ImportFolder {
     private String hash;
     private String path;
 
+    @Schema(name = "singles")
     @SerializedName("singles")
     private boolean isSingles;
 
+    @Schema(name = "singles_in_root")
     @SerializedName("singles_in_root")
     private boolean isSinglesInRoot;
 
+    @Schema(name = "singles_if_in_root_with_folders")
     @SerializedName("singles_if_in_root_with_folders")
     private boolean isSinglesIfInRootWithFolders;
 
+    @Schema(name = "ignore_volume_numbers_detection")
     @SerializedName("ignore_volume_numbers_detection")
     private boolean isIgnoreVolumeNumbersDetection;
 
+    @Schema(name = "series_count")
     @SerializedName("series_count")
     private long seriesCount;
 
+    @Schema(name = "singles_count")
     @SerializedName("singles_count")
     private long singlesCount;
 
+    @Schema(name = "archives_count")
     @SerializedName("archives_count")
     private long archivesCount;
 
+    @Schema(name = "chapters_count")
     @SerializedName("chapters_count")
     private long chaptersCount;
 
