@@ -1,13 +1,8 @@
 plugins {
     id 'java'
     id 'idea'
-
-    // Spring
-    id 'org.springframework.boot' version '3.3.5'
+    id 'org.springframework.boot' version '3.5.10'
     id 'io.spring.dependency-management' version '1.1.7'
-
-    // GraalVM
-    id 'org.graalvm.buildtools.native' version '0.9.28'
 }
 
 group 'xyz.atsumeru.web'
@@ -19,6 +14,10 @@ System.setProperty('file.encoding', 'UTF-8')
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
+}
+
+java {
+    sourceCompatibility = '17'
 }
 
 configurations {
@@ -53,8 +52,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-web'
 
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-gson:0.11.5'
+
     // OpenAPI & SwaggerUI
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15'
 
     // ORM
     implementation "com.j256.ormlite:ormlite-core:5.1"
