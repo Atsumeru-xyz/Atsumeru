@@ -1,3 +1,11 @@
+Version 2.0
+[Core]
+- update Spring Boot
+- bump Java to 17+
+
+[WebUI]
+- first implementation of WebUI
+
 Version 1.3
 [Core]
 - add support of JPEG2000 and JBIG2 images into PDF module
