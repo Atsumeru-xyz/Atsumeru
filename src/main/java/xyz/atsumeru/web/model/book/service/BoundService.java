@@ -10,12 +10,12 @@ public class BoundService {
     @Getter
     @Schema(name = "service_type")
     @SerializedName("service_type")
-    private final ServiceType serviceType;
+    private ServiceType serviceType;
 
-    private final String id;
+    private String id;
 
     @Getter
-    private final String link;
+    private String link;
 
     public BoundService(ServiceType serviceType, String idOrLink) {
         this.serviceType = serviceType;
