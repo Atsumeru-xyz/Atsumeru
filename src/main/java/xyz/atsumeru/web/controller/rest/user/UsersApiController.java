@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import xyz.atsumeru.web.Beans;
+import xyz.atsumeru.web.component.Localization;
 import xyz.atsumeru.web.configuration.ServerConfiguration;
 import xyz.atsumeru.web.enums.Genre;
 import xyz.atsumeru.web.enums.LibraryPresentation;
@@ -131,7 +132,7 @@ public class UsersApiController {
                 atsumeruUser.setPassword(atsumeruUserInDb.getPassword());
             }
             userService.saveUser(atsumeruUser, !atsumeruUser.getPassword().equals(atsumeruUserInDb.getPassword()));
-            responseMessage = "User successfully created";
+            responseMessage = Localization.toLocale("success.user_updated");
             statusCode = HttpStatus.CREATED;
         }
 
@@ -146,7 +147,7 @@ public class UsersApiController {
     public ResponseEntity<AtsumeruMessage> deleteUser(@RequestParam(name = "user_id") int userId) {
         boolean success = userService.deleteUser(userId);
         return RestHelper.createResponseMessage(
-                success ? "User successfully deleted" : "Unable to delete user",
+                Localization.toLocale(success ? "success.user_deleted" : "error.user_unable_to_delete"),
                 success ? HttpStatus.OK : HttpStatus.BAD_REQUEST
         );
     }
