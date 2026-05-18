@@ -1,5 +1,8 @@
 package xyz.atsumeru.web.helper;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 public final class Constants {
 
     public static String[] SUPPORTED_SINGLE_FILES = {
@@ -17,6 +20,26 @@ public final class Constants {
             Formats.PDF,
             Formats.DJVU
     };
+
+    public static final String[] SUPPORTED_COVER_IMAGE_EXTENSIONS = new String[]{
+            Formats.BMP,
+            Formats.GIF,
+            Formats.JPEG,
+            Formats.JPG,
+            Formats.PNG,
+            Formats.WEBP,
+            Formats.JXL
+    };
+
+    public static final String[] SUPPORTED_IMAGE_EXTENSIONS =
+            Stream.concat(
+                    Arrays.stream(SUPPORTED_COVER_IMAGE_EXTENSIONS),
+                    Stream.of(
+                            Formats.AVIF,
+                            Formats.HEIC,
+                            Formats.HEIF
+                    )
+            ).toArray(String[]::new);
 
     public static class Hashes {
         public static final String ARCHIVE_HASH_TAG = "atsumeru";
@@ -37,6 +60,7 @@ public final class Constants {
         public static final String AVIF = "avif";
         public static final String HEIC = "heic";
         public static final String HEIF = "heif";
+        public static final String JXL = "jxl";
 
         // Archives
         public static final String SEVEN_ZIP = "7z";
@@ -65,5 +89,6 @@ public final class Constants {
         public static final String IMAGE_AVIF = "image/avif";
         public static final String IMAGE_HEIC = "image/heic";
         public static final String IMAGE_HEIF = "image/heif";
+        public static final String IMAGE_JXL = "image/jxl";
     }
 }

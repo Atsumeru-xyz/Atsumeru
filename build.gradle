@@ -68,9 +68,12 @@ dependencies {
     // CLI ProgressBar
     implementation 'me.tongfei:progressbar:0.10.1'
 
-    // ImageIO extensions (Extended JPEG and WebP support)
+    // ImageIO extensions (Extended JPEG, WebP, JpegXL support)
     implementation 'com.twelvemonkeys.imageio:imageio-jpeg:3.9.3'
     implementation 'com.twelvemonkeys.imageio:imageio-webp:3.9.3'
+
+    implementation 'com.github.umjammer:vavi-image:1.0.15'
+    implementation 'com.github.umjammer:vavi-image-jxlatte:0.2.0'
 
     // Image thumbnails creation
     implementation 'net.coobird:thumbnailator:0.4.14'

@@ -53,6 +53,7 @@ public class FilesHelper {
         MIME_TYPES.put(Constants.Formats.AVIF, Constants.MimeTypes.IMAGE_AVIF);
         MIME_TYPES.put(Constants.Formats.HEIC, Constants.MimeTypes.IMAGE_HEIC);
         MIME_TYPES.put(Constants.Formats.HEIF, Constants.MimeTypes.IMAGE_HEIF);
+        MIME_TYPES.put(Constants.Formats.JXL, Constants.MimeTypes.IMAGE_JXL);
     }
 
     public static String readHashFileAttribute(Path path, String attributeName, String defaultHash) {

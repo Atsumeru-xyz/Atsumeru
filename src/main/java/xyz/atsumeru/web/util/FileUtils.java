@@ -12,15 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class FileUtils {
-    public static final String[] ALLOWED_IMAGE_EXTENSIONS = new String[]{
-            Constants.Formats.BMP,
-            Constants.Formats.GIF,
-            Constants.Formats.JPEG,
-            Constants.Formats.JPG,
-            Constants.Formats.PNG,
-            Constants.Formats.WEBP
-    };
-
     /**
      * Write given {@link String} into {@link File}
      *
@@ -48,13 +39,13 @@ public class FileUtils {
      * Get list of all {@link File} from given directory with filtering by extension
      *
      * @param directoryPath     directory path
-     * @param allowedExtensions array of extensions for filtering. May be null. In that case, {@link FileUtils#ALLOWED_IMAGE_EXTENSIONS}
+     * @param allowedExtensions array of extensions for filtering. May be null. In that case, {@link Constants#SUPPORTED_COVER_IMAGE_EXTENSIONS}
      *                          will be used
      * @param recursive         set recursive mode
      * @return {@link List<File>} with files
      */
     public static List<File> getAllFilesFromDirectory(String directoryPath, String[] allowedExtensions, boolean recursive) {
-        allowedExtensions = Optional.ofNullable(allowedExtensions).orElse(ALLOWED_IMAGE_EXTENSIONS);
+        allowedExtensions = Optional.ofNullable(allowedExtensions).orElse(Constants.SUPPORTED_COVER_IMAGE_EXTENSIONS);
 
         File file = new File(directoryPath);
         if (file.isDirectory()) {

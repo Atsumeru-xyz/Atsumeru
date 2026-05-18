@@ -60,7 +60,6 @@ public class ReadableContent implements Closeable {
     public static final String BOOK_JSON_INFO_FILENAME = "book_info.json";
     public static final String SERIE_JSON_INFO_FILENAME = "serie_info.json";
     public static final String CHAPTER_JSON_INFO_FILENAME = "chapter_info.json";
-    public static final String[] SUPPORTED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"};
     public static final String ZERO_COVER_FILENAME_START = "00000.";
     public static final String COVER_FILENAME_START = "cover";
 
@@ -366,21 +365,25 @@ public class ReadableContent implements Closeable {
                 }
             }
 
-            for (String extension : ReadableContent.SUPPORTED_IMAGE_EXTENSIONS) {
-                if (fileName.endsWith(extension)) {
+            for (String extension : Constants.SUPPORTED_IMAGE_EXTENSIONS) {
+                if (fileName.endsWith("." + extension)) {
                     // Поиск первого изображения и получение InputStream оного. В последствии данное изображение будет
                     // использовано как превью и полноформатная обложка
-                    if (!zeroCoverFound && (getCoverStream() == null || isCoverFile(fileName))) {
-                        if (getCoverStream() == null || !isCoverFile(getCoverFilePath())) {
-                            setCoverStream(archiveIterator.getEntryInputStream());
-                            setCoverFilePath(fileName);
-                            log(logger, "Found cover image in path: " + fileName);
-                            zeroCoverFound = FileUtils.getFileNameWithExt(fileName).toLowerCase().startsWith(ZERO_COVER_FILENAME_START);
+                    for (String coverExtension : Constants.SUPPORTED_COVER_IMAGE_EXTENSIONS) {
+                        if (fileName.endsWith("." + coverExtension)) {
+                            if (!zeroCoverFound && (getCoverStream() == null || isCoverFile(fileName))) {
+                                if (getCoverStream() == null || !isCoverFile(getCoverFilePath())) {
+                                    setCoverStream(archiveIterator.getEntryInputStream());
+                                    setCoverFilePath(fileName);
+                                    log(logger, "Found cover image in path: " + fileName);
+                                    zeroCoverFound = FileUtils.getFileNameWithExt(fileName).toLowerCase().startsWith(ZERO_COVER_FILENAME_START);
+                                }
+                            }
                         }
                     }
 
                     if (!isBookFile) {
-                        // Сохранение названия Entry в список для подальшего использования
+                        // Сохранение названия Entry в список для дальнейшего использования
                         pageEntryNames.add(archiveIterator.getEntryName());
 
                         // Добавление пути к файлу к "главам"
