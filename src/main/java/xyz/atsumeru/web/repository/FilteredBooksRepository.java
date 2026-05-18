@@ -122,8 +122,8 @@ public class FilteredBooksRepository {
                 }
             }
 
-            if (StringUtils.isNotEmpty(it.getCategories()) && StringUtils.isNotEmpty(category)) {
-                if (!it.getCategories().contains(category)) {
+            if (StringUtils.isNotEmpty(category)) {
+                if (StringUtils.isEmpty(it.getCategories()) || !it.getCategories().contains(category)) {
                     return false;
                 }
             }
