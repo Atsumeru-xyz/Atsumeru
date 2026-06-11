@@ -88,6 +88,16 @@ public class AtsumeruExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new AtsumeruException(exception.getMessage()), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
+    @ExceptionHandler(SharingTokenNotFoundException.class)
+    protected ResponseEntity<AtsumeruException> handleSharingTokenNotFoundException() {
+        return new ResponseEntity<>(new AtsumeruException("Share token not found"), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SharingTokenExpiredException.class)
+    protected ResponseEntity<AtsumeruException> handleSharingTokenExpiredException() {
+        return new ResponseEntity<>(new AtsumeruException("Share token expired"), HttpStatus.GONE);
+    }
+
     @Data
     @AllArgsConstructor
     private static class AtsumeruException {

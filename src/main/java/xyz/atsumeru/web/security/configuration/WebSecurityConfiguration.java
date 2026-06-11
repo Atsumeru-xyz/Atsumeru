@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import xyz.atsumeru.web.security.filter.JwtAuthenticationFilter;
+import xyz.atsumeru.web.security.filter.SharingAuthenticationFilter;
 
 @Profile("!dev")
 @Configuration
@@ -23,9 +24,12 @@ import xyz.atsumeru.web.security.filter.JwtAuthenticationFilter;
 @EnableMethodSecurity
 public class WebSecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final SharingAuthenticationFilter sharingAuthenticationFilter;
 
-    public WebSecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public WebSecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter,
+                                    SharingAuthenticationFilter sharingAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.sharingAuthenticationFilter = sharingAuthenticationFilter;
     }
 
     @Bean
@@ -35,6 +39,7 @@ public class WebSecurityConfiguration {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         auth -> auth
+                                .requestMatchers("/api/v1/share/**").permitAll()
                                 .requestMatchers("/api/**").authenticated()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").authenticated()
@@ -43,6 +48,7 @@ public class WebSecurityConfiguration {
                 .httpBasic(basic -> basic.authenticationEntryPoint(basicEntryPoint()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(sharingAuthenticationFilter, JwtAuthenticationFilter.class)
                 .build();
     }
 
