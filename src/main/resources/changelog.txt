@@ -1,3 +1,16 @@
+Version 2.1
+[Core]
+- support JpegXL
+- update localization
+- fix incorrect CORS configuration
+- fix not working search in custom categories
+
+[Import]
+- fix BoundServices deserialization bug
+
+[WebUI]
+- updated with settings implementations, categories modification support, live search and metadata editor
+
 Version 2.0
 [Core]
 - update Spring Boot
