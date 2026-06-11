@@ -13,12 +13,17 @@ import xyz.atsumeru.web.model.book.image.Images;
 import xyz.atsumeru.web.repository.BooksRepository;
 import xyz.atsumeru.web.util.FileUtils;
 
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
 public class ImageCache {
     private ImageCache() {
@@ -67,7 +72,6 @@ public class ImageCache {
         return true;
     }
 
-
     public static Images saveToFile(InputStream inputStream, String imageHash, String extension) {
         String imageName = String.format("%s.%s", imageHash, extension);
 
@@ -77,7 +81,9 @@ public class ImageCache {
 
         BufferedImage bImage = null;
         try {
-            createThumbnail(bImage = ImageIO.read(inputStream), thumbnailImage);
+            byte[] imageBytes = IOUtils.toByteArray(inputStream);
+            bImage = readImageSafely(imageBytes);
+            createThumbnail(bImage, thumbnailImage);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -85,6 +91,38 @@ public class ImageCache {
         }
 
         return new Images(thumbnailImage.getPath(), bImage);
+    }
+
+    private static BufferedImage readImageSafely(byte[] imageBytes) throws IOException {
+        try {
+            return ImageIO.read(new ByteArrayInputStream(imageBytes));
+        } catch (IIOException e) {
+            if (e.getMessage() != null && e.getMessage().toLowerCase().contains("jxl")) {
+                return readImageSkipJxl(new ByteArrayInputStream(imageBytes));
+            }
+            throw e;
+        }
+    }
+
+    private static BufferedImage readImageSkipJxl(InputStream inputStream) throws IOException {
+        try (ImageInputStream iis = ImageIO.createImageInputStream(inputStream)) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+            while (readers.hasNext()) {
+                ImageReader reader = readers.next();
+                if (reader.getClass().getName().contains("Jxlatte")) {
+                    continue;
+                }
+                try {
+                    reader.setInput(iis);
+                    BufferedImage image = reader.read(0);
+                    reader.dispose();
+                    return image;
+                } catch (Exception ignored) {
+                    reader.dispose();
+                }
+            }
+        }
+        throw new IIOException("No suitable ImageReader found (JXL skipped)");
     }
 
     private static void createThumbnail(BufferedImage image, File thumbnailImage) {

@@ -30,6 +30,8 @@ configurations {
 }
 
 bootJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     manifest {
         attributes(
                 'Implementation-Title':  'Atsumeru',
