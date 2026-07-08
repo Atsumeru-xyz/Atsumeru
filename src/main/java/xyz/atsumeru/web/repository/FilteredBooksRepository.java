@@ -14,6 +14,7 @@ import xyz.atsumeru.web.repository.dao.BooksDaoManager;
 import xyz.atsumeru.web.util.ArrayUtils;
 import xyz.atsumeru.web.util.EnumUtils;
 import xyz.atsumeru.web.util.StringUtils;
+import xyz.atsumeru.web.util.TypeUtils;
 import xyz.atsumeru.web.util.comparator.AlphanumComparator;
 import xyz.atsumeru.web.util.comparator.NaturalStringComparator;
 
@@ -208,6 +209,11 @@ public class FilteredBooksRepository {
                 Genre genre = Genre.getGenreFromString(it);
                 if (genre != null) {
                     genreIds.add(String.valueOf(genre.ordinal()));
+                } else {
+                    // Try to get by ordinal
+                    if (TypeUtils.getIntDef(it, Integer.MIN_VALUE) != Integer.MIN_VALUE) {
+                        genreIds.add(it);
+                    }
                 }
             });
         }
