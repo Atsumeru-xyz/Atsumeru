@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'xyz.atsumeru.web'
-version '2.1'
+version '2.2'
 
 compileJava.options.encoding = 'UTF-8'
 System.setProperty('file.encoding', 'UTF-8')

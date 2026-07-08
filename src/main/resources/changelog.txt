@@ -1,3 +1,13 @@
+Version 2.2
+[Core]
+- fix filtering when using Genre ordinal
+
+[WebUI]
+- an advanced filtering panel has been implemented in the library. Separate interfaces for desktop and mobile modes
+- ability to open content in a new tab by clicking on the MMB
+- fixed an issue where cards in categories would not load while scrolling after refreshing the page
+- fixed importing dialog progress bar. It now correctly displays progress from 0 to 100%
+
 Version 2.1
 [Core]
 - support JpegXL
